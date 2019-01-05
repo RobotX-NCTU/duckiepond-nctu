@@ -1,0 +1,15 @@
+*~
+*.bag
+*.pcd
+*.png
+*.pyc
+*.swp
+*.swo
+*.vscode
+*.log
+catkin_ws/build/
+catkin_ws/install/
+catkin_ws/devel/
+catkin_ws/.catkin_workspace
+*.xls
+*.caffemodel
