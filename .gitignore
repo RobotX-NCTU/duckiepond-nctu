@@ -13,3 +13,5 @@ catkin_ws/devel/
 catkin_ws/.catkin_workspace
 *.xls
 *.caffemodel
+*.vscode
+

@@ -45,9 +45,22 @@ $ sudo apt-get install ros-kinetic-desktop-full
 ```
 
 ## How to Build (Software)
-
+1. For ROS part
 ```
-write build ros and others here (working on...)
+$ cd 
+$ cd $HOME/duckiepond-nctu/catkin_ws
+$ catkin_make
+```
+2. For MOOS part
+```
+$ cd 
+$ git clone https://github.com/ARG-NCTU/moos-ivp-nctu.git moos-ivp
+$ cd moos-ivp
+$ ./build-moos.sh
+$ ./build-ivp.sh
+$ source ~/.bashrc
+$ cd $HOME/duckiepond-nctu/moos
+$ ./build.sh
 ```
 
 If you don't have ZED driver:
@@ -67,6 +80,3 @@ Do the following everytime as you open new terminals
 $ cd ~/duckiepond_nctu/
 $ source environment.sh
 ```
-
-## For MOOS
-Please see the readme in /moos folder
