@@ -22,7 +22,7 @@ Processconfig = ANTLER
   Run = pMarinePID       @ NewConsole = false
   Run = pHelmIvP         @ NewConsole = false
   Run = pHostInfo        @ NewConsole = false
-
+  Run = pBasicContactMgr @ NewConsole = false
 
   Run = uSimMarine       @ NewConsole = false
 }
@@ -64,6 +64,26 @@ ProcessConfig = uSimMarine
   thrust_map    = 0:0, 20:1, 40:2, 60:3, 80:4, 100:5
   thrust_reflect = true
 }
+
+//--------------------------------------------------------
+// pBasicContactMgr Configuration Block (Created from Plugin)
+
+ProcessConfig = pBasicContactMgr
+{
+  AppTick   = 2
+  CommsTick = 2
+
+  decay = 30,60
+
+  alert_verbose = true
+
+  contact_max_age = 100
+  display_radii   = true
+
+  default_alert_range = 20
+  default_cpa_range   = 28
+  default_alert_range_color = gray70
+  default_cpa_range_color   = gray30
 
 }
 
