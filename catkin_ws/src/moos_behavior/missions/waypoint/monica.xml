@@ -1,0 +1,85 @@
+<moosrosconfig>
+
+  <!-- ROS Publish -->
+
+  <message>
+    <moosname>NAV_X</moosname>
+    <rosname>monica/NAV_X</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toMOOS</direction>
+  </message>
+
+  <message>
+    <moosname>NAV_Y</moosname>
+    <rosname>monica/NAV_Y</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toMOOS</direction>
+  </message>
+
+  <message>
+    <moosname>NAV_SPEED</moosname>
+    <rosname>monica/NAV_SPEED</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toMOOS</direction>
+  </message>
+
+  <message>
+    <moosname>NAV_HEADING</moosname>
+    <rosname>monica/NAV_HEADING</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toMOOS</direction>
+  </message>
+  
+  <!-- MOOS Publish -->
+  <message>
+    <moosname>DB_TIME</moosname>
+    <rosname>monica/DB_TIME</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message>
+
+  <message>
+    <moosname>DESIRED_HEADING</moosname>
+    <rosname>monica/DESIRED_HEADING</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message>
+
+  <message>
+    <moosname>DESIRED_SPEED</moosname>
+    <rosname>monica/DESIRED_SPEED</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message>
+
+  <message>
+    <moosname>DESIRED_RUDDER</moosname>
+    <rosname>monica/DESIRED_RUDDER</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message>
+
+  <message>
+    <moosname>DESIRED_THRUST_L</moosname>
+    <rosname>monica/DESIRED_THRUST_L</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message>
+
+  <message>
+    <moosname>DESIRED_THRUST_R</moosname>
+    <rosname>monica/DESIRED_THRUST_R</rosname>
+    <moostype>Double</moostype>
+    <rostype>std_msgs/Float64</rostype>
+    <direction>toROS</direction>
+  </message> 
+</moosrosconfig>

@@ -1,0 +1,28 @@
+<launch>
+    <arg name="sim" default="true"/>
+    <arg name="factor" default="gazebo"/>
+    <arg name="moos_folder" default="waypoint"/>
+    <arg name="veh_brain" default="brian"/> 
+    <arg name="veh_$(arg veh_monica)" default="monica"/>
+
+    <!-- MOOS ROS Bridge -->
+    <node ns="$(arg veh_brian)" pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_brian)" 
+        args="$(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_brian).xml $(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_brian)_vehicle.moos" 
+        respawn="false" output="screen" />
+
+    <node ns="$(arg veh_monica)" pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_monica)" 
+        args="$(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_monica).xml $(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_monica)_vehicle.moos" 
+        respawn="false" output="screen" />
+
+    <!-- MOOS Multi-Behavior -->
+    <node ns="$(arg veh_brian)" pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt_$(arg veh_brian)" respawn="false" output="screen">
+        <param name="sim" value="$(arg sim)"/>
+        <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
+    </node>
+
+    <node ns="$(arg veh_monica)" pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt_$(arg veh_brian)" respawn="false" output="screen">
+        <param name="sim" value="$(arg sim)"/>
+        <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
+    </node>
+
+</launch>

@@ -1,0 +1,12 @@
+//------------------------------------------------
+// pFeatureTracker config block
+
+ProcessConfig = pFeatureTracker
+{
+   AppTick   = 4
+   CommsTick = 4
+
+   min_feature_dist = 7.0 // distance in meters beyond which a detected feature is considered distinct
+
+}
+

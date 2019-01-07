@@ -13,3 +13,11 @@ catkin_ws/devel/
 catkin_ws/.catkin_workspace
 *.xls
 *.caffemodel
+*.vscode
+*.pyc
+MOOSLog*/
+LOG*/
+.LastOpenedMOOSLogDirectory
+duckiepond_*.moos
+duckiepond_*.bhv
+*.moos++
