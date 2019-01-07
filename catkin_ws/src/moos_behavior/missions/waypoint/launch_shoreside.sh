@@ -1,10 +1,14 @@
 #!/bin/bash -e
 SHORE_IP="localhost"
-SHORE_LISTEN="9000"
-VEH1_IP="localhost"
-VEH1_LISTEN="9100"
-VEH2_IP="localhost"
-VEH2_LISTEN="9200"
+SHORE_PORT="9000"
+
+VEH_NAME1="brian"
+VEH_IP1="localhost"
+VEH_PORT1="9100"
+
+VEH_NAME2="monica"
+VEH_IP2="localhost"
+VEH_PORT2="9200"
 
 COMMUNITY="shoreside"
 
@@ -12,25 +16,16 @@ COMMUNITY="shoreside"
 #  Part 1: Check for and handle command-line arguments
 #-------------------------------------------------------
 TIME_WARP=1
-SHORE_IP=$1
-echo "SHORE_IP = " $1
-
-VEH1_IP=$1
-echo "VEH1_IP = " $2
-
-VEH2_IP=$1
-echo "VEH2_IP = " $3
+echo "SHORE_IP = " $SHORE_IP ", VEH_IP1 = " $VEH_IP1 ", VEH_IP2 = " $VEH_IP2
+echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $VEH_PORT2
 
 #-------------------------------------------------------
 #  Part 2: Launch the processes
 #-------------------------------------------------------
-nsplug ${COMMUNITY}.moos duckiepond_${COMMUNITY}.moos -f  \
-    SHORE_IP=$SHORE_IP \
-    SHORE_LISTEN=$SHORE_LISTEN \
-    VEH1_IP=$VEH1_IP \
-    VEH1_LISTEN=$VEH1_LISTEN \
-    VEH2_IP=$VEH2_IP \
-    VEH2_LISTEN=$VEH2_LISTEN 
+nsplug shoreside.moos duckiepond_${COMMUNITY}.moos -f  \
+    SHORE_PORT=$SHORE_PORT  SHORE_IP=$SHORE_IP \
+    VEH_IP1=$VEH_IP1 VEH_IP2=$VEH_IP2 \
+    VEH_PORT1=$VEH_PORT1 VEH_PORT2=$VEH_PORT2
 
 
 printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_${COMMUNITY} $TIME_WARP
