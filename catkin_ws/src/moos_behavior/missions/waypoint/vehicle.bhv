@@ -2,6 +2,7 @@
 
 initialize   DEPLOY = false
 initialize   RETURN = false
+initialize   AVOID = true
 
 //----------------------------------------------
 Behavior = BHV_Waypoint
