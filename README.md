@@ -3,7 +3,7 @@
 
 |Reference | Link |
 |-------|--------|
-|Duckiepond NCTU Github 	|[RobotX Team at NCTU](https://github.com/RobotX-NCTU/duckiepond-nctu.git)|
+|Duckiepond NCTU Github 	|[Dukciepond NCTU Repo](https://github.com/RobotX-NCTU/duckiepond-nctu.git)|
 |NCTU ARG website		|[Assistive Robotics Group](https://arg-nctu.github.io)|
 |MIT MOOS-IvP website|[MOOS-IvP](http://oceanai.mit.edu/moos-ivp/pmwiki/pmwiki.php?n=Main.HomePage)|
 |MIT MOOS-Ivp Tutorial|[MOOS-Ivp Lab](http://oceanai.mit.edu/ivpman/pmwiki/pmwiki.php?n=Lab.HomePage2680)|

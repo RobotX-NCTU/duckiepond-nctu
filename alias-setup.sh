@@ -1,0 +1,1 @@
+alias pd-make='cd ~/duckiepond-nctu/catkin_ws; catkin make -j8; cd -'
