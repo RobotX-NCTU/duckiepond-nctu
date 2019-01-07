@@ -6,11 +6,13 @@ Last update: 2019/01/06
 moos waypoint bhv 
 '''
 import rospy
-from wamv_pose import WAMVPose
 from duckiepond_vehicle.msg import UsvDrive
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float64, String
 import tf
+import math
+from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
+from duckiepond.srv import SetValue, SetValueRequest, SetValueResponse
 
 class MOOSWaypt(object):
     def __init__(self):
@@ -23,6 +25,7 @@ class MOOSWaypt(object):
         self.long_orig  = rospy.get_param('~longitude', None)
         self.linear_speed  = rospy.get_param('~linear_speed', 0.0)
         self.angular_speed  = rospy.get_param('~angular_speed', 0.0)
+        self.vname = rospy.get_param("~vname", None)
 
         # Variables
         self.wamv_pose = None   # geometry_msgs/Pose
@@ -38,18 +41,25 @@ class MOOSWaypt(object):
         rospy.Timer(rospy.Duration(0.2), self.send_motor_cmd)
 
 
+        # Ros service
+        self.srv_linear_speed = rospy.Service('~set_linear', SetValue, self.cb_srv_set_linear_speed)
+        self.srv_angular_speed = rospy.Service('~set_angular', SetValue, self.cb_srv_set_angular_speed)
+        self.srv_reset = rospy.Service('~reset', SetValue, self.cb_srv_reset)
+
+
         ####################################################################################
         #### ROS Publisher
         ####################################################################################
 
         # To moos
-        self.pub_nav_x      = rospy.Publisher("/NAV_X", Float64, queue_size=1)
-        self.pub_nav_y      = rospy.Publisher("/NAV_Y", Float64, queue_size=1)
-        self.pub_nav_heading   = rospy.Publisher("/NAV_HEADING", Float64, queue_size=1)
+        self.pub_nav_x      = rospy.Publisher("~NAV_X", Float64, queue_size=1)
+        self.pub_nav_y      = rospy.Publisher("~NAV_Y", Float64, queue_size=1)
+        self.pub_nav_heading   = rospy.Publisher("~NAV_HEADING", Float64, queue_size=1)
+        self.pub_nav_speed   = rospy.Publisher("~NAV_SPEED", Float64, queue_size=1)
 
         # To ros
         if self.sim:
-            self.pub_motion = rospy.Publisher("/cmd_drive", UsvDrive, queue_size=1)
+            self.pub_motion = rospy.Publisher("~cmd_drive", UsvDrive, queue_size=1)
         else:
             print("No real message")
 
@@ -58,17 +68,17 @@ class MOOSWaypt(object):
         ####################################################################################
 
         # From ros
-        self.sub_odom = rospy.Subscriber("/p3d_odom", Odometry, self.cb_odom)
+        self.sub_odom = rospy.Subscriber("~p3d_odom", Odometry, self.cb_odom)
         
         # From moos
-        self.sub_dbtime = rospy.Subscriber("/DB_TIME", Float64, self.cb_time)
-        self.sub_desired_rudder = rospy.Subscriber("/DESIRED_RUDDER", Float64, self.cb_rudder)
-        self.sub_desired_speed = rospy.Subscriber("/DESIRED_SPEED", Float64, self.cb_speed)
-        self.sub_desired_heading = rospy.Subscriber("/DESIRED_HEADING", Float64, self.cb_heading)
-        self.sub_desired_heading = rospy.Subscriber("/DESIRED_THRUST_L", Float64, self.cb_thruster_l)
-        self.sub_desired_heading = rospy.Subscriber("/DESIRED_THRUST_R", Float64, self.cb_thruster_r)
+        self.sub_dbtime = rospy.Subscriber("~DB_TIME", Float64, self.cb_time)
+        self.sub_desired_rudder = rospy.Subscriber("~DESIRED_RUDDER", Float64, self.cb_rudder)
+        self.sub_desired_speed = rospy.Subscriber("~DESIRED_SPEED", Float64, self.cb_speed)
+        self.sub_desired_heading = rospy.Subscriber("~DESIRED_HEADING", Float64, self.cb_heading)
+        self.sub_desired_heading = rospy.Subscriber("~DESIRED_THRUST_L", Float64, self.cb_thruster_l)
+        self.sub_desired_heading = rospy.Subscriber("~DESIRED_THRUST_R", Float64, self.cb_thruster_r)
 
-    def sendMotorCmd(self, event):
+    def send_motor_cmd(self, event):
         if self.sim:
             motor_msg = UsvDrive()
         else:
@@ -78,7 +88,7 @@ class MOOSWaypt(object):
         motor_msg.right = 0
         if self.wamv_desired_heading is None or self.wamv_desired_rudder is None or self.wamv_desired_speed is None:
             pass
-        elif abs(self.wamv_desired_rudder-0.0)<0.001 and abs(self.wamv_desired_thruster_l ) < 5.0 :    
+        elif abs(self.wamv_desired_rudder-0.0)<0.001 and abs(self.wamv_desired_thruster_l ) < 5.0 and self.wamv_desired_speed < 0.1:    
             pass
         else:
             if abs(self.wamv_desired_thruster_l ) < 5.0 :
@@ -101,6 +111,8 @@ class MOOSWaypt(object):
         #### Send all informations to MOOS
         #################################################################################### 
         if self.dbtime is not None:
+            #rospy.loginfo("%s send data." %(self.node_name))
+
             nav_x = Float64()
             nav_x.data = self.wamv_pose.position.x
             self.pub_nav_x.publish(nav_x)   
@@ -110,8 +122,12 @@ class MOOSWaypt(object):
             self.pub_nav_y.publish(nav_y)  
 
             nav_heading = Float64()
-            nav_heading.data = self.quaternion_to_yaw(self.wamv_pose.orientation) 
-            self.pub_nav_heading.publish(nav_heading)          
+            nav_heading.data = (90 - self.quaternion_to_yaw(self.wamv_pose.orientation) / math.pi * 180) % 360
+            self.pub_nav_heading.publish(nav_heading)      
+
+            nav_speed = Float64()
+            nav_speed.data = self.linear_speed
+            self.pub_nav_speed.publish(nav_speed)
 
     def cb_thruster_l(self, msg):
         self.wamv_desired_thruster_l = msg.data
@@ -135,9 +151,26 @@ class MOOSWaypt(object):
         self.wamv_desired_speed = msg.data
     
     def quaternion_to_yaw(self, qua):
-        q=[qua.x, qua.y qua.z, qua.w]
+        q=[qua.x, qua.y, qua.z, qua.w]
         _   , _, yaw = tf.transformations.euler_from_quaternion(q) 
         return yaw
+
+
+    def cb_srv_set_linear_speed(self, req):
+        self.linear_speed = req.value
+        rospy.loginfo("%s Set Linear Speed %f." %(self.vname, self.linear_speed))
+        return SetValueResponse()
+
+    def cb_srv_set_angular_speed(self, req):
+        self.angular_speed = req.value
+        rospy.loginfo("%s Set Angular Speed %f." %(self.vname, self.angular_speed))
+        return SetValueResponse()
+
+    def cb_srv_reset(self, req):
+        self.wamv_desired_heading = None 
+        self.wamv_desired_rudder = None
+        return SetValueResponse()  
+
 
     def createColorFeatureString(self, x, y):
         ####################################################################################

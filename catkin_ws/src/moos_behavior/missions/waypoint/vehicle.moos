@@ -25,7 +25,7 @@ Processconfig = ANTLER
   
   Run = pBasicContactMgr @ NewConsole = false
 
-  Run = uSimMarine       @ NewConsole = false
+  #Run = uSimMarine       @ NewConsole = false
 }
 //--------------------------------------------------------
 // pBasicContactMgr Configuration Block (Created from Plugin)
@@ -147,7 +147,7 @@ ProcessConfig = pLogger
   AppTick 	= 5
   CommsTick 	= 5
   
-  File		= LOG_%(VEH_NAME)
+  File		= LOG_%(VNAME)
   PATH		= ./
   AsyncLog 	= true
   FileTimeStamp = true

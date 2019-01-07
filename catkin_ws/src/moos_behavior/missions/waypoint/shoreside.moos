@@ -26,6 +26,7 @@ ProcessConfig = ANTLER
   Run = pHostInfo         @ NewConsole = fasle
   Run = uFldNodeComms     @ NewConsole = fasle
 }
+
 //--------------------------------------------------
 // uFldNodeComms Configuration Block
 
@@ -68,7 +69,6 @@ ProcessConfig=pShare
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
 
 }
-
 
 
 //------------------------------------------

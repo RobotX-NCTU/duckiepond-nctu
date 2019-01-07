@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   rostopic
   std_msgs
+  duckiepond
 )
 
 find_package(MOOS REQUIRED)
