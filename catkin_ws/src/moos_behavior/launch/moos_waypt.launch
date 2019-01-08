@@ -2,27 +2,60 @@
     <arg name="sim" default="true"/>
     <arg name="factor" default="gazebo"/>
     <arg name="moos_folder" default="waypoint"/>
-    <arg name="veh_brain" default="brian"/> 
-    <arg name="veh_$(arg veh_monica)" default="monica"/>
+    <arg name="veh_brian" default="brian"/> 
+    <arg name="veh_monica" default="monica"/>
 
-    <!-- MOOS ROS Bridge -->
-    <node ns="$(arg veh_brian)" pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_brian)" 
-        args="$(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_brian).xml $(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_brian)_vehicle.moos" 
-        respawn="false" output="screen" />
+    <group ns="$(arg veh_brian)">
+        <!-- MOOS ROS Bridge -->
+        <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_brian)" 
+            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_brian).moos" 
+            respawn="false" output="screen" />
 
-    <node ns="$(arg veh_monica)" pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_monica)" 
-        args="$(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_monica).xml $(find moos_behavior)/missions/$(arg moos_folder)/$(arg veh_monica)_vehicle.moos" 
-        respawn="false" output="screen" />
+            
+        <!-- MOOS Behavior -->
+        <remap from="moos_waypt/p3d_odom" to="/$(arg veh_brian)/p3d_odom"/>
+        <remap from="moos_waypt/NAV_X" to="/$(arg veh_brian)/NAV_X"/>
+        <remap from="moos_waypt/NAV_Y" to="/$(arg veh_brian)/NAV_Y"/>
+        <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_brian)/NAV_HEADING"/>
+        <remap from="moos_waypt/NAV_SPEED" to="/$(arg veh_brian)/NAV_SPEED"/>
+        <remap from="moos_waypt/DB_TIME" to="/$(arg veh_brian)/DB_TIME"/>
+        <remap from="moos_waypt/DESIRED_RUDDER" to="/$(arg veh_brian)/DESIRED_RUDDER"/>
+        <remap from="moos_waypt/DESIRED_SPEED" to="/$(arg veh_brian)/DESIRED_SPEED"/>
+        <remap from="moos_waypt/DESIRED_HEADING" to="/$(arg veh_brian)/DESIRED_HEADING"/>
+        <remap from="moos_waypt/DESIRED_THRUST_L" to="/$(arg veh_brian)/DESIRED_THRUST_L"/>
+        <remap from="moos_waypt/DESIRED_THRUST_R" to="/$(arg veh_brian)/DESIRED_THRUST_R"/>
+        <remap from="moos_waypt/cmd_drive" to="/$(arg veh_brian)/cmd_drive"/>
+        <node pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt" respawn="false" output="screen">
+            <param name="sim" value="$(arg sim)"/>
+            <param name="vname" value="$(arg veh_brian)"/>
+            <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
+        </node>
+    </group>
 
-    <!-- MOOS Multi-Behavior -->
-    <node ns="$(arg veh_brian)" pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt_$(arg veh_brian)" respawn="false" output="screen">
-        <param name="sim" value="$(arg sim)"/>
-        <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
-    </node>
+    <group ns="$(arg veh_monica)">
+        <!-- MOOS ROS Bridge -->
+        <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_monica)" 
+            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_monica).moos" 
+            respawn="false" output="screen" />
 
-    <node ns="$(arg veh_monica)" pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt_$(arg veh_brian)" respawn="false" output="screen">
-        <param name="sim" value="$(arg sim)"/>
-        <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
-    </node>
+        <!-- MOOS Behavior -->
+        <remap from="moos_waypt/p3d_odom" to="/$(arg veh_monica)/p3d_odom"/>
+        <remap from="moos_waypt/NAV_X" to="/$(arg veh_monica)/NAV_X"/>
+        <remap from="moos_waypt/NAV_Y" to="/$(arg veh_monica)/NAV_Y"/>
+        <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_monica)/NAV_HEADING"/>
+        <remap from="moos_waypt/NAV_SPEED" to="/$(arg veh_monica)/NAV_SPEED"/>
+        <remap from="moos_waypt/DB_TIME" to="/$(arg veh_monica)/DB_TIME"/>
+        <remap from="moos_waypt/DESIRED_RUDDER" to="/$(arg veh_monica)/DESIRED_RUDDER"/>
+        <remap from="moos_waypt/DESIRED_SPEED" to="/$(arg veh_monica)/DESIRED_SPEED"/>
+        <remap from="moos_waypt/DESIRED_HEADING" to="/$(arg veh_monica)/DESIRED_HEADING"/>
+        <remap from="moos_waypt/DESIRED_THRUST_L" to="/$(arg veh_monica)/DESIRED_THRUST_L"/>
+        <remap from="moos_waypt/DESIRED_THRUST_R" to="/$(arg veh_monica)/DESIRED_THRUST_R"/>
+        <remap from="moos_waypt/cmd_drive" to="/$(arg veh_monica)/cmd_drive"/>
+        <node pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt" respawn="false" output="screen">
+            <param name="sim" value="$(arg sim)"/>
+            <param name="vname" value="$(arg veh_monica)"/>
+            <rosparam command="load" file="$(find moos_behavior)/config/$(arg factor).yaml" />
+        </node>
+    </group>
 
 </launch>

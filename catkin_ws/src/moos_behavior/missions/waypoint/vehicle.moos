@@ -2,7 +2,7 @@ ServerHost = $(VEH_IP)
 ServerPort = $(VEH_PORT)
 
 // Community name IS the vehicle name
-Community  = $(VEH_NAME)
+Community  = $(VNAME)
 MOOSTimeWarp = 1
 
 // Bamboo Lake NCTU
@@ -22,9 +22,29 @@ Processconfig = ANTLER
   Run = pMarinePID       @ NewConsole = false
   Run = pHelmIvP         @ NewConsole = false
   Run = pHostInfo        @ NewConsole = false
+  
   Run = pBasicContactMgr @ NewConsole = false
 
-  Run = uSimMarine       @ NewConsole = false
+  #Run = uSimMarine       @ NewConsole = false
+}
+//--------------------------------------------------------
+// pBasicContactMgr Configuration Block (Created from Plugin)
+ProcessConfig = pBasicContactMgr
+{
+  AppTick   = 2
+  CommsTick = 2
+
+  decay = 30,60
+
+  alert_verbose = true
+
+  contact_max_age = 3600
+  display_radii   = true
+
+  default_alert_range = 50
+  default_cpa_range   = 65
+  default_alert_range_color = gray70
+  default_cpa_range_color   = gray30
 }
 
 //---------------------------------------------------------
@@ -37,15 +57,16 @@ ProcessConfig = pShare
 
   input  = route = $(VEH_IP):$(VEH_PORT)
 
-  output = src_name = NODE_REPORT , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT_LOCAL , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE_LOCAL , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = NODE_REPORT , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE , route = $(SHORE_IP):$(SHORE_PORT)
 
   output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
+
 }
 
 //------------------------------------------------------
@@ -65,28 +86,6 @@ ProcessConfig = uSimMarine
   thrust_reflect = true
 }
 
-//--------------------------------------------------------
-// pBasicContactMgr Configuration Block (Created from Plugin)
-
-ProcessConfig = pBasicContactMgr
-{
-  AppTick   = 2
-  CommsTick = 2
-
-  decay = 30,60
-
-  alert_verbose = true
-
-  contact_max_age = 100
-  display_radii   = true
-
-  default_alert_range = 20
-  default_cpa_range   = 28
-  default_alert_range_color = gray70
-  default_cpa_range_color   = gray30
-
-}
-
 
 ProcessConfig = pHostInfo
 {
@@ -100,8 +99,8 @@ ProcessConfig = pHelmIvP
 {
   AppTick    = 4
   CommsTick  = 4
-  
-  Behaviors    = duckiepond_$(VEH_NAME).bhv  
+  ssss
+  Behaviors    = duckiepond_$(VNAME).bhv  
   Verbose      = false
   Domain       = course:0:359:360
   Domain       = speed:0:5:26
@@ -148,7 +147,7 @@ ProcessConfig = pLogger
   AppTick 	= 5
   CommsTick 	= 5
   
-  File		= LOG_%(VEH_NAME)
+  File		= LOG_%(VNAME)
   PATH		= ./
   AsyncLog 	= true
   FileTimeStamp = true

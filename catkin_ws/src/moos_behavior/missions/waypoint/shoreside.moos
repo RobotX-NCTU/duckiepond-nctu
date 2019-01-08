@@ -24,10 +24,27 @@ ProcessConfig = ANTLER
   Run = uProcessWatch	    @ NewConsole = false
   Run = pShare            @ NewConsole = fasle
   Run = pHostInfo         @ NewConsole = fasle
+  Run = uFldNodeComms     @ NewConsole = fasle
 }
+
+//--------------------------------------------------
+// uFldNodeComms Configuration Block
+
+ProcessConfig = uFldNodeComms
+{
+	AppTick   = 2
+	CommsTick = 2
+
+	comms_range      = 100
+	critical_range   = 25
+	min_msg_interval = 15
+	max_msg_length   = 2048
+	groups           = true
+	view_node_rpt_pulses = true
+}
+
 //------------------------------------------
 // pShare
-
 ProcessConfig=pShare
 {
   AppTick    = 2
@@ -50,8 +67,8 @@ ProcessConfig=pShare
   output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP2):$(VEH_PORT2) 
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
-}
 
+}
 
 
 //------------------------------------------
