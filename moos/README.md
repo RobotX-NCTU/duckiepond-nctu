@@ -33,12 +33,12 @@ This is the instrcution for how to install MOOS
 4. Build our moos
 ```
   $ cd 
-  $ cd robotx_nctu/moos
+  $ cd duckiepond-nctu/moos
   $ ./build.sh
   $ sudo vim ~/.bashrc
-  (add this line in the bottom, "export PATH=$HOME/robotx_nctu/moos/bin:$PATH" )
+  (add this line in the bottom, "export PATH=$HOME/duckiepond-nctu/moos/bin:$PATH" )
   $ which pXRelayTest
-  /home/you/robotx_nctu/moos/bin/pXRelayTest
+  /home/you/duckiepond-nctu/moos/bin/pXRelayTest
 ```
 
 
