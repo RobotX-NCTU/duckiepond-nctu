@@ -35,6 +35,8 @@ ProcessConfig = uFldShoreBroker
 {
   AppTick       = 1
   CommsTick     = 1
+
+  //qbridge  = NODE_REPORT, NODE_MESSAGE
 }
 
 //--------------------------------------------------
@@ -72,6 +74,8 @@ ProcessConfig=pShare
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP1):$(VEH_PORT1)
 
+  output = src_name = NODE_REPORT_BRIAN , dest_name = NODE_REPORT , route = $(VEH_IP1):$(VEH_PORT1)
+
   //VEH 2
   output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP2):$(VEH_PORT2)
@@ -81,6 +85,8 @@ ProcessConfig=pShare
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP2):$(VEH_PORT2)
+
+  output = src_name = NODE_REPORT_MONICA , dest_name = NODE_REPORT , route = $(VEH_IP2):$(VEH_PORT2)
 
 }
 

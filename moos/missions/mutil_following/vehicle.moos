@@ -27,6 +27,7 @@ Processconfig = ANTLER
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
 
+
   Run = uSimMarine       @ NewConsole = false
 }
 
@@ -36,6 +37,8 @@ ProcessConfig = uFldNodeBroker
   AppTick   = 1
   CommsTick = 1
 
+  //BRIDGE = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
+  //BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 }
 
 //--------------------------------------------------------
@@ -49,6 +52,7 @@ ProcessConfig = uFldMessageHandler
 
 //--------------------------------------------------------
 // pBasicContactMgr Configuration Block (Created from Plugin)
+
 ProcessConfig = pBasicContactMgr
 {
   AppTick   = 2
@@ -62,9 +66,13 @@ ProcessConfig = pBasicContactMgr
   display_radii   = true
 
   default_alert_range = 50
-  default_cpa_range   = 20
-  default_alert_range_color = gray50
-  default_cpa_range_color   = gray20
+  default_cpa_range   = 40
+  default_alert_range_color = gray70
+  default_cpa_range_color   = gray30
+
+  alert = id=avd, var=CONTACT_INFO, val="name=$[VNAME] # contact=$[VNAME]"
+  alert = id=avd, alert_range=40, cpa_range=45, alert_range_color=green
+ // alert = id=avd, cpa_range_color=invisible
 }
 
 //---------------------------------------------------------

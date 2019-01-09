@@ -2,11 +2,11 @@
 SHORE_IP="localhost"
 SHORE_PORT="9000"
 
-VEH_NAME1="brian"
+VEH_NAME1="BRIAN"
 VEH_IP1="localhost"
 VEH_PORT1="9100"
 
-VEH_NAME2="monica"
+VEH_NAME2="MONICA"
 VEH_IP2="localhost"
 VEH_PORT2="9200"
 
@@ -25,7 +25,8 @@ echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $V
 nsplug shoreside.moos duckiepond_${COMMUNITY}.moos -f  \
     SHORE_PORT=$SHORE_PORT  SHORE_IP=$SHORE_IP \
     VEH_IP1=$VEH_IP1 VEH_IP2=$VEH_IP2 \
-    VEH_PORT1=$VEH_PORT1 VEH_PORT2=$VEH_PORT2
+    VEH_PORT1=$VEH_PORT1 VEH_PORT2=$VEH_PORT2 \
+    VEH_NAME1=$VEH_NAME1 VEH_NAME2=$VEH_NAME2
 
 
 printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_${COMMUNITY} $TIME_WARP
