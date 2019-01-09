@@ -25,6 +25,16 @@ ProcessConfig = ANTLER
   Run = pShare            @ NewConsole = fasle
   Run = pHostInfo         @ NewConsole = fasle
   Run = uFldNodeComms     @ NewConsole = fasle
+  Run = uFldShoreBroker   @ NewConsole = false
+}
+
+//--------------------------------------------------
+// uFldShoreBroker Configuration Block
+
+ProcessConfig = uFldShoreBroker
+{
+  AppTick       = 1
+  CommsTick     = 1
 }
 
 //--------------------------------------------------
@@ -59,6 +69,8 @@ ProcessConfig=pShare
   output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)  
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP1):$(VEH_PORT1)
+  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
+  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP1):$(VEH_PORT1)
 
   //VEH 2
   output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP2):$(VEH_PORT2)
@@ -67,6 +79,8 @@ ProcessConfig=pShare
   output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP2):$(VEH_PORT2) 
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
+  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
+  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP2):$(VEH_PORT2)
 
 }
 
@@ -110,6 +124,9 @@ ProcessConfig = pMarineViewer
   button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
 
   button_three = ALLSTOP  # DEPLOY=false # MOOS_MANUAL_OVERRIDE=true
+
+  left_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=left_returnpoint
+  left_context[return]  = RETURN_UPDATE = points =$(XPOS),$(YPOS)
 
 
   action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false
