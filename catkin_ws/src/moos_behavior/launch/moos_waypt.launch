@@ -1,14 +1,15 @@
 <launch>
     <arg name="sim" default="true"/>
     <arg name="factor" default="gazebo"/>
-    <arg name="moos_folder" default="waypoint"/>
+    <arg name="moos_folder" default="mutil_following"/>
+    <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
     <arg name="veh_brian" default="brian"/> 
     <arg name="veh_monica" default="monica"/>
 
     <group ns="$(arg veh_brian)">
         <!-- MOOS ROS Bridge -->
         <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_brian)" 
-            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_brian).moos" 
+            args="$(arg root)/missions/$(arg moos_folder)/vehicle.xml $(arg root)/missions/$(arg moos_folder)/duckiepond_$(arg veh_brian).moos" 
             respawn="false" output="screen" />
 
             
@@ -35,7 +36,7 @@
     <group ns="$(arg veh_monica)">
         <!-- MOOS ROS Bridge -->
         <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_monica)" 
-            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_monica).moos" 
+            args="$(arg root)/missions/$(arg moos_folder)/vehicle.xml $(arg root)/missions/$(arg moos_folder)/duckiepond_$(arg veh_monica).moos" 
             respawn="false" output="screen" />
 
         <!-- MOOS Behavior -->

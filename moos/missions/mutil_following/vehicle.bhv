@@ -3,6 +3,7 @@
 initialize   DEPLOY = false
 initialize   RETURN = false
 initialize   AVOID = true
+initialize   SHADOW = true
 
 //----------------------------------------------
 Behavior = BHV_Waypoint

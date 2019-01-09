@@ -24,9 +24,29 @@ Processconfig = ANTLER
   Run = pHostInfo        @ NewConsole = false
   
   Run = pBasicContactMgr @ NewConsole = false
+  Run = uFldMessageHandler @ NewConsole = false
+  Run = uFldNodeBroker @ NewConsole = false
 
-  #Run = uSimMarine       @ NewConsole = false
+  Run = uSimMarine       @ NewConsole = false
 }
+
+//--------------------------------------------------------
+ProcessConfig = uFldNodeBroker
+{
+  AppTick   = 1
+  CommsTick = 1
+
+}
+
+//--------------------------------------------------------
+ProcessConfig = uFldMessageHandler
+{
+  AppTick   = 3
+  CommsTick = 3
+
+  STRICT_ADDRESSING = false
+}
+
 //--------------------------------------------------------
 // pBasicContactMgr Configuration Block (Created from Plugin)
 ProcessConfig = pBasicContactMgr
@@ -42,9 +62,9 @@ ProcessConfig = pBasicContactMgr
   display_radii   = true
 
   default_alert_range = 50
-  default_cpa_range   = 65
-  default_alert_range_color = gray70
-  default_cpa_range_color   = gray30
+  default_cpa_range   = 20
+  default_alert_range_color = gray50
+  default_cpa_range_color   = gray20
 }
 
 //---------------------------------------------------------
