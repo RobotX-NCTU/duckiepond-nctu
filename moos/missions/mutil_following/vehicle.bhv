@@ -3,17 +3,37 @@
 initialize   DEPLOY = false
 initialize   RETURN = false
 initialize   AVOID = true
-initialize   SHADOW = true
+initialize   SHADOW = false
+
+//----------------------------------------------
+Behavior = BHV_CutRange
+{
+  // General Behavior Parameters
+  // ---------------------------
+  name         = shadow_          // example
+  pwt          = 200                   // example
+  condition = SHADOW = true         // example
+  condition = RETURN = false
+  condition = DEPLOY = true
+
+  updates   = CONTACT_INFO          // example
+  endflag   = RETURN = true
+
+  contact = BRIAN           
+
+}
 
 //----------------------------------------------
 Behavior = BHV_Waypoint
 { 
-  name      = waypt_survey
+  name      = waypt_survey_
   pwt       = 100
 
   condition = RETURN = false
   condition = DEPLOY = true
+  condition = SHADOW = false
   endflag   = RETURN = true
+
 
   updates    = WPT_UPDATE
   perpetual  = true
@@ -42,7 +62,7 @@ Behavior = BHV_Waypoint
 Behavior = BHV_AvoidCollision
 {
   name       = avdcollision_
-  pwt        = 200
+  pwt        = 300
   condition  = AVOID = true
   updates    = CONTACT_INFO
   endflag    = CONTACT_RESOLVED = $[CONTACT]
@@ -51,13 +71,13 @@ Behavior = BHV_AvoidCollision
                contact = to-be-set
       on_no_contact_ok = true
            extrapolate = true
-                 decay = 30,60
+                 decay = 15, 30
 
-        pwt_outer_dist = 50
-        pwt_inner_dist = 20
-        completed_dist = 75
-     min_util_cpa_dist = 8
-     max_util_cpa_dist = 25
+        pwt_outer_dist = 20
+        pwt_inner_dist = 10
+        completed_dist = 20
+     min_util_cpa_dist = 10
+     max_util_cpa_dist = 20
              pwt_grade = linear
    bearing_line_config = white:0, green:0.65, yellow:0.8, red:1.0
 }
@@ -66,7 +86,7 @@ Behavior = BHV_AvoidCollision
 //----------------------------------------------
 Behavior=BHV_Waypoint
 {
-  name       = waypt_return
+  name       = waypt_return_
   pwt        = 100
 
   condition  = RETURN = true
@@ -87,7 +107,7 @@ Behavior=BHV_Waypoint
 //----------------------------------------------
 Behavior=BHV_ConstantSpeed
 {
-  name       = const_speed
+  name       = const_speed_
   pwt        = 200
   condition  = SPD=true
   condition  = DEPLOY = true
