@@ -19,6 +19,9 @@ class MocapLocalizationNode(object):
         self.verbose = rospy.get_param("~verbose", False)
         self.simulation = rospy.get_param("~simulation", True)
 
+        # get multiple robot names
+        self.robot_names = rospy.get_param("~robot_names", "duckiepond_1,duckiepond_2")
+
         # base tag id~system_number
         self.system_number = rospy.get_param("~system_number", 1)
 
@@ -44,12 +47,21 @@ class MocapLocalizationNode(object):
         self.path_msg = Path()
         self.path_msg.header.frame_id = "odom"
 
+        # multiple robot odomertry publisher
+        self.pub_robot_odom = list()
+        self.robot_topics = self.robot_names.split(',')
+
         # Subscribers
         self.sub_tag_detections = rospy.Subscriber("~tag_detections", AprilTagDetectionArray, self.processTagDetections, queue_size=10)
         
         # Publishers
         self.pub_vehicle_pose = rospy.Publisher("~als_posestamped", PoseStamped, queue_size=10)
-        self.pub_visual_apriltag_wp = rospy.Publisher("~apriltag_cube_waypoint", MarkerArray, queue_size=20)
+        self.pub_visual_apriltag_wp = rospy.Publisher("~apriltag_cube_waypoint", MarkerArray, queue_size=10)
+        for i in range(int(len(self.vehicle_tag_id)*0.5)):
+            rostopic = '/' + self.robot_topics[i] + '/mocap_localization_node/odometry'
+            self.pub_robot_odom.append(rospy.Publisher(rostopic, Odometry, queue_size=10))
+
+        #self.pub_obstacle = rospy.Publisher("~obstacle", MarkerArray, queue_size=20)
         #self.pub_obstacle = rospy.Publisher("~obstacle", MarkerArray, queue_size=20)
         # self.pub_odom = rospy.Publisher('~tag_localization_odometry', Odometry, queue_size = 20)
         # self.pub_path = rospy.Publisher('~tag_localization_path', Path, queue_size = 20)
@@ -238,8 +250,8 @@ class MocapLocalizationNode(object):
 
 
         #print self.base_tag_point.transpose()
-        print self.obser_tag_point.transpose()
-        print self.vehicle_tag_point_pair.transpose()
+        #print self.obser_tag_point.transpose()
+        #print self.vehicle_tag_point_pair.transpose()
 
         if True:
         #if self.get_mapping_matrix == False:
@@ -280,21 +292,11 @@ class MocapLocalizationNode(object):
         self.base_tag_detect_count = 0
         self.vehicle_tag_detect_count = 0
 
-        #if(self.verbose): print "vehicle tag detection"
-        #if(self.verbose): print self.vehicle_tag_point_pair.transpose()
-        #if(self.verbose): print "vehicle tag detection after transformation"
-        #if(self.verbose): print np.dot(self.T,self.vehicle_tag_point_pair.transpose())
-        #if(self.verbose): print "vehicle tag detection"
-        #print "vehicle tag detection"
-        #print self.vehicle_tag_point_pair.transpose()
-        #print "vehicle tag detection after transformation"
-        #print np.dot(self.T,self.vehicle_tag_point_pair.transpose())
-
         #print self.T
         vehicle_loalization = np.dot(self.T,self.vehicle_tag_point_pair.transpose())
-        print 'after transformation'
-        print np.dot(self.T,self.test_tag_point.transpose())
-        print vehicle_loalization
+        #print 'after transformation'
+        #print np.dot(self.T,self.test_tag_point.transpose())
+        #print vehicle_loalization
         #shift = self.shift_center.transpose()
         #for i in range(3):
         #    if vehicle_loalization[:,i][3] != 0:
@@ -310,6 +312,30 @@ class MocapLocalizationNode(object):
         #self.base_tag_detect_count = 0
         #self.vehicle_tag_detect_count = 0
 
+        odom_msg = Odometry()
+        odom_msg.header = self.header
+
+        vehicle_number = int(len(vehicle_loalization)*0.5)
+        #print vehicle_loalization[0,0]
+        #print vehicle_loalization[0,1]        
+        for i in range(vehicle_number):
+            # publish robot position
+            x1 = vehicle_loalization[0, i*2 + 0]
+            x0 = vehicle_loalization[0, i*2 + 1]
+            y1 = vehicle_loalization[1, i*2 + 0]
+            y0 = vehicle_loalization[1, i*2 + 1]	
+            odom_msg.pose.pose.position.x = (x1 + x0) * 0.5 
+            odom_msg.pose.pose.position.y = (y1 + y0) * 0.5
+            # publish robot orientation
+            dx = x1 - x0
+            dy = y1 - y0
+            yaw = math.atan2(dy, dx)
+            quan = quaternion_from_euler(0, 0, yaw)
+            odom_msg.pose.pose.orientation.x = quan[0]
+            odom_msg.pose.pose.orientation.y = quan[1]
+            odom_msg.pose.pose.orientation.z = quan[2]
+            odom_msg.pose.pose.orientation.w = quan[3]
+            self.pub_robot_odom[i].publish(odom_msg)
         #vehicle_pose = Pose()
         #vehicle_pose.position.x = vehicle_loalization[0] 
         #vehicle_pose.position.y = vehicle_loalization[1] 
