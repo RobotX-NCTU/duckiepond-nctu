@@ -155,8 +155,8 @@ ProcessConfig = pMarinePID
   ACTIVE_START  = true
   
   // Yaw PID controller
-  YAW_PID_KP             = 0.8
-  YAW_PID_KD             = 0.2
+  YAW_PID_KP             = 0.9
+  YAW_PID_KD             = 0.1
   YAW_PID_KI             = 0.0
   YAW_PID_INTEGRAL_LIMIT = 0.07
   
@@ -172,7 +172,7 @@ ProcessConfig = pMarinePID
   
   // A non-zero SPEED_FACTOR overrides use of SPEED_PID
   // Will set DESIRED_THRUST = DESIRED_SPEED * SPEED_FACTOR
-  SPEED_FACTOR = 5
+  SPEED_FACTOR = 6
 }
 
 //--------------------------------------------------
