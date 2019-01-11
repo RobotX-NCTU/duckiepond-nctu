@@ -26,7 +26,7 @@ Processconfig = ANTLER
   Run = pBasicContactMgr @ NewConsole = false
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
-  Run = uSimMarine       @ NewConsole = false
+  //Run = uSimMarine       @ NewConsole = false
 
   Run = uTimerScript @ NewConsole
 }
@@ -155,7 +155,7 @@ ProcessConfig = pMarinePID
   ACTIVE_START  = true
   
   // Yaw PID controller
-  YAW_PID_KP             = 0.9
+  YAW_PID_KP             = 0.4
   YAW_PID_KD             = 0.1
   YAW_PID_KI             = 0.0
   YAW_PID_INTEGRAL_LIMIT = 0.07
