@@ -32,6 +32,7 @@ Behavior = BHV_Waypoint
   condition = RETURN = false
   condition = DEPLOY = true
   condition = SHADOW = false
+  
   endflag   = RETURN = false
 
 
@@ -43,10 +44,10 @@ Behavior = BHV_Waypoint
        lead_to_start = true
                speed = 10   // meters per second
         capture_line = true
-      capture_radius = 5.0
-         slip_radius = 15.0
+      capture_radius = 2.0
+         slip_radius = 4.0
 	efficiency_measure = all
-            //polygon = 120,10
+             polygon = 3, 18 : 18, 18 : 18, 3: 3, 3
                order = normal
              repeat  = 1
 

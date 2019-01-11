@@ -15,6 +15,8 @@
             
         <!-- MOOS Behavior -->
         <remap from="moos_waypt/odometry" to="/$(arg veh_brian)/mocap_localization_node/odometry"/>
+        <!--remap from="moos_waypt/odometry" to="/$(arg veh_brian)/p3d_odom"/-->
+
         <remap from="moos_waypt/NAV_X" to="/$(arg veh_brian)/NAV_X"/>
         <remap from="moos_waypt/NAV_Y" to="/$(arg veh_brian)/NAV_Y"/>
         <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_brian)/NAV_HEADING"/>
@@ -41,6 +43,8 @@
 
         <!-- MOOS Behavior -->
         <remap from="moos_waypt/odometry" to="/$(arg veh_monica)/mocap_localization_node/odometry"/>
+        <!--remap from="moos_waypt/odometry" to="/$(arg veh_monica)/p3d_odom"/-->
+
         <remap from="moos_waypt/NAV_X" to="/$(arg veh_monica)/NAV_X"/>
         <remap from="moos_waypt/NAV_Y" to="/$(arg veh_monica)/NAV_Y"/>
         <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_monica)/NAV_HEADING"/>
