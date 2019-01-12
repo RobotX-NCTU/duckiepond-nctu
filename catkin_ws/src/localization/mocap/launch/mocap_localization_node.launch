@@ -1,0 +1,18 @@
+<launch>
+	<arg name="veh"/>
+	<arg name="pkg_name" default="mocap" doc="name of the package"/>
+	<arg name="node_name" default="mocap_localization_node" doc="name of the node"/>
+	<arg name="system_number" default="1" doc="number of apriltag base tag system"/>
+	<arg name="verbose" default="false" doc="visualization"/>
+	<arg name="simulation" default="true" doc="simulation of real-world"/>
+    <arg name="robot_names" default="duckiepond_1,duckiepond_2" />	
+
+	<node pkg="$(arg pkg_name)" type="$(arg node_name).py" name="$(arg node_name)" output="screen" clear_params="true" required="true">
+		<param name="system_number" value="$(arg system_number)"/>
+		<param name="verbose" value="$(arg verbose)"/>
+		<param name="simulation" value="$(arg simulation)"/>
+		<param name="robot_names" value="$(arg robot_names)"/>
+	</node>
+
+
+</launch>

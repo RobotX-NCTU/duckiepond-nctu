@@ -1,0 +1,60 @@
+# # Definitions of tags to detect
+#
+# ## General remarks
+#
+# - All length in meters
+# - Ellipsis (...) signifies that the previous element can be repeated multiple times.
+#
+# ## Standalone tag definitions
+# ### Remarks
+#
+# - name is optional
+#
+# ### Syntax
+#
+# standalone_tags:
+#   [
+#     {id: ID, size: SIZE, name: NAME},
+#     ...
+#   ]
+standalone_tags:
+  [
+     {id: 0, size: 0.54, name: WAM-V_back},
+     {id: 500, size: 0.54, name: WAM-V_back},
+     {id: 501, size: 0.70, name: WAM-V_left},
+     {id: 502, size: 0.70, name: WAM-V_back},
+     {id: 503, size: 0.70, name: WAM-V_right},
+     {id: 504, size: 0.70, name: tag_o0},
+     {id: 505, size: 0.70, name: tag_x0},
+     {id: 506, size: 0.70, name: tag_y0},
+     {id: 507, size: 0.70, name: tag_xy0},
+     {id: 508, size: 0.70, name: tag_o0_2},
+     {id: 509, size: 0.70, name: tag_x0_2},
+     {id: 510, size: 0.70, name: tag_y0_2},
+     {id: 511, size: 0.70, name: tag_xy0_2},
+     {id: 512, size: 0.70, name: WAM-V_front},
+  ]
+# ## Tag bundle definitions
+# ### Remarks
+#
+# - name is optional
+# - x, y, z have default values of 0 thus they are optional
+# - qw has default value of 1 and qx, qy, qz have default values of 0 thus they are optional
+#
+# ### Syntax
+#
+# tag_bundles:
+#   [
+#     {
+#       name: 'CUSTOM_BUNDLE_NAME',
+#       layout:
+#         [
+#           {id: ID, size: SIZE, x: X_POS, y: Y_POS, z: Z_POS, qw: QUAT_W_VAL, qx: QUAT_X_VAL, qy: QUAT_Y_VAL, qz: QUAT_Z_VAL},
+#           ...
+#         ]
+#     },
+#     ...
+#   ]
+tag_bundles:
+  [
+  ]
