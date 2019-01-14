@@ -7,7 +7,7 @@
   <arg name="system_number" default="1"/>
   <arg name="verbose" default="false" doc="visualization"/>
   <arg name="simulation" default="true" doc="simulation of real-world"/>
-  <arg name="robot_names" default="duckiepond_1,duckiepond_2" />
+  <arg name="robot_names" default="MONICA,BRIAN" />
 
   <!-- Apriltag detection -->
 <group ns="$(arg veh)">

@@ -1,19 +1,22 @@
 <launch>
     <arg name="sim" default="true"/>
     <arg name="factor" default="gazebo"/>
-    <arg name="moos_folder" default="waypoint"/>
-    <arg name="veh_brian" default="brian"/> 
-    <arg name="veh_monica" default="monica"/>
+    <arg name="moos_folder" default="mutil_following"/>
+    <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
+    <arg name="veh_brian" default="BRIAN"/> 
+    <arg name="veh_monica" default="MONICA"/>
 
     <group ns="$(arg veh_brian)">
         <!-- MOOS ROS Bridge -->
         <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_brian)" 
-            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_brian).moos" 
+            args="$(arg root)/missions/$(arg moos_folder)/vehicle.xml $(arg root)/missions/$(arg moos_folder)/duckiepond_$(arg veh_brian).moos" 
             respawn="false" output="screen" />
 
             
         <!-- MOOS Behavior -->
-        <remap from="moos_waypt/p3d_odom" to="/$(arg veh_brian)/p3d_odom"/>
+        <remap from="moos_waypt/odometry" to="/$(arg veh_brian)/mocap_localization_node/odometry"/>
+        <!--remap from="moos_waypt/odometry" to="/$(arg veh_brian)/p3d_odom"/-->
+
         <remap from="moos_waypt/NAV_X" to="/$(arg veh_brian)/NAV_X"/>
         <remap from="moos_waypt/NAV_Y" to="/$(arg veh_brian)/NAV_Y"/>
         <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_brian)/NAV_HEADING"/>
@@ -35,11 +38,13 @@
     <group ns="$(arg veh_monica)">
         <!-- MOOS ROS Bridge -->
         <node pkg="moos_behavior" type="Bridge" name="Bridge_$(arg veh_monica)" 
-            args="$(find moos_behavior)/missions/$(arg moos_folder)/vehicle.xml $(find moos_behavior)/missions/$(arg moos_folder)/duckiepond_$(arg veh_monica).moos" 
+            args="$(arg root)/missions/$(arg moos_folder)/vehicle.xml $(arg root)/missions/$(arg moos_folder)/duckiepond_$(arg veh_monica).moos" 
             respawn="false" output="screen" />
 
         <!-- MOOS Behavior -->
-        <remap from="moos_waypt/p3d_odom" to="/$(arg veh_monica)/p3d_odom"/>
+        <remap from="moos_waypt/odometry" to="/$(arg veh_monica)/mocap_localization_node/odometry"/>
+        <!--remap from="moos_waypt/odometry" to="/$(arg veh_monica)/p3d_odom"/-->
+
         <remap from="moos_waypt/NAV_X" to="/$(arg veh_monica)/NAV_X"/>
         <remap from="moos_waypt/NAV_Y" to="/$(arg veh_monica)/NAV_Y"/>
         <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh_monica)/NAV_HEADING"/>

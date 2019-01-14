@@ -13,22 +13,52 @@ LongOrigin = 121.000188
 Processconfig = ANTLER
 {
   MSBetweenLaunches = 100
-   
+
   Run = MOOSDB           @ NewConsole = false
   Run = uProcessWatch    @ NewConsole = false
   Run = pShare           @ NewConsole = false
   //Run = pLogger          @ NewConsole = false
   Run = pNodeReporter    @ NewConsole = false
   Run = pMarinePID       @ NewConsole = false
-  Run = pHelmIvP         @ NewConsole = false
-  Run = pHostInfo        @ NewConsole = false
-  
-  Run = pBasicContactMgr @ NewConsole = false
 
-  #Run = uSimMarine       @ NewConsole = false
+  Run = pHelmIvP         @ NewConsole = false
+  Run = pHostInfo        @ NewConsole = false  
+  Run = pBasicContactMgr @ NewConsole = false
+  Run = uFldMessageHandler @ NewConsole = false
+  Run = uFldNodeBroker @ NewConsole = false
+  //Run = uSimMarine       @ NewConsole = false
+
+  Run = uTimerScript @ NewConsole
 }
+
+ProcessConfig = uTimerScript
+{
+  event       = var=VEH_CONTACT, val= $(VEH_CONTACT), time=1
+}
+
+
+//--------------------------------------------------------
+ProcessConfig = uFldNodeBroker
+{
+  AppTick   = 1
+  CommsTick = 1
+
+  //BRIDGE = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
+  //BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
+}
+
+//--------------------------------------------------------
+ProcessConfig = uFldMessageHandler
+{
+  AppTick   = 3
+  CommsTick = 3
+
+  STRICT_ADDRESSING = false
+}
+
 //--------------------------------------------------------
 // pBasicContactMgr Configuration Block (Created from Plugin)
+
 ProcessConfig = pBasicContactMgr
 {
   AppTick   = 2
@@ -42,9 +72,13 @@ ProcessConfig = pBasicContactMgr
   display_radii   = true
 
   default_alert_range = 50
-  default_cpa_range   = 65
+  default_cpa_range   = 40
   default_alert_range_color = gray70
   default_cpa_range_color   = gray30
+
+  alert = id=avd, var=CONTACT_INFO, val="name=$[VNAME] # contact=$[VNAME]"
+  alert = id=avd, alert_range=40, cpa_range=45, alert_range_color=green
+ // alert = id=avd, cpa_range_color=invisible
 }
 
 //---------------------------------------------------------
@@ -63,7 +97,7 @@ ProcessConfig = pShare
 
   output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
   output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
 
@@ -77,7 +111,7 @@ ProcessConfig = uSimMarine
   AppTick   = 4
   CommsTick = 4
 
-  START_POS = $(START_POS), 180, 0
+  START_POS = $(START_POS), 90, 0
 
   prefix        = NAV
 
@@ -99,7 +133,9 @@ ProcessConfig = pHelmIvP
 {
   AppTick    = 4
   CommsTick  = 4
-  ssss
+
+  
+
   Behaviors    = duckiepond_$(VNAME).bhv  
   Verbose      = false
   Domain       = course:0:359:360
@@ -119,7 +155,7 @@ ProcessConfig = pMarinePID
   ACTIVE_START  = true
   
   // Yaw PID controller
-  YAW_PID_KP             = 0.6
+  YAW_PID_KP             = 0.4
   YAW_PID_KD             = 0.1
   YAW_PID_KI             = 0.0
   YAW_PID_INTEGRAL_LIMIT = 0.07

@@ -68,7 +68,7 @@ class MOOSWaypt(object):
         ####################################################################################
 
         # From ros
-        self.sub_odom = rospy.Subscriber("~p3d_odom", Odometry, self.cb_odom)
+        self.sub_odom = rospy.Subscriber("~odometry", Odometry, self.cb_odom)
         
         # From moos
         self.sub_dbtime = rospy.Subscriber("~DB_TIME", Float64, self.cb_time)
@@ -110,7 +110,7 @@ class MOOSWaypt(object):
         ####################################################################################
         #### Send all informations to MOOS
         #################################################################################### 
-        if self.dbtime is not None:
+        if self.dbtime is not None and self.wamv_pose is not None:
             #rospy.loginfo("%s send data." %(self.node_name))
 
             nav_x = Float64()

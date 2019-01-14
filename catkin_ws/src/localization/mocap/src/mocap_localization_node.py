@@ -314,6 +314,7 @@ class MocapLocalizationNode(object):
 
         odom_msg = Odometry()
         odom_msg.header = self.header
+        odom_msg.header.frame_id = "/map"
 
         vehicle_number = int(len(vehicle_loalization)*0.5)
         #print vehicle_loalization[0,0]
