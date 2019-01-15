@@ -1,7 +1,8 @@
 Docker develop environment
-
+---
 
 on laptop:
+--
 
   1.build yourself:
   
@@ -30,6 +31,7 @@ on laptop:
 ---------------------------------------------------------------------------------------------------------
  
 on pi3:
+---
 
   1.build yourself:
   
