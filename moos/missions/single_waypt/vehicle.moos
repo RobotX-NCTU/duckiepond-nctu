@@ -205,7 +205,7 @@ ProcessConfig = uProcessWatch
   
   WATCH_ALL = true      // default is true
 
-  WATCH  = uSimMarine
+  //WATCH  = uSimMarine
   WATCH  = pShare
   WATCH  = pNodeReporter
   WATCH  = pMarinePID

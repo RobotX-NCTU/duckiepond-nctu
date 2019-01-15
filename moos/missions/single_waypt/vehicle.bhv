@@ -11,7 +11,6 @@ Behavior = BHV_Waypoint
 
   condition = RETURN = false
   condition = DEPLOY = true
-  condition = SHADOW = false
 
   updates    = WPT_UPDATE
   perpetual  = true
