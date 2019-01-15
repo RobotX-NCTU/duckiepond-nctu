@@ -17,9 +17,13 @@ on laptop:
   
     docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:laptop
     
-  open a browser or vnc viewer enter:
+  open a browser enter:
   
     localhost:80
+    
+  or vnc viewer:
+  
+    localhost:5900
     
   you should see the desktop of vnc
     
