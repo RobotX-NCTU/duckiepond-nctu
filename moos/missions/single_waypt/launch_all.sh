@@ -36,22 +36,11 @@ nsplug vehicle.moos duckiepond_$VEH_NAME1.moos -f \
     VEH_IP=$VEH_IP1      SHORE_IP=$SHORE_IP \
     SHORE_PORT=$SHORE_PORT START_POS=$START_POS1 
 
-nsplug vehicle.moos duckiepond_$VEH_NAME2.moos -f \
-    VNAME=$VEH_NAME2    VEH_PORT=$VEH_PORT2 \
-    VEH_IP=$VEH_IP2      SHORE_IP=$SHORE_IP \
-    SHORE_PORT=$SHORE_PORT START_POS=$START_POS2 
-
 nsplug vehicle.bhv duckiepond_$VEH_NAME1.bhv -f VNAME=$VEH_NAME1     \
     START_POS=$START_POS1       
 
-nsplug vehicle.bhv duckiepond_$VEH_NAME2.bhv -f VNAME=$VEH_NAME2     \
-    START_POS=$START_POS2   
-
 printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME1 $TIME_WARP
 pAntler duckiepond_$VEH_NAME1.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
-
-printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME2 $TIME_WARP
-pAntler duckiepond_$VEH_NAME2.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
 
 printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_${COMMUNITY} $TIME_WARP
 pAntler duckiepond_${COMMUNITY}.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &

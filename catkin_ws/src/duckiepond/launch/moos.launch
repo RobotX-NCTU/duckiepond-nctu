@@ -1,0 +1,20 @@
+<launch>
+
+    <arg name="sim" default="true"/>
+    <arg name="factor" default="gazebo"/>
+    <arg name="moos_folder" default="mutil_following"/>
+    <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
+    <arg name="veh" default="BRIAN"/> 
+
+    <!-- MOOS -->
+    <group ns="$(arg veh)">
+        <include file="$(find moos_behavior)/launch/moos_waypt.launch">
+            <arg name="sim" value="$(arg sim)"/>
+            <arg name="factor" value="$(arg factor)"/>
+            <arg name="moos_folder" value="$(arg moos_folder)"/>
+            <arg name="root" value="$(arg root)"/>
+            <arg name="veh" value="$(arg veh)"/>  
+        </include>
+    </group>  
+
+</launch>

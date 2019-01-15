@@ -21,8 +21,6 @@ class MOOSWaypt(object):
 
         # Param
         self.sim  = rospy.get_param('~sim', True)
-        self.lati_orig  = rospy.get_param('~latitude', None)
-        self.long_orig  = rospy.get_param('~longitude', None)
         self.linear_speed  = rospy.get_param('~linear_speed', 0.0)
         self.angular_speed  = rospy.get_param('~angular_speed', 0.0)
         self.vname = rospy.get_param("~vname", None)
@@ -122,7 +120,7 @@ class MOOSWaypt(object):
             self.pub_nav_y.publish(nav_y)  
 
             nav_heading = Float64()
-            nav_heading.data = (90 - self.quaternion_to_yaw(self.wamv_pose.orientation) / math.pi * 180) % 360
+            nav_heading.data = (270 - self.quaternion_to_yaw(self.wamv_pose.orientation) / math.pi * 180) % 360
             self.pub_nav_heading.publish(nav_heading)      
 
             nav_speed = Float64()
@@ -172,7 +170,7 @@ class MOOSWaypt(object):
         return SetValueResponse()  
 
 
-    def createColorFeatureString(self, x, y):
+    def create_color_feature_string(self, x, y):
         ####################################################################################
         #### Create moos data about obstacles informations
         ####################################################################################    
@@ -180,11 +178,11 @@ class MOOSWaypt(object):
         color_featured = "x=" + str(x) + ", y="+ str(y) + ", size=1, color=red"
         return color_featured
 
-    def onShutdown(self):
+    def on_shutdown(self):
         rospy.loginfo("[%s] Shutdown." %(self.node_name))
 
 if __name__ == '__main__':
     rospy.init_node('moos_waypt_node', anonymous=False)
     moos_waypt_node = MOOSWaypt()
-    rospy.on_shutdown(moos_waypt_node.onShutdown)
+    rospy.on_shutdown(moos_waypt_node.on_shutdown)
     rospy.spin()
