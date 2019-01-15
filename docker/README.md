@@ -16,7 +16,8 @@ on laptop:
     run on laptop:
     docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:laptop
     
- 
+    
+---------------------------------------------------------------------------------------------------------
  
 on pi3:
 
