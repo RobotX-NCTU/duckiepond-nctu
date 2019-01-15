@@ -127,10 +127,10 @@ ProcessConfig = pMarineViewer
   SCOPE = NODE_REPORT_LOCAL
   SCOPE = DEPLOY
 
-  button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # SHADOW_2=false # SHADOW_1=false 
-  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false # AVOID = true
+  button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # SHADOW_2=true # SHADOW_1=false 
+  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false 
 
-  button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false # AVOID = true
+  button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
 
   button_three = ALLSTOP  # DEPLOY=false # MOOS_MANUAL_OVERRIDE=true
 
