@@ -120,7 +120,7 @@ class MOOSWaypt(object):
             self.pub_nav_y.publish(nav_y)  
 
             nav_heading = Float64()
-            nav_heading.data = (270 - self.quaternion_to_yaw(self.wamv_pose.orientation) / math.pi * 180) % 360
+            nav_heading.data = (90 - self.quaternion_to_yaw(self.wamv_pose.orientation) / math.pi * 180) % 360
             self.pub_nav_heading.publish(nav_heading)      
 
             nav_speed = Float64()
