@@ -2,6 +2,7 @@ Docker develop environment
 
 
 on laptop:
+
   1.build yourself:
   
     cd duckiepond-nctu/docker/laptop
@@ -18,6 +19,7 @@ on laptop:
  
  
 on pi3:
+
   1.build yourself:
   
     cd duckiepond-nctu/docker/pi3
