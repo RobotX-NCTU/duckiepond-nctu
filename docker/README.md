@@ -13,7 +13,8 @@ on laptop:
     docker pull juite/duckiepond:laptop
     docker tag juite/duckiepond:laptop duckiepond:laptop
     
-    run on laptop:
+  run on laptop:
+  
     docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:laptop
     
     
@@ -31,5 +32,6 @@ on pi3:
     docker pull juite/duckiepond:rpi
     docker tag juite/duckiepond:laptop duckiepond:pi3
     
-    run on pi3:
+  run on pi3:
+  
     docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:pi3
