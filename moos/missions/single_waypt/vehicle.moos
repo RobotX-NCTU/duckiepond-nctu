@@ -23,7 +23,7 @@ Processconfig = ANTLER
 
   Run = pHelmIvP         @ NewConsole = false
   Run = pHostInfo        @ NewConsole = false  
-  Run = pBasicContactMgr @ NewConsole = false
+  //Run = pBasicContactMgr @ NewConsole = false
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
   //Run = uSimMarine       @ NewConsole = false
