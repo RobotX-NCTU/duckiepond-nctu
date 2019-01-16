@@ -16,7 +16,7 @@ on laptop:
     
   run on laptop:
   
-    docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:laptop
+    docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /home/{user_name}/duckiepond-nctu:/hostname  duckiepond:laptop 
     
   open a browser enter:
   
