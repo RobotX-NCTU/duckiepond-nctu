@@ -16,7 +16,7 @@ on laptop:
     
   run on laptop:
   
-    docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /home/{user_name}/duckiepond-nctu:/hostname  duckiepond:laptop 
+    docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /var/run/docker.sock:/var/run/docker.sock -v /home/{user_name}/duckiepond-nctu:/hostname  duckiepond:laptop 
     
   open a browser enter:
   
@@ -45,4 +45,4 @@ on pi3:
     
   run on pi3:
   
-    docker run --rm -it --net=host --privileged -v /dev:/dev -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /var/run/docker.sock:/var/run/docker.sock -v /home/{user_name}/duckiepond-nctu:/hostname   duckiepond:pi3
+    docker run --rm -it --net=host --privileged -v /dev:/dev -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /var/run/docker.sock:/var/run/docker.sock -v /home/{user_name}/duckiepond-nctu:/hostname duckiepond:pi3
