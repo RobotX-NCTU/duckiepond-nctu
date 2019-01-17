@@ -13,9 +13,6 @@
 
         
     <!-- MOOS Behavior -->
-    <!--remap from="moos_waypt/odometry" to="/$(arg veh)/mocap_localization_node/odometry"/-->
-    <remap from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/>
-
     <remap from="moos_waypt/NAV_X" to="/$(arg veh)/NAV_X"/>
     <remap from="moos_waypt/NAV_Y" to="/$(arg veh)/NAV_Y"/>
     <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh)/NAV_HEADING"/>
