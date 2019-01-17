@@ -8,6 +8,8 @@
 
     <!-- MOOS -->
     <group ns="$(arg veh)">
+        <!--remap from="moos_waypt/odometry" to="/$(arg veh)/mocap_localization_node/odometry"/-->
+        <remap from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/>
         <include file="$(find moos_behavior)/launch/moos_waypt.launch">
             <arg name="sim" value="$(arg sim)"/>
             <arg name="factor" value="$(arg factor)"/>

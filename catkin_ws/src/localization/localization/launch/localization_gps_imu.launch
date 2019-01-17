@@ -1,0 +1,6 @@
+<launch>
+	<arg name="veh"/>
+	<arg name="pkg_name" default="mocap" doc="name of the package"/>
+
+
+</launch>
