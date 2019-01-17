@@ -1,17 +1,14 @@
 #!/bin/bash -e
-SHORE_IP="localhost"
+SHORE_IP="192.168.0.142"
 SHORE_PORT="9000"
 
 VEH_NAME1="BRIAN"
-VEH_IP1="localhost"
+VEH_IP1="192.168.0.147"
 VEH_PORT1="9100"
 
 VEH_NAME2="MONICA"
-VEH_IP2="localhost"
+VEH_IP2="192.168.0.142"
 VEH_PORT2="9200"
-
-START_POS1="0,0"         
-START_POS2="0,-25"
 
 COMMUNITY="shoreside"
 
@@ -31,27 +28,6 @@ nsplug shoreside.moos duckiepond_${COMMUNITY}.moos -f  \
     VEH_PORT1=$VEH_PORT1 VEH_PORT2=$VEH_PORT2 \
     VEH_NAME1=$VEH_NAME1 VEH_NAME2=$VEH_NAME2
 
-nsplug vehicle.moos duckiepond_$VEH_NAME1.moos -f \
-    VNAME=$VEH_NAME1  VEH_PORT=$VEH_PORT1    \
-    VEH_IP=$VEH_IP1      SHORE_IP=$SHORE_IP \
-    SHORE_PORT=$SHORE_PORT START_POS=$START_POS1 
-
-nsplug vehicle.moos duckiepond_$VEH_NAME2.moos -f \
-    VNAME=$VEH_NAME2    VEH_PORT=$VEH_PORT2 \
-    VEH_IP=$VEH_IP2      SHORE_IP=$SHORE_IP \
-    SHORE_PORT=$SHORE_PORT START_POS=$START_POS2 
-
-nsplug vehicle.bhv duckiepond_$VEH_NAME1.bhv -f VNAME=$VEH_NAME1     \
-    START_POS=$START_POS1       
-
-nsplug vehicle.bhv duckiepond_$VEH_NAME2.bhv -f VNAME=$VEH_NAME2     \
-    START_POS=$START_POS2   
-
-printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME1 $TIME_WARP
-pAntler duckiepond_$VEH_NAME1.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
-
-printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME2 $TIME_WARP
-pAntler duckiepond_$VEH_NAME2.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
 
 printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_${COMMUNITY} $TIME_WARP
 pAntler duckiepond_${COMMUNITY}.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &

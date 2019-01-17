@@ -76,21 +76,6 @@ ProcessConfig=pShare
   output = src_name = NODE_REPORT_$(VEH_NAME1) , dest_name = NODE_REPORT , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP1):$(VEH_PORT1)
 
-  output = src_name = SHADOW_1 , dest_name = SHADOW , route = $(VEH_IP1):$(VEH_PORT1)
-
-  //VEH 2
-  output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = STATION_KEEP , dest_name = STATION_KEEP , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP2):$(VEH_PORT2) 
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = NODE_REPORT_$(VEH_NAME2) , dest_name = NODE_REPORT , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP2):$(VEH_PORT2)
-
-  output = src_name = SHADOW_2 , dest_name = SHADOW , route = $(VEH_IP2):$(VEH_PORT2)
 }
 
 
@@ -127,8 +112,8 @@ ProcessConfig = pMarineViewer
   SCOPE = NODE_REPORT_LOCAL
   SCOPE = DEPLOY
 
-  button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # SHADOW_2=true # SHADOW_1=false 
-  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false 
+  button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false 
+  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false
 
   button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
 

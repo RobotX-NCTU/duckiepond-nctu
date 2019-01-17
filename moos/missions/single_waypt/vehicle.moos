@@ -23,17 +23,12 @@ Processconfig = ANTLER
 
   Run = pHelmIvP         @ NewConsole = false
   Run = pHostInfo        @ NewConsole = false  
-  Run = pBasicContactMgr @ NewConsole = false
+  //Run = pBasicContactMgr @ NewConsole = false
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
-  //Run = uSimMarine       @ NewConsole = false
+  Run = uSimMarine       @ NewConsole = false
 
-  Run = uTimerScript @ NewConsole
-}
-
-ProcessConfig = uTimerScript
-{
-  event       = var=VEH_CONTACT, val= $(VEH_CONTACT), time=1
+  //Run = uTimerScript @ NewConsole
 }
 
 

@@ -16,7 +16,7 @@ on laptop:
     
   run on laptop:
   
-    docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:laptop
+    docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /var/run/docker.sock:/var/run/docker.sock -v /home/{user_name}/duckiepond-nctu:/hostname  duckiepond:laptop 
     
   open a browser enter:
   
@@ -41,8 +41,8 @@ on pi3:
   2.pull from dockerhub:
   
     docker pull juite/duckiepond:rpi
-    docker tag juite/duckiepond:laptop duckiepond:pi3
+    docker tag juite/duckiepond:rpi  duckiepond:pi3
     
   run on pi3:
   
-    docker run --rm -it --net=host --privileged -v /dev:/dev duckiepond:pi3
+    docker run --rm -it --net=host --privileged -v /dev:/dev -v /dev:/dev -v /etc/localtime:/etc/localtime:ro -v /var/run/docker.sock:/var/run/docker.sock -v /home/{user_name}/duckiepond-nctu:/hostname duckiepond:pi3
