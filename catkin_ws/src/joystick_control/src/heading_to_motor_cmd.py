@@ -9,7 +9,7 @@ class Commander(object):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
         
-        self.pub_motor_cmd = rospy.Publisher("motor_cmd",MotorCmd,queue_size=1)
+        self.pub_motor_cmd = rospy.Publisher("cmd_drive",MotorCmd,queue_size=1)
         self.sub_heading = rospy.Subscriber("boat_heading",Heading,self.cbHeading,queue_size=1)
 
     def cbHeading(self,msg):
