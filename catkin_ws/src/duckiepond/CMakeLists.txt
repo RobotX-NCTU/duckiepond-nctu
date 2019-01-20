@@ -22,7 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   Heading.msg
-  Motor_cmd.msg
+  MotorCmd.msg
 )
 
 add_service_files(

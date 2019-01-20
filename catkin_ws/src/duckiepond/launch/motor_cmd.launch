@@ -1,0 +1,10 @@
+<launch>
+    <arg name="veh" />
+
+    <group ns="$(arg veh)">
+        <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
+            <param name="port" value="/dev/usb_arduino" />
+        </node>
+    </group>
+
+</launch>
