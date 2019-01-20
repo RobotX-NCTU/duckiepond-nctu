@@ -13,17 +13,6 @@
 
         
     <!-- MOOS Behavior -->
-    <remap from="moos_waypt/NAV_X" to="/$(arg veh)/NAV_X"/>
-    <remap from="moos_waypt/NAV_Y" to="/$(arg veh)/NAV_Y"/>
-    <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh)/NAV_HEADING"/>
-    <remap from="moos_waypt/NAV_SPEED" to="/$(arg veh)/NAV_SPEED"/>
-    <remap from="moos_waypt/DB_TIME" to="/$(arg veh)/DB_TIME"/>
-    <remap from="moos_waypt/DESIRED_RUDDER" to="/$(arg veh)/DESIRED_RUDDER"/>
-    <remap from="moos_waypt/DESIRED_SPEED" to="/$(arg veh)/DESIRED_SPEED"/>
-    <remap from="moos_waypt/DESIRED_HEADING" to="/$(arg veh)/DESIRED_HEADING"/>
-    <remap from="moos_waypt/DESIRED_THRUST_L" to="/$(arg veh)/DESIRED_THRUST_L"/>
-    <remap from="moos_waypt/DESIRED_THRUST_R" to="/$(arg veh)/DESIRED_THRUST_R"/>
-    <remap from="moos_waypt/cmd_drive" to="/$(arg veh)/cmd_drive"/>
     <node pkg="moos_behavior" type="moos_waypt.py" name="moos_waypt" respawn="false" output="screen">
         <param name="sim" value="$(arg sim)"/>
         <param name="vname" value="$(arg veh)"/>
