@@ -1,6 +1,10 @@
 <launch>
-	<arg name="veh"/>
-	<arg name="pkg_name" default="mocap" doc="name of the package"/>
+	<arg name="latitude" default="24.788808"/>
+	<arg name="longitude" default="121.000188"/>
 
+    <node pkg="localization" type="localization_gps_imu.py" name="localization_gps_imu" respawn="false" output="screen">
+        <param name="latitude" value="$(arg latitude)"/>
+        <param name="longitude" value="$(arg longitude)"/>
+    </node>
 
 </launch>

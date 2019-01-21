@@ -13,6 +13,7 @@ import tf
 import math
 from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
 from duckiepond.srv import SetValue, SetValueRequest, SetValueResponse
+from duckiepond.msg import MotorCmd
 
 class MOOSWaypt(object):
     def __init__(self):
@@ -59,7 +60,7 @@ class MOOSWaypt(object):
         if self.sim:
             self.pub_motion = rospy.Publisher("~cmd_drive", UsvDrive, queue_size=1)
         else:
-            print("No real message")
+            self.pub_motion = rospy.Publisher("~cmd_drive", MotorCmd, queue_size=1)
 
         ####################################################################################
         #### ROS Subscriber
@@ -80,7 +81,7 @@ class MOOSWaypt(object):
         if self.sim:
             motor_msg = UsvDrive()
         else:
-            print("No real message")
+            motor_msg = MotorCmd()
 
         motor_msg.left = 0
         motor_msg.right = 0
@@ -179,6 +180,7 @@ class MOOSWaypt(object):
         return color_featured
 
     def on_shutdown(self):
+
         rospy.loginfo("[%s] Shutdown." %(self.node_name))
 
 if __name__ == '__main__':

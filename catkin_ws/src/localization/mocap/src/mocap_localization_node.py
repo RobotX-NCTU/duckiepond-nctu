@@ -171,12 +171,12 @@ class MocapLocalizationNode(object):
                     self.test_tag_point[index, 2] = tag_detection.pose.pose.pose.position.y
                     self.test_tag_point[index, 3] = 1
                     self.base_tag_detect_count += 1
-                    print "get base tag: ", tag_id
+                    #print "get base tag: ", tag_id
             # extract vehicle tag detection
             for index, tag_id in enumerate(self.vehicle_tag_id):
                 if tag_detection.id[0] == tag_id:
-                    #a = tag_detection.pose.pose.pose.orientation
-                    #n = euler_from_quaternion([a.x, a.y, a.z, a.w]) 
+                    a = tag_detection.pose.pose.pose.orientation
+                    n = euler_from_quaternion([a.x, a.y, a.z, a.w]) 
                     #self.vehicle_theta[index, 0] = n[1]
                     #self.vehicle_check[index, 0] = abs(n[1])
                     self.vehicle_tag_point_pair[index, 0] = tag_detection.pose.pose.pose.position.z
@@ -185,6 +185,7 @@ class MocapLocalizationNode(object):
                     self.vehicle_tag_point_pair[index, 3] = 1
                     self.vehicle_tag_detect_count += 1 
                     print "get vehicle tag: ", tag_id
+                    print n
 
         # check whether two pitch of adjacent tag detections are half of pi
         #if self.vehicle_tag_detect_count == 2:
@@ -214,10 +215,10 @@ class MocapLocalizationNode(object):
 
         # check enough tags detected
         #if(self.verbose): print 'system: ', self.system_number
-        print 'base tag count:',self.base_tag_detect_count 
-        print 'vehicle tag count:',self.vehicle_tag_detect_count
+        #print 'base tag count:',self.base_tag_detect_count 
+        #print 'vehicle tag count:',self.vehicle_tag_detect_count
         if self.get_mapping_matrix == False: # not yet get mapping matrix                   
-            if(self.base_tag_detect_count < 3 or self.vehicle_tag_detect_count == 0):# non enough base or vehicle tag detected
+            if(self.base_tag_detect_count < 4 or self.vehicle_tag_detect_count == 0):# non enough base or vehicle tag detected
                 self.base_tag_detect_count = 0
                 self.vehicle_tag_detect_count = 0
                 if(self.verbose): print 'non enough tags detectecd'
@@ -243,17 +244,17 @@ class MocapLocalizationNode(object):
 
 
         # remove zero row if only three base apriltag detected
-        if(self.base_tag_detect_count == 3):
-            zero_row = np.where(~self.obser_tag_point.any(axis=1))[0][0]
-            self.base_tag_point = np.delete(self.base_tag_point, zero_row, axis=0)
-            self.obser_tag_point = self.obser_tag_point[~(self.obser_tag_point==0).all(1)]
+        #if(self.base_tag_detect_count == 3):
+        #    zero_row = np.where(~self.obser_tag_point.any(axis=1))[0][0]
+        #    self.base_tag_point = np.delete(self.base_tag_point, zero_row, axis=0)
+        #    self.obser_tag_point = self.obser_tag_point[~(self.obser_tag_point==0).all(1)]
 
 
         #print self.base_tag_point.transpose()
         #print self.obser_tag_point.transpose()
         #print self.vehicle_tag_point_pair.transpose()
 
-        if True:
+        if(self.base_tag_detect_count == 4):
         #if self.get_mapping_matrix == False:
             length = self.obser_tag_point.shape[0]
             p_ct = self.base_tag_point.sum(axis=0) / length
@@ -325,17 +326,22 @@ class MocapLocalizationNode(object):
             x0 = vehicle_loalization[0, i*2 + 1]
             y1 = vehicle_loalization[1, i*2 + 0]
             y0 = vehicle_loalization[1, i*2 + 1]	
+            if(x1 == 0 or x0 == 0):
+            	print 'only one tag'
+            	continue
             odom_msg.pose.pose.position.x = (x1 + x0) * 0.5 
             odom_msg.pose.pose.position.y = (y1 + y0) * 0.5
             # publish robot orientation
             dx = x1 - x0
             dy = y1 - y0
             yaw = math.atan2(dy, dx)
+            print i, ": ", yaw
             quan = quaternion_from_euler(0, 0, yaw)
             odom_msg.pose.pose.orientation.x = quan[0]
             odom_msg.pose.pose.orientation.y = quan[1]
             odom_msg.pose.pose.orientation.z = quan[2]
             odom_msg.pose.pose.orientation.w = quan[3]
+            #print odom_msg.pose.pose.position 
             self.pub_robot_odom[i].publish(odom_msg)
         #vehicle_pose = Pose()
         #vehicle_pose.position.x = vehicle_loalization[0] 
