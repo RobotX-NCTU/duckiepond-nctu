@@ -27,7 +27,9 @@ class LocailizationGPSImu(object):
 
         self.pose = Pose()
         self.prior_pose = Pose()
-        self.prior_euler = 0
+        self.prior_roll = 0
+        self.prior_pitch = 0
+        self.prior_yaw = 0
         self.start = False   
         self.covariance = np.zeros((36,), dtype=float)
         self.odometry = Odometry()
@@ -69,15 +71,18 @@ class LocailizationGPSImu(object):
     def kalman_filter(self):
 
         q = (self.pose.orientation.x, self.pose.orientation.y, self.pose.orientation.z, self.pose.orientation.w)
-        euler = tf.transformations.euler_from_quaternion(q)[2]
-        
+        roll = tf.transformations.euler_from_quaternion(q)[0]
+        pitch = tf.transformations.euler_from_quaternion(q)[1]
+        yaw = tf.transformations.euler_from_quaternion(q)[2]
 
         if self.start == False:
             self.start = True
             self.prior_pose.position.x = norm(loc = self.pose.position.x, scale = 100)
             self.prior_pose.position.y = norm(loc = self.pose.position.y, scale = 100)
             self.prior_pose.position.z = norm(loc = self.pose.position.z, scale = 100)
-            self.prior_euler = norm(loc = euler, scale = 10)
+            self.prior_roll = norm(loc = roll, scale = 10)
+            self.prior_pitch = norm(loc = pitch, scale = 10)
+            self.prior_yaw = norm(loc = yaw, scale = 10)
             return
 
         covariance = self.covariance
@@ -88,18 +93,26 @@ class LocailizationGPSImu(object):
         x = self.pose.position.x
         y = self.pose.position.y
         z = self.pose.position.z
-        o = euler
+        
         predicted_x = norm(loc = self.prior_pose.position.x.mean()+kernel.mean(), scale = np.sqrt(self.prior_pose.position.x.var()+kernel.var()))
         predicted_y = norm(loc = self.prior_pose.position.y.mean()+kernel.mean(), scale = np.sqrt(self.prior_pose.position.y.var()+kernel.var()))
         predicted_z = norm(loc = self.prior_pose.position.z.mean()+kernel.mean(), scale = np.sqrt(self.prior_pose.position.z.var()+kernel.var()))
-        predicted_o = norm(loc = self.prior_euler.mean()+kernel_euler.mean(), scale = np.sqrt(self.prior_euler.var()+kernel_euler.var()))
+        predicted_roll = norm(loc = self.prior_roll.mean()+kernel_euler.mean(), scale = np.sqrt(self.prior_roll.var()+kernel_euler.var()))
+        predicted_pitch = norm(loc = self.prior_pitch.mean()+kernel_euler.mean(), scale = np.sqrt(self.prior_pitch.var()+kernel_euler.var()))
+        predicted_yaw = norm(loc = self.prior_yaw.mean()+kernel_euler.mean(), scale = np.sqrt(self.prior_yaw.var()+kernel_euler.var()))
+
         # update step
         posterior_x = self.update_con(predicted_x, x, 0.05)
         posterior_y = self.update_con(predicted_y, y, 0.05)
         posterior_z = self.update_con(predicted_z, z, 0.05)
-        posterior_euler = self.update_con(predicted_o, o, 0.05)
+        posterior_roll = self.update_con(predicted_roll, roll, 0.05)
+        posterior_pitch = self.update_con(predicted_pitch, pitch, 0.05)
+        posterior_yaw = self.update_con(predicted_yaw, yaw, 0.05)
 
-        self.prior_euler = posterior_euler
+        self.prior_roll = posterior_roll
+        self.prior_pitch = posterior_pitch
+        self.prior_yaw = posterior_yaw
+
         self.prior_pose.position.x = posterior_x
         self.prior_pose.position.y = posterior_y
         self.prior_pose.position.z = posterior_z   
@@ -107,7 +120,7 @@ class LocailizationGPSImu(object):
         self.odometry.pose.pose.position.x = posterior_x.mean()
         self.odometry.pose.pose.position.y = posterior_y.mean()
         self.odometry.pose.pose.position.z = posterior_z.mean()
-        kf_euler = posterior_euler.mean()
+        kf_euler = posterior_yaw.mean()
         qu = tf.transformations.quaternion_from_euler(0, 0, kf_euler+self.imu_offset)
         pose = Pose()
         pose.orientation.x = qu[0]
@@ -133,7 +146,10 @@ class LocailizationGPSImu(object):
             (q[0], q[1], q[2], q[3]), \
             rospy.Time.now(),"/odom","/utm")
 
-        print("X = ", self.pose.position.x, ", Y = ", self.pose.position.y, ", Yaw = ", kf_euler+self.imu_offset)
+        rad_2_deg = 180/math.pi
+        print("X = ", self.pose.position.x, ", Y = ", self.pose.position.y)
+        print(", RPY = ", posterior_roll.mean()*rad_2_deg, posterior_pitch.mean()*rad_2_deg, posterior_yaw.mean()*rad_2_deg+self.imu_offset*rad_2_deg)
+        print("========================================================")
 
     def cb_srv_imu_offest(self, request): 
         self.imu_offset = request.data
