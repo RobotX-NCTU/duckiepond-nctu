@@ -1,0 +1,4 @@
+<launch>
+	<arg name="veh" />
+	<node ns="$(arg veh)" pkg="joy" type="joy_node" name="joy" />
+</launch>
