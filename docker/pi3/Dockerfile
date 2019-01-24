@@ -12,6 +12,8 @@ RUN apt-get update -y && apt-get install -y \
     ros-kinetic-geodesy \
     && rm -rf /var/lib/apt/lists/*
 
+RUN sudo pip install utm
+
 #install moos-ivp
 WORKDIR /root
 RUN git clone https://github.com/ARG-NCTU/moos-ivp-nctu.git moos-ivp 
