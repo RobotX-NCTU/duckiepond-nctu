@@ -15,7 +15,7 @@ class JoyMapper(object):
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
-        self.sub_joy = rospy.Subscriber("~/joy", Joy, self.cbJoy, queue_size=1)
+        self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
         #varibles
         self.emergencyStop = False

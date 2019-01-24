@@ -3,7 +3,8 @@
     <arg name="veh" />
 
     <group ns="$(arg veh)">
-        <group if="$(arg gazebo)">
+        <remap from="joymapper/joy" to="joy" />
+	<group if="$(arg gazebo)">
             <node pkg="joystick_control" type="joymapper_node.py" name="joymapper" output="screen" />
             <node pkg="joystick_control" type="heading_to_usv.py" name="heading_to_usv" output="screen" />
         </group>
