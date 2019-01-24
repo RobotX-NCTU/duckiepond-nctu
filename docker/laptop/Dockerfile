@@ -3,10 +3,12 @@ FROM dorowu/ubuntu-desktop-lxde-vnc:xenial
 #install 
 RUN apt-get update -y
 RUN apt-get install -y bash git make wget sudo build-essential \
-    cmake net-tools iputils-ping network-manager vim \
+    cmake net-tools iputils-ping network-manager \
+    vim python-pip python-dev \
     libjpeg-dev libtiff-dev libpng-dev libfltk1.3-dev fluid \
     && rm -rf /var/lib/apt/lists/*
 
+RUN sudo pip install utm
 
 # install packages
 RUN apt-get update && apt-get install -q -y \
@@ -51,8 +53,9 @@ RUN apt-get update && apt-get install -y --fix-missing\
     ros-kinetic-rqt \
     ros-kinetic-rqt-common-plugins \
     ros-kinetic-web-video-server \
-    ros-kinetic-rosserial \
     ros-kinetic-rosserial-arduino \
+    ros-kinetic-rosserial \
+    ros-kinetic-geodesy \
     && rm -rf /var/lib/apt/lists/*
 
 
