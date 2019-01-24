@@ -1,0 +1,16 @@
+<launch>
+
+    <arg name="veh" default="BRIAN"/> 
+    <arg name="latitude" default="24.788808"/>
+    <arg name="longitude" default="121.000188"/>
+
+    <!-- GPS IMU Localization -->
+    <group ns="$(arg veh)">
+        <remap from="localization_gps_imu/fix" to="fix"/>
+        <remap from="localization_gps_imu/imu/data" to="imu/data"/>
+        <include file="$(find localization)/launch/localization_gps_imu.launch">
+            <arg name="latitude" value="$(arg latitude)"/>
+            <arg name="longitude" value="$(arg longitude)"/>
+        </include>
+    </group>
+</launch>
