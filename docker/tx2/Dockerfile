@@ -8,6 +8,8 @@ RUN apt-get install -y \
     make \
     wget \
     sudo \
+    python-pip \
+    python-dev \
     build-essential \
     cmake \
     net-tools \
@@ -20,6 +22,8 @@ RUN apt-get install -y \
     libfltk1.3-dev \
     fluid \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sudo pip install utm
 
 # install packages
 RUN apt-get update && apt-get install -q -y \
@@ -65,7 +69,9 @@ RUN apt-get update && apt-get install -y --fix-missing\
     ros-kinetic-web-video-server \
     ros-kinetic-rosserial-arduino \
     ros-kinetic-rosserial \
+    ros-kinetic-geodesy \
     && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /root
 RUN git clone -b tx2 https://github.com/ARG-NCTU/moos-ivp-nctu.git moos-ivp 

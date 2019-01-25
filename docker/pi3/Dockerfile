@@ -3,10 +3,16 @@ FROM argnctu/ncs_ver1_duckietown_based
 #install essential package
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -y && apt-get install -y \
-    bash git cmake make wget sudo build-essential \
+    bash git cmake make wget sudo \
+    python-pip python-dev build-essential \
     cmake net-tools iputils-ping network-manager vim \
     libjpeg-dev libtiff-dev libpng-dev libfltk1.3-dev fluid \
+    ros-kinetic-rosserial-arduino \
+    ros-kinetic-rosserial \
+    ros-kinetic-geodesy \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sudo pip install utm
 
 #install moos-ivp
 WORKDIR /root
