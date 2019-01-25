@@ -10,6 +10,8 @@ RUN apt-get install -y \
     sudo \
     python-pip \
     python-dev \
+    python-numpy \
+    python-scipy \
     build-essential \
     cmake \
     net-tools \
