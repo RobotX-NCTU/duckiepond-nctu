@@ -4,8 +4,8 @@ import thread
 
 import yaml
 
-from duckietown_msgs.msg import BoolStamped
-from duckietown_utils import get_duckiefleet_root
+from duckiepond.msg import BoolStamped
+#from duckietown_utils import get_duckiefleet_root
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 import rospkg
@@ -35,7 +35,9 @@ class CameraNode(object):
         self.camera.resolution = (self.res_w, self.res_h)
 
         # For intrinsic calibration
-        self.cali_file_folder = get_duckiefleet_root() + "/calibrations/camera_intrinsic/"
+        rospack = rospkg.RosPack()
+        #self.cali_file_folder = get_duckiefleet_root() + "/calibrations/camera_intrinsic/"
+        self.cali_file_folder =  rospack.get_path('pi_camera') + "/config/calibrations/camera_intrinsic/"
 
         self.frame_id = rospy.get_namespace().strip('/') + "/camera_optical_frame"
 

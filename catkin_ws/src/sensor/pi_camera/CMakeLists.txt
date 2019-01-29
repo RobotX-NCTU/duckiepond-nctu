@@ -4,7 +4,6 @@ project(pi_camera)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  #duckietown_msgs # Every duckietown packages should use this.
   std_msgs
 )
 
