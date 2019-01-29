@@ -1,0 +1,65 @@
+//--------    FILE: alpha.bhv   -------------
+
+initialize   DEPLOY = false
+initialize   RETURN = false
+
+//----------------------------------------------
+Behavior = BHV_Loiter
+{ 
+  name      = loiter_survey_
+  pwt       = 100
+
+  condition = RETURN = false
+  condition = DEPLOY = true
+
+  updates    = LIT_UPDATE
+  perpetual  = true
+
+   post_suffix = A
+         speed = 1.3
+     clockwise = false
+        radius = 8.0
+     nm_radius = 15.0
+       //polygon = radial::$(LOITER_POS), radius=10, pts=4, snap=1, label=$(VNAME)_LOITER
+  visual_hints = nextpt_color=white, nextpt_lcolor=khaki
+  visual_hints = edge_color=orange, vertex_color=white
+  visual_hints = edge_size=1, vertex_size=2
+}
+
+//----------------------------------------------
+Behavior=BHV_Waypoint
+{
+  name       = waypt_return_
+  pwt        = 100
+
+  condition  = RETURN = true
+  condition  = DEPLOY = true
+  perpetual  = true
+  updates    = RETURN_UPDATE
+
+  endflag    = RETURN = false
+  endflag    = DEPLOY = false
+  endflag    = MISSION = complete
+	
+           speed = 2.0
+  capture_radius = 2.0
+     slip_radius = 8.0
+          points = 0,-20
+ }
+
+//----------------------------------------------
+Behavior=BHV_ConstantSpeed
+{
+  name       = const_speed_
+  pwt        = 200
+  condition  = SPD=true
+  condition  = DEPLOY = true
+  perpetual  = true
+  updates    = SPEED_UPDATE
+  endflag    = SPD = false
+
+     speed = 0.5
+		 duration = 10
+		 duration_reset = CONST_SPD_RESET=true
+
+//----------------------------------------------
