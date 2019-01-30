@@ -1,0 +1,12 @@
+<launch>
+    <arg name="sim" default="true"/>
+    <arg name="tune" default="true"/>
+    <arg name="config" default="gazebo"/>
+
+    <node pkg="control" type="pid_control.py" name="pid_control" respawn="false" output="screen">
+    	<param name="sim" value="$(arg sim)"/>
+    	<param name="tune" value="$(arg tune)"/>
+        <rosparam command="load" file="$(find control)/config/$(arg config).yaml" />
+    </node>
+
+</launch>
