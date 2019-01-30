@@ -6,7 +6,7 @@ Last update: 2019/01/06
 moos waypoint bhv 
 '''
 import rospy
-from duckiepond_vehicle.msg import UsvDrive
+#from duckiepond_vehicle.msg import UsvDrive
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float64, String
 import tf
