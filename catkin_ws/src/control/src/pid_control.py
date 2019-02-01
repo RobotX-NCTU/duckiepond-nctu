@@ -16,7 +16,7 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-from duckiepond_vehicle.msg import UsvDrive
+#from duckiepond_vehicle.msg import UsvDrive
 from duckiepond.msg import MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
 
@@ -102,8 +102,8 @@ class Robot_PID():
 		else:
 			cmd_msg = MotorCmd()
 
-		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
-		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
+		cmd_msg.right = self.cmd_constarin(pos_output - ang_output)
+		cmd_msg.left = self.cmd_constarin(pos_output + ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 

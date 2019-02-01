@@ -1,6 +1,6 @@
 <launch>
 
-    <arg name="sim" default="true"/>
+    <arg name="sim" default="false"/>
     <arg name="factor" default="gazebo"/>
     <arg name="moos_folder" default="single_waypt"/>
     <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
@@ -18,8 +18,8 @@
         </include>
 
         <!--remap from="moos_waypt/odometry" to="mocap_localization_node/odometry"/-->
-        <!--remap from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/-->
-        <remap from="moos_waypt/odometry" to="localization_gps_imu/odometry"/>
+        <remap if="$(arg sim)" from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/>
+        <remap unless="$(arg sim)" from="moos_waypt/odometry" to="localization_gps_imu/odometry"/>
 
         <remap from="moos_waypt/NAV_X" to="/$(arg veh)/NAV_X"/>
         <remap from="moos_waypt/NAV_Y" to="/$(arg veh)/NAV_Y"/>

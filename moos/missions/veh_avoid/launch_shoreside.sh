@@ -1,13 +1,13 @@
 #!/bin/bash -e
-SHORE_IP="localhost"
+SHORE_IP="192.168.2.103"
 SHORE_PORT="9000"
 
 VEH_NAME1="BRIAN"
-VEH_IP1="localhost"
+VEH_IP1="192.168.2.101"
 VEH_PORT1="9100"
 
 VEH_NAME2="MONICA"
-VEH_IP2="localhost"
+VEH_IP2="192.168.2.111"
 VEH_PORT2="9200"
 
 COMMUNITY="shoreside"

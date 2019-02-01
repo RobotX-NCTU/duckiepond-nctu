@@ -1,6 +1,6 @@
 <launch>
     <arg name="veh" default="BRIAN"/> 
-    <arg name="sim" default="true"/>
+    <arg name="sim" default="false"/>
     <arg name="tune" default="true"/>
     <arg name="config" default="gazebo"/>
 
@@ -8,7 +8,7 @@
 
     <group ns="$(arg veh)">
         <remap if="$(arg sim)" from="pid_control/odometry" to="/$(arg veh)/p3d_odom" />
-        <remap unless="$(arg sim)" from="pid_control/odometry" to="/$(arg veh)/odometry" />
+        <remap unless="$(arg sim)" from="pid_control/odometry" to="/$(arg veh)/localization_gps_imu/odometry" />
         <remap from="pid_control/cmd_drive" to="/$(arg veh)/cmd_drive"/>
 
         <include file="$(find control)/launch/pid_tuning.launch">
