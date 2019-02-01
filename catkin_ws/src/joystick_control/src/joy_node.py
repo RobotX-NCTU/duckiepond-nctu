@@ -37,11 +37,11 @@ class JoyMapper(object):
         mcd_msg = MotorCmd()
         speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
         difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-        mcd_msg.left = max(min(speed - difference , 1),-1)
-        mcd_msg.right = max(min(speed + difference , 1),-1)
-        right = mcd_msg.right
-	mcd_msg.right = mcd_msg.left*-1
-	mcd_msg.left = right*-1
+        mcd_msg.right = max(min(speed - difference , 1),-1)
+        mcd_msg.left = max(min(speed + difference , 1),-1)
+        #right = mcd_msg.right
+	#mcd_msg.right = mcd_msg.left*-1
+	#mcd_msg.left = right*-1
 	
         if not self.emergencyStop and not self.autoMode:
             self.pub_motor_cmd.publish(mcd_msg)
