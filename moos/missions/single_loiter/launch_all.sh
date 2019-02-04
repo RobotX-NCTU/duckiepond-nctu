@@ -27,9 +27,9 @@ echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $V
 #-------------------------------------------------------
 nsplug shoreside.moos duckiepond_${COMMUNITY}.moos -f  \
     SHORE_PORT=$SHORE_PORT  SHORE_IP=$SHORE_IP \
-    VEH_IP1=$VEH_IP1 VEH_IP2=$VEH_IP2 \
-    VEH_PORT1=$VEH_PORT1 VEH_PORT2=$VEH_PORT2 \
-    VEH_NAME1=$VEH_NAME1 VEH_NAME2=$VEH_NAME2
+    VEH_IP=$VEH_IP1 VEH_IP2=$VEH_IP2 \
+    VEH_PORT=$VEH_PORT1 VEH_PORT2=$VEH_PORT2 \
+    VNAME=$VEH_NAME1 VEH_NAME2=$VEH_NAME2
 
 nsplug vehicle.moos duckiepond_$VEH_NAME1.moos -f \
     VNAME=$VEH_NAME1  VEH_PORT=$VEH_PORT1    \
