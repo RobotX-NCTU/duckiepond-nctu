@@ -1,0 +1,6 @@
+<launch>
+    <arg name="veh" default="BRIAN" />
+    
+    <node ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect.py" name="detecter" output="screen" />
+
+</launch>
