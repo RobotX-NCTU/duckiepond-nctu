@@ -31,7 +31,7 @@ for ARGI; do
     elif [ "${ARGI}" = "-pc" ] ; then 
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
 		 -v /var/run/docker.sock:/var/run/docker.sock -v /home/$USER/duckiepond-nctu:/root/duckiepond-nctu  \
-		 --hostname laptop juite/duckiepond:laptop
+		--add-host eastgod:192.168.2.103 juite/duckiepond:laptop
 
     else 
         printf "Bad Argument: %s \n" $ARGI
