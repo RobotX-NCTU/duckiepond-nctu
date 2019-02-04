@@ -19,7 +19,7 @@ Behavior = BHV_CutRange
   templating   = spawn                             // example
 
   contact = BRIAN     
-  pwt_inner_dist = 3
+  pwt_inner_dist = 5
   pwt_outer_dist = 50     
 
   patience = 90
@@ -48,7 +48,7 @@ Behavior = BHV_Waypoint
       capture_radius = 2.0
          slip_radius = 4.0
 	efficiency_measure = all
-             polygon = 25, 0 : 25, -25 : 0, -25 : 0, 0
+             polygon = 20, 5 : 20, -15 : 0, -15 : 0, 5
                order = normal
              repeat  = 1
 
