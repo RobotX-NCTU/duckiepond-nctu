@@ -140,6 +140,7 @@ ProcessConfig = pHelmIvP
   Verbose      = false
   Domain       = course:0:359:360
   Domain       = speed:0:5:26
+  ok_skew      = ANY
 }
 
 //-----------------------------------------------------

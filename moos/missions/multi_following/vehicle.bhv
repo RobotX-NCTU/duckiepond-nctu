@@ -19,8 +19,8 @@ Behavior = BHV_CutRange
   templating   = spawn                             // example
 
   contact = BRIAN     
-  pwt_inner_dist = 5
-  pwt_outer_dist = 30     
+  pwt_inner_dist = 3
+  pwt_outer_dist = 50     
 
   patience = 90
 }
