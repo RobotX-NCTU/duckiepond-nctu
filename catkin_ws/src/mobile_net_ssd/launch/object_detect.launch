@@ -1,0 +1,8 @@
+<launch>
+    <arg name="veh" default="BRIAN" />
+    <arg name="pub_image" default="True" />
+    
+    <node ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect.py" name="detecter" output="screen" >
+        <param name="publish_image" value="$(arg pub_image)" />
+    </node>
+</launch>
