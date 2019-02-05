@@ -66,10 +66,10 @@ ProcessConfig = pBasicContactMgr
 
   decay = 30,60
 
-  alert_verbose = true
+  alert_verbose = false
 
   contact_max_age = 3600
-  display_radii   = true
+  display_radii   = false
 
   default_alert_range = 50
   default_cpa_range   = 40
