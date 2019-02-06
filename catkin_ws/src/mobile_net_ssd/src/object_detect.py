@@ -18,22 +18,16 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
 class ObjectDetecter(object):
 	def __init__(self):
-		self.node_name = rospy.get_name()
-		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
-		self.pubimage = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
-		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
-		rospy.loginfo("[%s] Initializing " %(self.node_name))
-		self.bridge = CvBridge()
-		self.frame_counter = 0
-
 		#parameter
 		self.publish_image = rospy.get_param("detecter/publish_image",False)
 		self.dest_rate = rospy.get_param("detecter/dest_rate",5)
 		self.input_rate = rospy.get_param("detecter/input_rate",30)
+		self.output_width = rospy.get_param("detecter/output_width",640)
+		self.output_height = rospy.get_param("detecter/output_height",480)
 		self.threshold = rospy.get_param("detecter/threshold",0.2)
-
+		
 		self.PREPROCESS_DIMS = (300,300)
-		self.DISPLAY_DIMS = (640,480)
+		self.DISPLAY_DIMS = (self.output_width,self.output_height)
 
 		# calculate the multiplier needed to scale the bounding boxes
 		self.DISP_MULTIPLIER = [(self.DISPLAY_DIMS[0]/(float)(self.PREPROCESS_DIMS[0])) ,(self.DISPLAY_DIMS[1]/(float)(self.PREPROCESS_DIMS[1]))]
@@ -63,6 +57,14 @@ class ObjectDetecter(object):
 		rospy.loginfo("allocating the graph on the NCS...")
 		self.graph = mvnc.Graph("MobileNet-SSD")
 		self.ssd_fifo_in , self.ssd_fifo_out = self.graph.allocate_with_fifos(self.device,graph_in_memory)
+		
+		self.node_name = rospy.get_name()
+		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
+		self.pubimage = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
+		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
+		rospy.loginfo("[%s] Initializing " %(self.node_name))
+		self.bridge = CvBridge()
+		self.frame_counter = 0
 
 	def cbimage(self,img):
 		self.frame_counter += 1
@@ -87,9 +89,9 @@ class ObjectDetecter(object):
 				# is greater than the minimum confidence
 				if pred_class==4 and pred_conf>self.threshold:
 					# print prediction to terminal
-					rospy.loginfo("Prediction #{}: class={}, confidence={}, "
-						"boxpoints={}".format(i, CLASSES[pred_class], pred_conf,
-						pred_boxpts))
+					#rospy.loginfo("Prediction #{}: class={}, confidence={}, "
+					#	"boxpoints={}".format(i, CLASSES[pred_class], pred_conf,
+					#	pred_boxpts))
 					
 					# extract information from the prediction boxpoints
 					(ptA, ptB) = (pred_boxpts[0], pred_boxpts[1])
@@ -100,6 +102,9 @@ class ObjectDetecter(object):
 					box.y = ptA[1]
 					box.w = ptB[0] - ptA[0]
 					box.h = ptB[1] - ptA[1]
+					box.confidence = pred_conf
+					box.image_width = self.output_width
+					box.image_height = self.output_height
 					box_list.list.append(box)
 
 					if self.publish_image:
@@ -199,3 +204,4 @@ if __name__ == "__main__":
 	node = ObjectDetecter()
 	rospy.on_shutdown(node.on_shutdown)
 	rospy.spin()
+	

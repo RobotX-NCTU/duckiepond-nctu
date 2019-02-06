@@ -4,11 +4,15 @@
     <arg name="threshold" default="0.3" />
     <arg name="dest_rate" default="5" />
     <arg name="input_rate" default="30" />
+    <arg name="output_width" default="640" />
+    <arg name="output_height" default="480" />
 
     <node ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect.py" name="detecter" output="screen" >
         <param name="publish_image" value="$(arg pub_image)" />
         <param name="threshold" value="$(arg threshold)" />
         <param name="dest_rate" value="$(arg dest_rate)" />
         <param name="input_rate" value="$(arg input_rate)" />
+        <param name="output_width" value="$(arg output_width)" />
+        <param name="output_height" value="$(arg output_height)" />
     </node>
 </launch>
