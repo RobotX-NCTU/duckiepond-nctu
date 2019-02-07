@@ -22,4 +22,4 @@ duckiepond_*.moos
 duckiepond_*.bhv
 *.moos++
 *graph
-catkin_ws/src/mobile_net_ssd/graphs
+catkin_ws/src/deep_learning/mobile_net_ssd/graphs
