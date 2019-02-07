@@ -23,3 +23,5 @@ duckiepond_*.bhv
 *.moos++
 *graph
 catkin_ws/src/mobile_net_ssd/graphs
+*.pb
+*.meta
