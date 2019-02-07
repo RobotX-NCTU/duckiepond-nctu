@@ -6,6 +6,7 @@ import rospy
 import time
 import cv2
 import os.path
+from mobile_net_ssd.msg import Box,Boxlist
 from sensor_msgs.msg import Image,CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
@@ -17,20 +18,16 @@ COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
 class ObjectDetecter(object):
 	def __init__(self):
-		self.node_name = rospy.get_name()
-		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
-		self.pubimage = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
-		rospy.loginfo("[%s] Initializing " %(self.node_name))
-		self.bridge = CvBridge()
-		self.dest_rate = 5
-		self.input_rate = 30
-		self.frame_counter = 0
-
 		#parameter
 		self.publish_image = rospy.get_param("detecter/publish_image",False)
-
+		self.dest_rate = rospy.get_param("detecter/dest_rate",5)
+		self.input_rate = rospy.get_param("detecter/input_rate",30)
+		self.output_width = rospy.get_param("detecter/output_width",640)
+		self.output_height = rospy.get_param("detecter/output_height",480)
+		self.threshold = rospy.get_param("detecter/threshold",0.2)
+		
 		self.PREPROCESS_DIMS = (300,300)
-		self.DISPLAY_DIMS = (640,480)
+		self.DISPLAY_DIMS = (self.output_width,self.output_height)
 
 		# calculate the multiplier needed to scale the bounding boxes
 		self.DISP_MULTIPLIER = [(self.DISPLAY_DIMS[0]/(float)(self.PREPROCESS_DIMS[0])) ,(self.DISPLAY_DIMS[1]/(float)(self.PREPROCESS_DIMS[1]))]
@@ -60,6 +57,14 @@ class ObjectDetecter(object):
 		rospy.loginfo("allocating the graph on the NCS...")
 		self.graph = mvnc.Graph("MobileNet-SSD")
 		self.ssd_fifo_in , self.ssd_fifo_out = self.graph.allocate_with_fifos(self.device,graph_in_memory)
+		
+		self.node_name = rospy.get_name()
+		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
+		self.pubimage = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
+		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
+		rospy.loginfo("[%s] Initializing " %(self.node_name))
+		self.bridge = CvBridge()
+		self.frame_counter = 0
 
 	def cbimage(self,img):
 		self.frame_counter += 1
@@ -68,8 +73,10 @@ class ObjectDetecter(object):
 			# grab the frame from the threaded video stream
 			# make a copy of the frame and resize it for display/video purposes
 			image = self.bridge.compressed_imgmsg_to_cv2(img)
-			image_for_result = cv2.resize(image, self.DISPLAY_DIMS)
-
+			if self.publish_image:
+				image_for_result = cv2.resize(image, self.DISPLAY_DIMS)
+			#prepare prediction list
+			box_list = Boxlist()
 			# use the NCS to acquire predictions
 			predictions = self.predict(image)
 
@@ -80,33 +87,43 @@ class ObjectDetecter(object):
 
 				# filter out weak detections by ensuring the `confidence`
 				# is greater than the minimum confidence
-				if pred_class==4:
+				if pred_class==4 and pred_conf>self.threshold:
 					# print prediction to terminal
-					rospy.loginfo("Prediction #{}: class={}, confidence={}, "
-						"boxpoints={}".format(i, CLASSES[pred_class], pred_conf,
-						pred_boxpts))
-
-					# build a label consisting of the predicted class and
-					# associated probability
-					label = "{}: {:.2f}%".format(CLASSES[pred_class],
-						pred_conf * 100)
-
+					#rospy.loginfo("Prediction #{}: class={}, confidence={}, "
+					#	"boxpoints={}".format(i, CLASSES[pred_class], pred_conf,
+					#	pred_boxpts))
+					
 					# extract information from the prediction boxpoints
 					(ptA, ptB) = (pred_boxpts[0], pred_boxpts[1])
 					ptA = ((int)(ptA[0] * self.DISP_MULTIPLIER[0]), (int)(ptA[1] * self.DISP_MULTIPLIER[1]))
 					ptB = ((int)(ptB[0] * self.DISP_MULTIPLIER[0]), (int)(ptB[1] * self.DISP_MULTIPLIER[1]))
-					(startX, startY) = (ptA[0], ptA[1])
-					y = startY - 15 if startY - 15 > 15 else startY + 15
+					box = Box()
+					box.x = ptA[0]
+					box.y = ptA[1]
+					box.w = ptB[0] - ptA[0]
+					box.h = ptB[1] - ptA[1]
+					box.confidence = pred_conf
+					box.image_width = self.output_width
+					box.image_height = self.output_height
+					box_list.list.append(box)
 
-					# display the rectangle and label text
-					cv2.rectangle(image_for_result, ptA, ptB,
-						COLORS[pred_class], 2)
-					cv2.putText(image_for_result, label, (startX, y),
-						cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
+					if self.publish_image:
+						# build a label consisting of the predicted class and
+						# associated probability
+						label = "{}: {:.2f}%".format(CLASSES[pred_class],
+						pred_conf * 100)
+						(startX, startY) = (ptA[0], ptA[1])
+						y = startY - 15 if startY - 15 > 15 else startY + 15
+
+						# display the rectangle and label text
+						cv2.rectangle(image_for_result, ptA, ptB,
+							COLORS[pred_class], 2)
+						cv2.putText(image_for_result, label, (startX, y),
+							cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
 				
 			if self.publish_image:
 				self.pubimage.publish(self.bridge.cv2_to_compressed_imgmsg(image_for_result))
-			
+			self.pubBoxlist.publish(box_list)
 
 	def preprocess_image(self,input_image):
 		# preprocess the image
@@ -187,3 +204,4 @@ if __name__ == "__main__":
 	node = ObjectDetecter()
 	rospy.on_shutdown(node.on_shutdown)
 	rospy.spin()
+	
