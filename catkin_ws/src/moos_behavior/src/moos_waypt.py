@@ -83,11 +83,11 @@ class MOOSWaypt(object):
         if self.sim:
             from duckiepond_vehicle.msg import UsvDrive
             motor_msg = UsvDrive()
-            motor_msg.header.stamp = rospy.Time.now()
 
         else:
             motor_msg = MotorCmd()
 
+        motor_msg.header.stamp = rospy.Time.now()
         motor_msg.left = 0
         motor_msg.right = 0
         if self.wamv_desired_heading is None or self.wamv_desired_rudder is None or self.wamv_desired_speed is None:
