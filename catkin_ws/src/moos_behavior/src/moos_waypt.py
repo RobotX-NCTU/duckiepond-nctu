@@ -79,9 +79,12 @@ class MOOSWaypt(object):
         self.sub_desired_heading = rospy.Subscriber("~DESIRED_THRUST_R", Float64, self.cb_thruster_r)
 
     def send_motor_cmd(self, event):
+        motor_msg = None
         if self.sim:
             from duckiepond_vehicle.msg import UsvDrive
             motor_msg = UsvDrive()
+            motor_msg.header.stamp = rospy.Time.now()
+
         else:
             motor_msg = MotorCmd()
 
@@ -103,6 +106,16 @@ class MOOSWaypt(object):
             else:
                 motor_msg.left = motor_msg.left + self.wamv_desired_rudder  * self.angular_speed * self.wamv_desired_speed
                 motor_msg.right = motor_msg.right - self.wamv_desired_rudder * self.angular_speed * self.wamv_desired_speed                
+
+        if motor_msg.left >= 0.9:
+            motor_msg.left = 0.9
+        elif motor_msg.left <= -0.9:
+            motor_msg.left = -0.9
+
+        if motor_msg.right >= 0.9:
+            motor_msg.right = 0.9
+        elif motor_msg.right <= -0.9:
+            motor_msg.right = -0.9
 
         self.pub_motion.publish(motor_msg)
 
