@@ -10,7 +10,6 @@ project(mobile_net_ssd)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
-  message_generation
   sensor_msgs
   std_msgs
 )
@@ -49,11 +48,9 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-add_message_files(
-   FILES
-   Box.msg
-   Boxlist.msg
-)
+#add_message_files(
+#   FILES
+#)
 
 ## Generate services in the 'srv' folder
 # add_service_files(

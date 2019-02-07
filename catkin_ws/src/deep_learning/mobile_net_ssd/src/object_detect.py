@@ -6,7 +6,7 @@ import rospy
 import time
 import cv2
 import os.path
-from mobile_net_ssd.msg import Box,Boxlist
+from duckiepond.msg import Box,Boxlist
 from sensor_msgs.msg import Image,CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
