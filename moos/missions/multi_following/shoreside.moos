@@ -19,7 +19,7 @@ ProcessConfig = ANTLER
   MSBetweenLaunches = 200
 
   Run = MOOSDB            @ NewConsole = false
-  //Run = pLogger         @ NewConsole = false
+  Run = pLogger         @ NewConsole = false
   Run = pMarineViewer	    @ NewConsole = false
   Run = uProcessWatch	    @ NewConsole = false
   Run = pShare            @ NewConsole = fasle
@@ -71,7 +71,6 @@ ProcessConfig=pShare
   output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)  
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = NODE_REPORT_$(VEH_NAME1) , dest_name = NODE_REPORT , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP1):$(VEH_PORT1)
@@ -85,7 +84,6 @@ ProcessConfig=pShare
   output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP2):$(VEH_PORT2) 
   output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = NODE_REPORT_$(VEH_NAME2) , dest_name = NODE_REPORT , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP2):$(VEH_PORT2)
@@ -112,11 +110,21 @@ ProcessConfig = pMarineViewer
   hash_shade           = 0.22
   hash_viewable        = true
 
-  trails_point_size   = 1
+  
+  appcast_viewable = true
+
+  trails_length = 100
+  //trails_point_size = 1
+  seglist_viewable_all = true
+  seglist_viewable_labels = false
+  point_viewable_all = true
+  point_viewable_labels = true
+  //polygon_viewable_labels = false
+  trails_color = green
 
 
   // Appcast configuration
-  appcast_height       = 75
+  appcast_height       = 60
   appcast_width        = 30
   appcast_viewable     = true
   appcast_color_scheme = indigo

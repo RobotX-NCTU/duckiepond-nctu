@@ -80,3 +80,49 @@ Do the following everytime as you open new terminals
 $ cd ~/duckiepond_nctu/
 $ source environment.sh
 ```
+
+## How to Run
+[change the ip, -b, and veh name to monica's when running monica]
+192.168.2.102 --> 192.168.2.112
+192.168.2.101 --> 192.168.2.111
+BRIAN --> MONICA
+### Repeat this when opening a new terminal (RPI)
+```
+$ ssh robotx@192.168.2.102
+$ source ~/duckiepond-nctu/docker_run.sh rpi
+$ source ~/duckeipond-nctu/set_all.sh -b -rpi
+```
+### Repeat this when opening a new terminal (TX2)
+```
+$ ssh robotx@192.168.2.101
+$ source ~/duckiepond-nctu/docker_run.sh tx2
+$ source ~/duckeipond-nctu/set_all.sh -b -tx2
+```
+### Run Joystick
+```
+(LAPTOP)
+$ roscre
+(LAPTOP)
+$ roslaunch duckiepond joy_node.launch veh:=BRIAN
+(RPI)
+$ roslaunch duckiepond joystick.launch veh:=BRIAN
+```
+### Run Sensor
+```
+(LAPTOP)
+$ roscre
+(RPI)
+$ roslaunch duckiepond sensor.launch veh:=BRIAN
+```
+### Run MOOS (Single_waypt)
+Please open joystick and sensor before running moos
+```
+(TX2)
+$ roslaunch duckiepond moos.launch sim:=false veh:=BRIAN moos_folder:=single_waypt
+(TX2)
+$ cd ~/duckiepond-nctu/moos/missions/single_waypt
+$ ./launch_vehicle.sh -b
+(LAPTOP)
+$ cd ~/duckiepond-nctu/moos/missions/single_waypt
+$ ./launch_shoreside.sh
+```

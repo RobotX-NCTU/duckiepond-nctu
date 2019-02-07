@@ -6,7 +6,7 @@ Last update: 2019/01/06
 moos waypoint bhv 
 '''
 import rospy
-from duckiepond_vehicle.msg import UsvDrive
+#from duckiepond_vehicle.msg import UsvDrive
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Float64, String
 import tf
@@ -58,6 +58,7 @@ class MOOSWaypt(object):
 
         # To ros
         if self.sim:
+            from duckiepond_vehicle.msg import UsvDrive
             self.pub_motion = rospy.Publisher("~cmd_drive", UsvDrive, queue_size=1)
         else:
             self.pub_motion = rospy.Publisher("~cmd_drive", MotorCmd, queue_size=1)
@@ -79,6 +80,7 @@ class MOOSWaypt(object):
 
     def send_motor_cmd(self, event):
         if self.sim:
+            from duckiepond_vehicle.msg import UsvDrive
             motor_msg = UsvDrive()
         else:
             motor_msg = MotorCmd()

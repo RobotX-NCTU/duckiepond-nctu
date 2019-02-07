@@ -8,7 +8,7 @@
 #define LEFT_SIGN 4
 ros::NodeHandle nh;
 
-void cbMotor(duckiepond::MotorCmd& msg){
+void cbMotor(const duckiepond::MotorCmd& msg){
     int rightSp = int(abs(msg.right*255));
     int leftSp = int(abs(msg.left*255));
     analogWrite(RIGHT_MOTOR,rightSp);

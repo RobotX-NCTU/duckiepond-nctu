@@ -24,7 +24,9 @@ class JoyMapper(object):
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-            self.pub_motor_cmd.publish(cmd_msg)
+	    self.motor_msg.right = max(min(cmd_msg.left*-1,1),-1)
+	    self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
+            self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbJoy(self, joy_msg):
         self.joy = joy_msg
@@ -35,9 +37,12 @@ class JoyMapper(object):
         mcd_msg = MotorCmd()
         speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
         difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-        mcd_msg.left = max(min(speed - difference , 1),-1)
-        mcd_msg.right = max(min(speed + difference , 1),-1)
-        
+        mcd_msg.right = max(min(speed - difference , 1),-1)
+        mcd_msg.left = max(min(speed + difference , 1),-1)
+        #right = mcd_msg.right
+	#mcd_msg.right = mcd_msg.left*-1
+	#mcd_msg.left = right*-1
+	
         if not self.emergencyStop and not self.autoMode:
             self.pub_motor_cmd.publish(mcd_msg)
 

@@ -25,6 +25,7 @@ add_message_files(
   MotorCmd.msg
   Box.msg
   Boxlist.msg
+  BoolStamped.msg
 )
 
 add_service_files(
