@@ -1,0 +1,10 @@
+<launch>
+    <arg name="sim" default="true"/>
+    <arg name="model" default="$(find end_to_end)/models/train-1400"/>
+
+    <node pkg="end_to_end" type="end_to_end_tensorflow.py" name="end_to_end" respawn="false" output="screen">
+    	<param name="sim" value="$(arg sim)"/>
+    	<param name="model" value="$(arg model)"/>
+    </node>
+
+</launch>

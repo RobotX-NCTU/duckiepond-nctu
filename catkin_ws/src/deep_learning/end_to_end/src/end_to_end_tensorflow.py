@@ -12,6 +12,7 @@ import rospy
 from sensor_msgs.msg import CompressedImage
 from duckiepond.msg import MotorCmd
 from cv_bridge import CvBridge
+import time
 
 class EndToEndTensorflow(object):
     def __init__(self):
@@ -34,8 +35,8 @@ class EndToEndTensorflow(object):
         self.sess = tf.Session()
         self.saver = tf.train.import_meta_graph(self.model_path + ".meta")
         self.saver.restore(self.sess, self.model_path)
-        self.image_tensor = sess.graph.get_tensor_by_name('x:0')
-        self.output_tensor = sess.graph.get_tensor_by_name('ConvNet/fc_layer_2/BiasAdd:0')
+        self.image_tensor = self.sess.graph.get_tensor_by_name('x:0')
+        self.output_tensor = self.sess.graph.get_tensor_by_name('ConvNet/fc_layer_2/BiasAdd:0')
 
 
         # Timer
@@ -79,11 +80,10 @@ class EndToEndTensorflow(object):
         pred = self.sess.run(self.output_tensor, {self.image_tensor: img_process})
         self.motor_cmd = pred
 
-        print("Prediciont Time = ", time.clock()-t_start)
+        #print("Prediciont Time = ", time.clock()-t_start)
 
     def send_motor_cmd(self, event):
         if self.motor_cmd is not None:
-
             motor_msg = None
             if self.sim:
                 from duckiepond_vehicle.msg import UsvDrive
@@ -91,14 +91,14 @@ class EndToEndTensorflow(object):
             else:
                 motor_msg = MotorCmd()
 
-            motor_msg.left = self.motor_cmd[0]
-            motor_msg.right = self.motor_cmd[1]
+            motor_msg.left = self.motor_cmd[0][0]
+            motor_msg.right = self.motor_cmd[0][1]
             motor_msg.header.stamp = rospy.Time.now()
             self.pub_motion.publish(motor_msg)
 
             print("Motor cmd = ", motor_msg.left, motor_msg.right)
 
-    def on_shutdown(self)
+    def on_shutdown(self):
         rospy.loginfo("[%s] Shutdown." %(self.node_name))
 
 if __name__ == '__main__':

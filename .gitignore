@@ -25,3 +25,5 @@ duckiepond_*.bhv
 catkin_ws/src/mobile_net_ssd/graphs
 *.pb
 *.meta
+*.index
+train-*
