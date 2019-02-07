@@ -23,6 +23,8 @@ add_message_files(
   FILES
   Heading.msg
   MotorCmd.msg
+  Box.msg
+  Boxlist.msg
 )
 
 add_service_files(
