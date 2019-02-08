@@ -36,8 +36,8 @@ class JoyMapper(object):
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-	        self.motor_msg.right = max(min(cmd_msg.left*-1,1),-1)
-	        self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
+            self.motor_msg.right = max(min(cmd_msg.left*-1,1),-1)
+            self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
 
     def cbJoy(self, joy_msg):
         if not self.emergencyStop and not self.autoMode:
