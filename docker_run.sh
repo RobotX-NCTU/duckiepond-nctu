@@ -11,22 +11,22 @@ for ARGI; do
     elif [ "${ARGI}" = "-b_pi" ] ; then
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
 		 -v /var/run/docker.sock:/var/run/docker.sock -v /home/$USER/duckiepond-nctu:/root/duckiepond-nctu  \
-		 --hostname brian_pi3 juite/duckiepond:pi3
+		 juite/duckiepond:pi3
 
     elif [ "${ARGI}" = "-m_pi" ] ; then 
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
 		 -v /var/run/docker.sock:/var/run/docker.sock -v /home/$USER/duckiepond-nctu:/root/duckiepond-nctu  \
-		 --hostname monica_pi3 juite/duckiepond:pi3
+		 juite/duckiepond:pi3
 
     elif [ "${ARGI}" = "-b_tx" ] ; then 
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
 		 -v /var/run/docker.sock:/var/run/docker.sock -v /home/$USER/duckiepond-nctu:/root/duckiepond-nctu  \
-		 --hostname brian_tx2 juite/duckiepond:tx2
+		 juite/duckiepond:tx2
 
 	elif [ "${ARGI}" = "-m_tx" ] ; then 
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
 		 -v /var/run/docker.sock:/var/run/docker.sock -v /home/$USER/duckiepond-nctu:/root/duckiepond-nctu  \
-		 --hostname monica_tx2 juite/duckiepond:tx2
+		 juite/duckiepond:tx2
 
     elif [ "${ARGI}" = "-pc" ] ; then 
 		docker run --rm -it --net=host --privileged -v /dev:/dev -v /etc/localtime:/etc/localtime:ro \
