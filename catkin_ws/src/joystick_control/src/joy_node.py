@@ -21,30 +21,35 @@ class JoyMapper(object):
         self.emergencyStop = False
         self.autoMode = False
         self.motor_msg = MotorCmd()
+        self.motor_msg.right = 0
+        self.motor_msg.left = 0
+
+        #timer
+        self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
+
+    def cb_publish(self,event):
+        if self.emergencyStop:
+            self.motor_msg.right = 0
+            self.motor_msg.left = 0
+        
+        self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-	    self.motor_msg.right = max(min(cmd_msg.left*-1,1),-1)
-	    self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
-            self.pub_motor_cmd.publish(self.motor_msg)
+            self.motor_msg.right = max(min(cmd_msg.left*-1,1),-1)
+            self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
 
     def cbJoy(self, joy_msg):
-        self.joy = joy_msg
-        self.processButtons(joy_msg)
-        boat_heading_msg = Heading()
-        boat_heading_msg.speed = math.sqrt((math.pow(self.joy.axes[1],2)+math.pow(self.joy.axes[3],2))/2)
-        boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
-        mcd_msg = MotorCmd()
-        speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
-        difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-        mcd_msg.right = max(min(speed - difference , 1),-1)
-        mcd_msg.left = max(min(speed + difference , 1),-1)
-        #right = mcd_msg.right
-	#mcd_msg.right = mcd_msg.left*-1
-	#mcd_msg.left = right*-1
-	
         if not self.emergencyStop and not self.autoMode:
-            self.pub_motor_cmd.publish(mcd_msg)
+            self.joy = joy_msg
+            self.processButtons(joy_msg)
+            boat_heading_msg = Heading()
+            boat_heading_msg.speed = math.sqrt((math.pow(self.joy.axes[1],2)+math.pow(self.joy.axes[3],2))/2)
+            boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
+            speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
+            difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
+            self.motor_msg.right = max(min(speed - difference , 1),-1)
+            self.motor_msg.left = max(min(speed + difference , 1),-1)
 
     def processButtons(self, joy_msg):
         # Button A
@@ -80,6 +85,8 @@ class JoyMapper(object):
             self.emergencyStop = not self.emergencyStop
             if self.emergencyStop:
                 rospy.loginfo('emergency stop activate')
+                self.motor_msg.right = 0
+                self.motor_msg.left = 0
             else:
                 rospy.loginfo('emergency stop release')
         # Left joystick button
@@ -91,8 +98,14 @@ class JoyMapper(object):
             if some_active:
                 rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
 
+    def on_shutdown(self):
+        self.motor_msg.right = 0
+        self.motor_msg.left = 0
+        self.pub_motor_cmd.publish(self.motor_msg)
+        rospy.loginfo("shutting down [%s]" %(self.node_name))
 
 if __name__ == "__main__":
     rospy.init_node("joy_mapper",anonymous=False)
     joy_mapper = JoyMapper()
+    rospy.on_shutdown(joy_mapper.on_shutdown)
     rospy.spin()

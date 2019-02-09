@@ -60,7 +60,7 @@ class ObjectDetecter(object):
 		
 		self.node_name = rospy.get_name()
 		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
-		self.pubimage = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
+		#self.pubImg = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
 		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		self.bridge = CvBridge()
@@ -77,6 +77,9 @@ class ObjectDetecter(object):
 				image_for_result = cv2.resize(image, self.DISPLAY_DIMS)
 			#prepare prediction list
 			box_list = Boxlist()
+			box_list.image_height = self.output_height
+			box_list.image_width = self.output_width
+			box_list.image.header = img.header
 			# use the NCS to acquire predictions
 			predictions = self.predict(image)
 
@@ -103,8 +106,6 @@ class ObjectDetecter(object):
 					box.w = ptB[0] - ptA[0]
 					box.h = ptB[1] - ptA[1]
 					box.confidence = pred_conf
-					box.image_width = self.output_width
-					box.image_height = self.output_height
 					box_list.list.append(box)
 
 					if self.publish_image:
@@ -122,7 +123,8 @@ class ObjectDetecter(object):
 							cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
 				
 			if self.publish_image:
-				self.pubimage.publish(self.bridge.cv2_to_compressed_imgmsg(image_for_result))
+				box_list.image = self.bridge.cv2_to_compressed_imgmsg(image_for_result)
+				#self.pubImg.publish(box_list.image)
 			self.pubBoxlist.publish(box_list)
 
 	def preprocess_image(self,input_image):
