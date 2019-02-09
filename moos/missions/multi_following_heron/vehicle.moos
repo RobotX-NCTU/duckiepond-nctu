@@ -1,0 +1,227 @@
+ServerHost = $(VEH_IP)
+ServerPort = $(VEH_PORT)
+
+// Community name IS the vehicle name
+Community  = $(VNAME)
+MOOSTimeWarp = 1
+
+// Bamboo Lake NCTU
+LatOrigin  = 24.788808
+LongOrigin = 121.000188
+
+//------------------------------------------------------------
+Processconfig = ANTLER
+{
+  MSBetweenLaunches = 100
+
+  Run = MOOSDB           @ NewConsole = false
+  Run = uProcessWatch    @ NewConsole = false
+  Run = pShare           @ NewConsole = false
+  //Run = pLogger          @ NewConsole = false
+  Run = pNodeReporter    @ NewConsole = false
+  Run = pMarinePID       @ NewConsole = false
+
+  Run = pHelmIvP         @ NewConsole = false
+  Run = pHostInfo        @ NewConsole = false  
+  Run = pBasicContactMgr @ NewConsole = false
+  Run = uFldMessageHandler @ NewConsole = false
+  Run = uFldNodeBroker @ NewConsole = false
+
+  #ifdef SIM
+    Run = uSimMarine       @ NewConsole = false
+  #endif
+
+  //Run = uTimerScript @ NewConsole
+}
+
+ProcessConfig = uTimerScript
+{
+  event       = var=VEH_CONTACT, val= $(VEH_CONTACT), time=1
+}
+
+
+//--------------------------------------------------------
+ProcessConfig = uFldNodeBroker
+{
+  AppTick   = 1
+  CommsTick = 1
+
+  //BRIDGE = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
+  //BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
+}
+
+//--------------------------------------------------------
+ProcessConfig = uFldMessageHandler
+{
+  AppTick   = 3
+  CommsTick = 3
+
+  STRICT_ADDRESSING = false
+}
+
+//--------------------------------------------------------
+// pBasicContactMgr Configuration Block (Created from Plugin)
+
+ProcessConfig = pBasicContactMgr
+{
+  AppTick   = 2
+  CommsTick = 2
+
+  decay = 30,60
+
+  alert_verbose = false
+
+  contact_max_age = 3600
+  display_radii   = false
+
+  default_alert_range = 50
+  default_cpa_range   = 40
+  default_alert_range_color = gray70
+  default_cpa_range_color   = gray30
+
+  alert = id=avd, var=CONTACT_INFO, val="name=$[VNAME] # contact=$[VNAME]"
+  alert = id=avd, alert_range=40, cpa_range=45, alert_range_color=green
+ // alert = id=avd, cpa_range_color=invisible
+}
+
+//---------------------------------------------------------
+// pShare Config Block  (Created from Plugin)
+
+ProcessConfig = pShare
+{
+  AppTick    = 2
+  CommsTick  = 2
+
+  input  = route = $(VEH_IP):$(VEH_PORT)
+
+  //output = src_name = NODE_REPORT , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE , route = $(SHORE_IP):$(SHORE_PORT)
+
+  output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
+  output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
+
+}
+
+//------------------------------------------------------
+// uSimMarine Configuration Block  (Created from plugin)
+
+ProcessConfig = uSimMarine
+{
+  AppTick   = 4
+  CommsTick = 4
+
+  START_POS = $(START_POS), 90, 0
+
+  prefix        = NAV
+
+  turn_rate     = 40
+  thrust_map    = 0:0, 20:1, 40:2, 60:3, 80:4, 100:5
+  thrust_reflect = true
+}
+
+
+ProcessConfig = pHostInfo
+{
+  AppTick 	= 1
+  CommsTick 	= 1
+
+  DEFAULT_HOSTIP = localhost
+}
+
+ProcessConfig = pHelmIvP
+{
+  AppTick    = 4
+  CommsTick  = 4
+
+  
+
+  Behaviors    = duckiepond_$(VNAME).bhv  
+  Verbose      = false
+  Domain       = course:0:359:360
+  Domain       = speed:0:5:26
+  ok_skew      = ANY
+}
+
+//-----------------------------------------------------
+// pMarinePID Configuration Block (created from plugin)
+
+ProcessConfig = pMarinePID
+{
+  AppTick    = 10
+  CommsTick  = 10
+  
+  VERBOSE       = true
+  DEPTH_CONTROL = false
+  ACTIVE_START  = true
+  
+  // Yaw PID controller
+  YAW_PID_KP             = 0.4
+  YAW_PID_KD             = 0.1
+  YAW_PID_KI             = 0.0
+  YAW_PID_INTEGRAL_LIMIT = 0.07
+  
+  // Speed PID controller
+  SPEED_PID_KP           = 1.0
+  SPEED_PID_KD           = 0.0
+  SPEED_PID_KI           = 0.0
+  SPEED_PID_INTEGRAL_LIMIT = 0.07
+  
+  // Maximums
+  MAXRUDDER  = 100
+  MAXTHRUST  = 100
+  
+  // A non-zero SPEED_FACTOR overrides use of SPEED_PID
+  // Will set DESIRED_THRUST = DESIRED_SPEED * SPEED_FACTOR
+  SPEED_FACTOR = 6
+}
+
+//--------------------------------------------------
+// pLogger Configuration Block (Created from Plugin)
+
+ProcessConfig = pLogger
+{
+  AppTick 	= 5
+  CommsTick 	= 5
+  
+  File		= LOG_%(VNAME)
+  PATH		= ./
+  AsyncLog 	= true
+  FileTimeStamp = true
+
+  // Log it all!!!!!
+  LogAuxSrc = true
+  WildCardLogging = true 
+}
+
+ProcessConfig = pNodeReporter
+{
+  AppTick     = 2
+  CommsTick   = 2
+  
+  VESSEL_TYPE = KAYAK
+}
+
+ProcessConfig = uProcessWatch
+{
+  AppTick   = 1
+  CommsTick = 1
+
+  ALLOW_RETRACTIONS = true
+  
+  WATCH_ALL = true      // default is true
+
+  //WATCH  = uSimMarine
+  WATCH  = pShare
+  WATCH  = pNodeReporter
+  WATCH  = pMarinePID
+  WATCH  = pHelmIvP
+
+  NOWATCH = uXMS*
+  NOWATCH = uPokeDB*
+
+  SUMMARY_WAIT = 12
+}
