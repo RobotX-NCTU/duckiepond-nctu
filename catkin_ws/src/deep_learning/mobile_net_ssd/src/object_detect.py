@@ -20,7 +20,7 @@ class ObjectDetecter(object):
 	def __init__(self):
 		#parameter
 		self.publish_image = rospy.get_param("detecter/publish_image",False)
-		self.dest_rate = rospy.get_param("detecter/dest_rate",5)
+		self.dest_rate = rospy.get_param("detecter/dest_rate",30)
 		self.input_rate = rospy.get_param("detecter/input_rate",30)
 		self.output_width = rospy.get_param("detecter/output_width",640)
 		self.output_height = rospy.get_param("detecter/output_height",480)
@@ -60,7 +60,7 @@ class ObjectDetecter(object):
 		
 		self.node_name = rospy.get_name()
 		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
-		#self.pubImg = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
+		self.pubImg = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
 		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		self.bridge = CvBridge()
@@ -79,7 +79,7 @@ class ObjectDetecter(object):
 			box_list = Boxlist()
 			box_list.image_height = self.output_height
 			box_list.image_width = self.output_width
-			box_list.image.header = img.header
+			box_list.image = img
 			# use the NCS to acquire predictions
 			predictions = self.predict(image)
 
@@ -123,8 +123,7 @@ class ObjectDetecter(object):
 							cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
 				
 			if self.publish_image:
-				box_list.image = self.bridge.cv2_to_compressed_imgmsg(image_for_result)
-				#self.pubImg.publish(box_list.image)
+				self.pubImg.publish(self.bridge.cv2_to_compressed_imgmsg(image_for_result))
 			self.pubBoxlist.publish(box_list)
 
 	def preprocess_image(self,input_image):
