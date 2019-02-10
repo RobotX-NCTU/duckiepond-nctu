@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
+#include "std_msgs/Header.h"
 
 namespace duckiepond
 {
@@ -12,12 +13,15 @@ namespace duckiepond
   class MotorCmd : public ros::Msg
   {
     public:
+      typedef std_msgs::Header _header_type;
+      _header_type header;
       typedef float _left_type;
       _left_type left;
       typedef float _right_type;
       _right_type right;
 
     MotorCmd():
+      header(),
       left(0),
       right(0)
     {
@@ -26,6 +30,7 @@ namespace duckiepond
     virtual int serialize(unsigned char *outbuffer) const
     {
       int offset = 0;
+      offset += this->header.serialize(outbuffer + offset);
       union {
         float real;
         uint32_t base;
@@ -52,6 +57,7 @@ namespace duckiepond
     virtual int deserialize(unsigned char *inbuffer)
     {
       int offset = 0;
+      offset += this->header.deserialize(inbuffer + offset);
       union {
         float real;
         uint32_t base;

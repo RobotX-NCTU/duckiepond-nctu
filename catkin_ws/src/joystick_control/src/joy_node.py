@@ -40,9 +40,9 @@ class JoyMapper(object):
             self.motor_msg.left = max(min(cmd_msg.right*-1,1),-1)
 
     def cbJoy(self, joy_msg):
+        self.processButtons(joy_msg)
         if not self.emergencyStop and not self.autoMode:
             self.joy = joy_msg
-            self.processButtons(joy_msg)
             boat_heading_msg = Heading()
             boat_heading_msg.speed = math.sqrt((math.pow(self.joy.axes[1],2)+math.pow(self.joy.axes[3],2))/2)
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
