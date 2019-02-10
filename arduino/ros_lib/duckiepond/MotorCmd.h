@@ -84,7 +84,7 @@ namespace duckiepond
     }
 
     const char * getType(){ return "duckiepond/MotorCmd"; };
-    const char * getMD5(){ return "3a927990ab5d5c3d628e2d52b8533e52"; };
+    const char * getMD5(){ return "b7824dbc6876539e023bc92130e483cb"; };
 
   };
 
