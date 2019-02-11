@@ -3,7 +3,7 @@
 #  Part 1: Check for and handle command-line arguments
 #-------------------------------------------------------
 
-MASTER_PC_IP='192.168.2.103'
+MASTER_PC_IP='192.168.2.105'
 MONICA_RPI_IP='192.168.2.112'
 MONICA_TX2_IP='192.168.2.111'
 BRIAN_RPI_IP='192.168.2.102'
