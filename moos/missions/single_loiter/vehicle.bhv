@@ -3,14 +3,13 @@
 initialize   DEPLOY = false
 initialize   RETURN = false
 
-//----------------------------------------------
 Behavior = BHV_Loiter
-{ 
+{
   name      = loiter_survey_
   pwt       = 100
 
-  condition = RETURN = false
-  condition = DEPLOY = true
+  condition  = RETURN = false
+  condition  = DEPLOY = true
 
   updates    = LIT_UPDATE
   perpetual  = true
@@ -21,10 +20,12 @@ Behavior = BHV_Loiter
         radius = 8.0
      nm_radius = 15.0
        //polygon = radial::$(LOITER_POS), radius=10, pts=4, snap=1, label=$(VNAME)_LOITER
+
   visual_hints = nextpt_color=white, nextpt_lcolor=khaki
   visual_hints = edge_color=orange, vertex_color=white
   visual_hints = edge_size=1, vertex_size=2
 }
+
 
 //----------------------------------------------
 Behavior=BHV_Waypoint

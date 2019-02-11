@@ -27,3 +27,6 @@ duckiepond_*.bhv
 *.index
 train-*
 catkin_ws/src/deep_learning/mobile_net_ssd/graphs
+*.gv
+*.svg
+

@@ -1,12 +1,12 @@
 <launch>
     <arg name="sim" default="true"/>
-    <arg name="model" default="train-1400"/>
+    <arg name="model" default="graph"/>
     <arg name="veh" default="MONICA"/>
 
     <group ns="$(arg veh)">
         <remap from="end_to_end/compressed_image" to="camera/rgb/image_rect_color/compressed"/>
         <remap from="end_to_end/cmd_drive" to="cmd_drive"/>
-        <include file="$(find end_to_end)/launch/end_to_end_tensorflow.launch">
+        <include file="$(find end_to_end)/launch/end_to_end_ncs.launch">
             <arg name="sim" value="$(arg sim)"/>
             <arg name="model" value="$(arg model)"/>
         </include>

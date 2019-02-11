@@ -14,7 +14,7 @@ class JoyMapper(object):
         self.pub_boat_heading = rospy.Publisher("boat_heading", Heading, queue_size=1)
 
         # Subscriptions
-        self.sub_joy_ = rospy.Subscriber("~/joy", Joy, self.cbJoy, queue_size=1)
+        self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
     def cbJoy(self, joy_msg):
         self.joy = joy_msg

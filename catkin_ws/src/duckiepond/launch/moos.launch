@@ -1,7 +1,7 @@
 <launch>
 
     <arg name="sim" default="false"/>
-    <arg name="factor" default="gazebo"/>
+    <arg name="factor" default="bamboo"/>
     <arg name="moos_folder" default="single_waypt"/>
     <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
     <arg name="veh" default="BRIAN"/> 
