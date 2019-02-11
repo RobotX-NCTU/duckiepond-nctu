@@ -16,16 +16,9 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-from duckiepond_vehicle.msg import UsvDrive
-from duckiepond.msg import Boxlist
+from duckiepond.msg import Boxlist,MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
 from PID import PID_control
-import torch
-import torch.nn as nn
-import torch.backends.cudnn as cudnn
-from torch.autograd import Variable
-from ssd import build_ssd
-from matplotlib import pyplot as plt
 
 class Tracking():
 	def __init__(self):
@@ -34,16 +27,13 @@ class Tracking():
 		self.ROBOT_NUM = 3
 		self.wavm_labels = ["wamv",""]
 		#rospy.Subscriber('/pcl_points_img', PoseArray, self.call_back, queue_size = 1, buff_size = 2**24)
-		self.net = build_ssd('test', 300, 3)    # initialize SSD
-		self.net.load_weights('/home/arg_ws3/argbot/catkin_ws/src/tracking/src/ssd300_wamv_5000.pth')
-		if torch.cuda.is_available():
-			self.net = self.net.cuda()
+		
 
 		# Image definition
-		self.width = 1280
-		self.height = 960
+		self.width = 640
+		self.height = 480
 		self.h_w = 10.
-		self.const_SA = 0.17
+		self.const_SA = 0.7
 		self.bridge = CvBridge()
 		self.predict_prob = 0.5
 
@@ -59,9 +49,14 @@ class Tracking():
 		self.goal = self.final_goal
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
+		self.sim = rospy.get_param("Tracking/sim",False)
 		#self.image_sub = rospy.Subscriber("/BRIAN/camera_node/image/compressed", Image, self.img_cb, queue_size=1)
-		self.image_sub = rospy.Subscriber("/detecter/predictions", Boxlist, self.box_cb, queue_size=1, buff_size = 2**24)
-		self.pub_cmd = rospy.Publisher("/MONICA/cmd_drive", UsvDrive, queue_size = 1)
+		self.image_sub = rospy.Subscriber("detecter/predictions", Boxlist, self.box_cb, queue_size=1, buff_size = 2**24)
+		if self.sim:
+			from duckiepond_vehicle.msg import UsvDrive
+			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
+		else:
+			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		self.pub_goal = rospy.Publisher("/goal_point", Marker, queue_size = 1)
 		self.image_pub = rospy.Publisher("/predict_img", Image, queue_size = 1)
 		self.station_keeping_srv = rospy.Service("/station_keeping", SetBool, self.station_keeping_cb)
@@ -88,9 +83,9 @@ class Tracking():
 			#cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 		except CvBridgeError as e:
 			print(e)
-		#(rows, cols, channels) = cv_image.shape
+		(rows, cols, channels) = cv_image.shape
 		boxes = msg.list
-		predict = get_control_info(boxes, cv_image)
+		predict = self.get_control_info(boxes, cv_image)
 		if predict is None:
 			return
 		angle, dis = predict[0], predict[1]
@@ -104,8 +99,8 @@ class Tracking():
 		else:
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 		cmd_msg = UsvDrive()
-		cmd_msg.left = self.cmd_constarin(pos_output + ang_output)
-		cmd_msg.right = self.cmd_constarin(pos_output - ang_output)
+		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		#self.publish_goal(self.goal)
 
@@ -116,10 +111,12 @@ class Tracking():
 		for box in boxes:
 			if box.confidence > confidence:
 				bbox = box
+		if bbox is None:
+			return
 		angle, dis, center = self.BBx2AngDis(bbox)
 		cv2.circle(img, (int(center[0]), int(center[1])), 10, (0,0,255), -1)
-		cv2.rectangle(img, (int(coords[0][0]), int(coords[0][1])),\
-							(int(coords[0][0] + coords[1]), int(coords[0][1] + coords[2])),(0,0,255),5)
+		cv2.rectangle(img, (int(bbox.x), int(bbox.y)),\
+							(int(bbox.x + bbox.w), int(bbox.y + bbox.h)),(0,0,255),5)
 		try:
 			img = self.draw_cmd(img, dis, angle)
 			self.image_pub.publish(self.bridge.cv2_to_imgmsg(img, "bgr8"))
@@ -143,7 +140,7 @@ class Tracking():
 		y_max = radius*math.sin(rad)
 		center = (int(self.width/2.), int(self.height))
 		draw_img = img.copy()
-		cv2.circle(draw_img, center, radius, (255, 255, 255), 10)
+		cv2.circle(draw_img, (center), radius, (255, 255, 255), 10)
 		cv2.addWeighted(draw_img, alpha, img, 1 - alpha, 0, img)
 		#cv2.circle(img, (int(center[0]+x_max), int(center[1]+y_max)), 15, (255, 255, 255), -1)
 		cv2.arrowedLine(img, center, (int(center[0]+x), int(center[1]+y)), (255, 255, 255), 7)
@@ -156,7 +153,7 @@ class Tracking():
 		h = bbox.h
 		center = (x + w/2., y + h/2.)
 		angle = (center[0]-self.width/2.)/(self.width/2.)
-		dis = (self.height - h)/(self.height)
+		dis = float((self.height - h))/(self.height)
 		return angle, dis, center
 
 	def control(self, goal_distance, goal_angle):
@@ -164,10 +161,10 @@ class Tracking():
 		self.ang_control.update(goal_angle)
 
 		# pos_output will always be positive
-		pos_output = self.pos_constrain(self.pos_control.output)
+		pos_output = -self.pos_constrain(self.pos_control.output)
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
-		ang_output = self.ang_control.output/(self.width/2.)
+		ang_output = self.ang_control.output
 		return pos_output, ang_output
 
 	def station_keeping(self, goal_distance, goal_angle):

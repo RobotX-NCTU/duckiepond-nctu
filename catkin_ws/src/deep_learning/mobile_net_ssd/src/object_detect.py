@@ -22,16 +22,12 @@ class ObjectDetecter(object):
 		self.publish_image = rospy.get_param("detecter/publish_image",False)
 		self.dest_rate = rospy.get_param("detecter/dest_rate",30)
 		self.input_rate = rospy.get_param("detecter/input_rate",30)
-		self.output_width = rospy.get_param("detecter/output_width",640)
-		self.output_height = rospy.get_param("detecter/output_height",480)
 		self.threshold = rospy.get_param("detecter/threshold",0.2)
+		self.sim = rospy.get_param("detecter/sim",False)
 		
 		self.PREPROCESS_DIMS = (300,300)
-		self.DISPLAY_DIMS = (self.output_width,self.output_height)
 
-		# calculate the multiplier needed to scale the bounding boxes
-		self.DISP_MULTIPLIER = [(self.DISPLAY_DIMS[0]/(float)(self.PREPROCESS_DIMS[0])) ,(self.DISPLAY_DIMS[1]/(float)(self.PREPROCESS_DIMS[1]))]
-
+		
 		# grab a list of all NCS devices plugged in to USB
 		rospy.loginfo("finding NCS devices...")
 		self.devices = mvnc.enumerate_devices()
@@ -59,7 +55,10 @@ class ObjectDetecter(object):
 		self.ssd_fifo_in , self.ssd_fifo_out = self.graph.allocate_with_fifos(self.device,graph_in_memory)
 		
 		self.node_name = rospy.get_name()
-		self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1)
+		if self.sim:
+			self.subscriber = rospy.Subscriber("camera/rgb/image_rect_color/compressed",CompressedImage,self.cbimage,queue_size=1,buff_size=2**24)
+		else :
+			self.subscriber = rospy.Subscriber("camera_node/image/compressed",CompressedImage,self.cbimage,queue_size=1,buff_size=2**24)
 		self.pubImg = rospy.Publisher("detecter/image/compressed",CompressedImage,queue_size=1)
 		self.pubBoxlist = rospy.Publisher("detecter/predictions",Boxlist,queue_size=1)
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
@@ -73,12 +72,17 @@ class ObjectDetecter(object):
 			# grab the frame from the threaded video stream
 			# make a copy of the frame and resize it for display/video purposes
 			image = self.bridge.compressed_imgmsg_to_cv2(img)
-			if self.publish_image:
-				image_for_result = cv2.resize(image, self.DISPLAY_DIMS)
+			
 			#prepare prediction list
 			box_list = Boxlist()
-			box_list.image_height = self.output_height
-			box_list.image_width = self.output_width
+			(box_list.image_height,box_list.image_width, _) = image.shape
+			display_dims = (box_list.image_width ,box_list.image_height)
+			# calculate the multiplier needed to scale the bounding boxes
+			DISP_MULTIPLIER = [(display_dims[0]/(float)(self.PREPROCESS_DIMS[0])) ,(display_dims[1]/(float)(self.PREPROCESS_DIMS[1]))]
+			
+			if self.publish_image:
+				image_for_result = cv2.resize(image, display_dims)
+			
 			box_list.image = img
 			# use the NCS to acquire predictions
 			predictions = self.predict(image)
@@ -98,8 +102,8 @@ class ObjectDetecter(object):
 					
 					# extract information from the prediction boxpoints
 					(ptA, ptB) = (pred_boxpts[0], pred_boxpts[1])
-					ptA = ((int)(ptA[0] * self.DISP_MULTIPLIER[0]), (int)(ptA[1] * self.DISP_MULTIPLIER[1]))
-					ptB = ((int)(ptB[0] * self.DISP_MULTIPLIER[0]), (int)(ptB[1] * self.DISP_MULTIPLIER[1]))
+					ptA = ((int)(ptA[0] * DISP_MULTIPLIER[0]), (int)(ptA[1] * DISP_MULTIPLIER[1]))
+					ptB = ((int)(ptB[0] * DISP_MULTIPLIER[0]), (int)(ptB[1] * DISP_MULTIPLIER[1]))
 					box = Box()
 					box.x = ptA[0]
 					box.y = ptA[1]
