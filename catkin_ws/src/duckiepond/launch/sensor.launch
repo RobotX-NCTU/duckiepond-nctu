@@ -9,6 +9,8 @@
             <param name="~port" value="$(arg gps_port)" />
             <param name="~baud" value="$(arg gps_baud)" />
         </node>
-        <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" />
+        <include file="$(find razor_imu_9dof)/launch/razor-pub.launch" >
+            <arg name="razor_config_file" value="$(find razor_imu_9dof)/config/$(arg veh).yaml"/>
+        </include>
     </group>
 </launch>
