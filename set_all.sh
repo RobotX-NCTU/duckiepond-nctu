@@ -46,7 +46,6 @@ for ARGI; do
         DEVICE='PC'
     else 
         printf "Bad Argument: %s \n" $ARGI
-        exit 0
     fi
 done
 
@@ -71,7 +70,6 @@ elif [ $IP = 'LAY_TX2_IP' ] ; then
     VNAME_DEVICE_IP=$LAY_TX2_IP
 else 
     printf "Bad VNAME_DEVICE_IP: %s \n" $ARGI
-    exit 0
 fi
 
 #-------------------------------------------------------
