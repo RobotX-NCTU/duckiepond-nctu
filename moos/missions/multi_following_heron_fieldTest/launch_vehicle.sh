@@ -17,6 +17,7 @@ VEH_NAME3="ALENANDER"
 VEH_IP3="192.168.1.13"
 VEH_PORT3="9003"
 VEH_LISTEN3="9203"
+M200_IP="192.168.2.1"
 
 COMMUNITY="shoreside"
 
@@ -39,7 +40,7 @@ for ARGI; do
     if [ "${ARGI}" = "--help" -o "${ARGI}" = "-h" ] ; then
         HELP="yes"
     elif [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ] ; then
-        SIM=true
+        SIM="true"
         echo "Simulation mode ON"  
 
     elif [ "${ARGI}" = "--brian" -o "${ARGI}" = "-b" ] ; then 
@@ -82,7 +83,7 @@ for ARGI; do
             VEH_IP=$VEH_IP3      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS3 \
             VEH_LISTEN=$VEH_LISTEN3 SIM="true" \
-            SHORE_LISTEN=$SHORE_LISTEN
+            SHORE_LISTEN=$SHORE_LISTEN M200_IP=$M200_IP
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME3.bhv -f VNAME=$VEH_NAME3     \
             START_POS=$START_POS3   
