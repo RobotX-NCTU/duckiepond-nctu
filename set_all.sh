@@ -9,11 +9,10 @@ MONICA_TX2_IP='192.168.2.111'
 BRIAN_RPI_IP='192.168.2.102'
 BRIAN_TX2_IP='192.168.2.101'
 
-SIM=true
 VNAME='BRIAN'
 DEVICE='RPI'
 VNAME_DEVICE_IP=$BRIAN_RPI_IP
-
+CONTINUE="True"
 
 for ARGI; do
     if [ "${ARGI}" = "--help" -o "${ARGI}" = "-h" ] ; then
@@ -37,8 +36,8 @@ for ARGI; do
         VNAME='MASTER'
         DEVICE='PC'
     else 
-        printf "Bad Argument: %s \n" $ARGI
-        exit 0
+        printf "Bad Argument: %s \n" $ARGIs
+        return
     fi
 done
 
@@ -55,7 +54,7 @@ elif [ $IP = 'BRIAN_TX2_IP' ] ; then
     VNAME_DEVICE_IP=$BRIAN_TX2_IP
 else 
     printf "Bad VNAME_DEVICE_IP: %s \n" $ARGI
-    exit 0
+    return
 fi
 
 #-------------------------------------------------------
