@@ -33,7 +33,7 @@ class Tracking():
 		self.width = 640
 		self.height = 480
 		self.h_w = 10.
-		self.const_SA = 0.75
+		self.const_SA = 0.7
 		self.bridge = CvBridge()
 		self.predict_prob = 0.5
 
@@ -88,14 +88,6 @@ class Tracking():
 		predict = self.get_control_info(boxes, cv_image)
 		if predict is None:
 			return
-			if self.sim:
-				cmd_msg = UsvDrive()
-			else:
-				cmd_msg = MotorCmd()
-			cmd_msg.left = 0
-			cmd_msg.right = 0
-			self.pub_cmd.publish(cmd_msg)
-			return
 		angle, dis = predict[0], predict[1]
 		self.tracking_control(angle, dis)
 
@@ -111,6 +103,7 @@ class Tracking():
 			cmd_msg = UsvDrive()
 		else:
 			cmd_msg = MotorCmd()
+		print(cmd_msg.left,cmd_msg.right)
 		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
 		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
 		print(cmd_msg.left,cmd_msg.right)
