@@ -4,12 +4,12 @@ port: /dev/sensor_imu
 
 ##### Calibration ####
 ### accelerometer
-accel_x_min: -258.30
-accel_x_max: 257.57
+accel_x_min: -255.13
+accel_x_max: 259.40
 accel_y_min: -259.16
-accel_y_max: 251.46
-accel_z_min: -271.12
-accel_z_max: 266.72
+accel_y_max: 257.45
+accel_z_min: -296.02
+accel_z_max: 290.28
 
 ### magnetometer
 # standard calibration
@@ -22,8 +22,8 @@ magn_z_max: 600.0
 
 # extended calibration
 calibration_magn_use_extended: true
-magn_ellipsoid_center: [-46.3001, -256.789, -504.924]
-magn_ellipsoid_transform: [[0.964879, 0.0167609, 0.0107535], [0.0167609, 0.951714, 0.0186343], [0.0107535, 0.0186343, 0.982687]]
+magn_ellipsoid_center: [-395.756, -654.700, -1454.55]
+magn_ellipsoid_transform: [[0.865345, -0.141758, -0.132587], [-0.141758, 0.849848, -0.149078], [-0.132587, -0.149078, 0.771140]]
 
 # AHRS to robot calibration
 imu_yaw_calibration: 0.0
