@@ -1,7 +1,9 @@
 <launch>
   <arg name="veh"/>
+  <arg name="sim" default="false"/>
     <include file="$(find mobile_net_ssd)/launch/object_detect.launch">
       <arg name="veh" value="$(arg veh)"/>
+      <arg name="sim" value="$(arg sim)"/>
     </include>
 
     <include file="$(find tracking)/launch/ncs_track.launch">

@@ -33,7 +33,7 @@ class Tracking():
 		self.width = 640
 		self.height = 480
 		self.h_w = 10.
-		self.const_SA = 0.82
+		self.const_SA = 0.75
 		self.bridge = CvBridge()
 		self.predict_prob = 0.5
 
@@ -58,7 +58,7 @@ class Tracking():
 		else:
 			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		self.pub_goal = rospy.Publisher("/goal_point", Marker, queue_size = 1)
-		self.image_pub = rospy.Publisher("/predict_img", Image, queue_size = 1)
+		self.image_pub = rospy.Publisher("/motion_img/compressed", CompressedImage, queue_size = 1)
 		self.station_keeping_srv = rospy.Service("/station_keeping", SetBool, self.station_keeping_cb)
 
 		self.pos_control = PID_control("Position_tracking")
@@ -87,6 +87,7 @@ class Tracking():
 		boxes = msg.list
 		predict = self.get_control_info(boxes, cv_image)
 		if predict is None:
+			return
 			if self.sim:
 				cmd_msg = UsvDrive()
 			else:
@@ -112,6 +113,7 @@ class Tracking():
 			cmd_msg = MotorCmd()
 		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
 		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
+		print(cmd_msg.left,cmd_msg.right)
 		self.pub_cmd.publish(cmd_msg)
 		#self.publish_goal(self.goal)
 
@@ -130,7 +132,7 @@ class Tracking():
 							(int(bbox.x + bbox.w), int(bbox.y + bbox.h)),(0,0,255),5)
 		try:
 			img = self.draw_cmd(img, dis, angle)
-			self.image_pub.publish(self.bridge.cv2_to_imgmsg(img, "bgr8"))
+			self.image_pub.publish(self.bridge.cv2_to_compressed_imgmsg(img))
 		except CvBridgeError as e:
 			print(e)
 		return angle, dis
@@ -168,8 +170,7 @@ class Tracking():
 		return angle, dis, center
 
 	def control(self, goal_distance, goal_angle):
-		print(goal_angle)
-		self.pos_control.update(6*(goal_distance - self.const_SA))
+		self.pos_control.update(5*(goal_distance - self.const_SA))
 		self.ang_control.update(goal_angle)
 
 		# pos_output will always be positive
