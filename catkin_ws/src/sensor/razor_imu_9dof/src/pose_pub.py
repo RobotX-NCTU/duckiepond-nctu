@@ -25,5 +25,5 @@ if __name__ == '__main__':
     #init publisher
     rospy.init_node('imu_info_pub')
     pose_pub = rospy.Publisher("/imu_pose", PoseStamped, queue_size=1)
-    sub_imu = rospy.Subscriber("/imu/data", Imu, imuCB, queue_size=1)
+    sub_imu = rospy.Subscriber("/TONY/imu/data", Imu, imuCB, queue_size=1)
     rospy.spin()
