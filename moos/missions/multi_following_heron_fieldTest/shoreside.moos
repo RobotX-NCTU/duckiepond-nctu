@@ -1,9 +1,9 @@
-/-------------------------------------------------
+-------------------------------------------------
 // NAME: M. Benjamin, MIT CSAIL
 // FILE: shoreside.moos
 //-------------------------------------------------
 
-ServerHost   = $(SHORE_IP)
+ServerHost   = localhost
 ServerPort   = $(SHORE_PORT)
 Community    = shoreside
 MOOSTimeWarp = 1
@@ -28,16 +28,7 @@ ProcessConfig = ANTLER
   Run = uFldShoreBroker   @ NewConsole = false
 }
 
-//--------------------------------------------------
-// uFldShoreBroker Configuration Block
 
-ProcessConfig = uFldShoreBroker
-{
-  AppTick       = 1
-  CommsTick     = 1
-
-  //qbridge  = NODE_REPORT, NODE_MESSAGE
-}
 
 //--------------------------------------------------
 // uFldNodeComms Configuration Block
@@ -55,6 +46,21 @@ ProcessConfig = uFldNodeComms
 	view_node_rpt_pulses = true
 }
 
+//--------------------------------------------------
+// uFldShoreBroker Configuration Block
+
+ProcessConfig = uFldShoreBroker
+{
+  AppTick       = 1
+  CommsTick     = 1
+
+    qbridge = DEPLOY, RETURN, STATION_KEEP, WPT_UPDATE, RETURN_UPDATE
+    qbridge = MOOS_MANUAL_OVERRIDE, CONTACT, APPCAST_REQ
+    
+    bridge = src=NODE_REPORT_$N, alias=NODE_REPORT
+
+  //qbridge  = NODE_REPORT, NODE_MESSAGE
+}
 //------------------------------------------
 // pShare
 ProcessConfig=pShare
@@ -62,48 +68,18 @@ ProcessConfig=pShare
   AppTick    = 2
   CommsTick  = 2
 
-  input = route =  $(SHORE_IP):$(SHORE_PORT)
+  input = route =  $(SHORE_IP):$(SHORE_LISTEN)
+    input = route = multicast_9
 
   //VEH 1 BRIAN
-  output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = STATION_KEEP , dest_name = STATION_KEEP , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)  
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = NODE_REPORT_$(VEH_NAME1) , dest_name = NODE_REPORT , route = $(VEH_IP1):$(VEH_PORT1)
-  output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP1):$(VEH_PORT1)
-
   output = src_name = BRIAN_FOLLOW , dest_name = SHADOW_BRIAN , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = BRIAN_FOLLOW_VEH, dest_name = CONTACT_VEH , route = $(VEH_IP1):$(VEH_PORT1)
 
-
   //VEH 2 MONICA
-  output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = STATION_KEEP , dest_name = STATION_KEEP , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP2):$(VEH_PORT2) 
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = NODE_REPORT_$(VEH_NAME2) , dest_name = NODE_REPORT , route = $(VEH_IP2):$(VEH_PORT2)
-  output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP2):$(VEH_PORT2)
-
   output = src_name = MONICA_FOLLOW , dest_name = SHADOW_MONICA , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = MONICA_FOLLOW_VEH, dest_name = CONTACT_VEH , route = $(VEH_IP2):$(VEH_PORT2)
 
   // VEH 3 
-  output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = STATION_KEEP , dest_name = STATION_KEEP , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP3):$(VEH_PORT3) 
-  output = src_name = RETURN_UPDATE , dest_name = RETURN_UPDATE , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = MOOS_MANUAL_OVERRIDE , dest_name = MOOS_MANUAL_OVERRIDE , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = CONTACT , dest_name = CONTACT , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = NODE_REPORT_$(VEH_NAME2) , dest_name = NODE_REPORT , route = $(VEH_IP3):$(VEH_PORT3)
-  output = src_name = APPCAST_REQ , dest_name = APPCAST_REQ , route = $(VEH_IP3):$(VEH_PORT3)
-
   output = src_name = ALENANDER_FOLLOW , dest_name = SHADOW , route = $(VEH_IP3):$(VEH_PORT3)
   output = src_name = ALENANDER_FOLLOW_VEH, dest_name = CONTACT_VEH , route = $(VEH_IP3):$(VEH_PORT3)
 }
@@ -152,25 +128,25 @@ ProcessConfig = pMarineViewer
   SCOPE = NODE_REPORT_LOCAL
   SCOPE = DEPLOY
 
-  button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # MONICA_FOLLOW=true # BRIAN_FOLLOW=true # ALENANDER_FOLLOW=false
-  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false 
+  button_one = DEPLOY # DEPLOY_ALL=true # STATION_KEEP_ALL=false # MONICA_FOLLOW=true # BRIAN_FOLLOW=true # ALENANDER_FOLLOW=false
+  button_one = MOOS_MANUAL_OVERRIDE_ALL=false # RETURN_ALL=false 
   button_one = BRIAN_FOLLOW_VEH = "$(BRIAN_FOLLOW_VEH)"
   button_one = MONICA_FOLLOW_VEH = "$(MONICA_FOLLOW_VEH)"
   button_one = ALENANDER_FOLLOW_VEH = "$(ALENANDER_FOLLOW_VEH)"
 
-  button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
+  button_two = RETURN # RETURN_ALL=true # STATION_KEEP_ALL=false # DEPLOY_ALL=true # MOOS_MANUAL_OVERRIDE_ALL=false
 
-  button_three = ALLSTOP  # DEPLOY=false # MOOS_MANUAL_OVERRIDE=true
+  button_three = ALLSTOP  # DEPLOY_ALL=false # MOOS_MANUAL_OVERRIDE_ALL=true
 
   left_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=returnpoint
-  left_context[return]  = RETURN_UPDATE = points =$(XPOS),$(YPOS)
+  left_context[return]  = RETURN_UPDATE_ALL = points =$(XPOS),$(YPOS)
 
   right_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=waypoint
-  right_context[return]  = WPT_UPDATE = points =$(XPOS),$(YPOS)
+  right_context[return]  = WPT_UPDATE_ALL = points =$(XPOS),$(YPOS)
 
 
-  action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false
-  action+ = MENU_KEY=deploy # MOOS_MANUAL_OVERRIDE=false
+  action  = MENU_KEY=deploy # DEPLOY_ALL = true # RETURN_ALL = false
+  action+ = MENU_KEY=deploy # MOOS_MANUAL_OVERRIDE_ALL=false
   action  = RETURN=true
   action  = UPDATES_RETURN=speed=1.4
 
