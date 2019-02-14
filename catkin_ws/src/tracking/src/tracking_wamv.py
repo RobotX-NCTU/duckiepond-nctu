@@ -57,9 +57,9 @@ class Tracking():
 			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
 		else:
 			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
-		self.pub_goal = rospy.Publisher("/goal_point", Marker, queue_size = 1)
-		self.image_pub = rospy.Publisher("/motion_img/compressed", CompressedImage, queue_size = 1)
-		self.station_keeping_srv = rospy.Service("/station_keeping", SetBool, self.station_keeping_cb)
+		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
+		self.image_pub = rospy.Publisher("motion_img/compressed", CompressedImage, queue_size = 1)
+		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)
 
 		self.pos_control = PID_control("Position_tracking")
 		self.ang_control = PID_control("Angular_tracking")
