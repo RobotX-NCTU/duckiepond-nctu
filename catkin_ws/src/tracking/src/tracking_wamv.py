@@ -27,7 +27,8 @@ class Tracking():
 		self.ROBOT_NUM = 3
 		self.wavm_labels = ["wamv",""]
 		#rospy.Subscriber('/pcl_points_img', PoseArray, self.call_back, queue_size = 1, buff_size = 2**24)
-		
+		self.combine_moos = rospy.get_param("Tracking/combine_moos",False)
+
 
 		# Image definition
 		self.width = 640
@@ -52,11 +53,14 @@ class Tracking():
 		self.sim = rospy.get_param("Tracking/sim",False)
 		#self.image_sub = rospy.Subscriber("/BRIAN/camera_node/image/compressed", Image, self.img_cb, queue_size=1)
 		self.image_sub = rospy.Subscriber("detecter/predictions", Boxlist, self.box_cb, queue_size=1, buff_size = 2**24)
+		publisher_name = "cmd_drive"
+		if self.combine_moos:
+			publisher_name = "ssd_drive"
 		if self.sim:
 			from duckiepond_vehicle.msg import UsvDrive
-			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
+			self.pub_cmd = rospy.Publisher(publisher_name, UsvDrive, queue_size = 1)
 		else:
-			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
+			self.pub_cmd = rospy.Publisher(publisher_name, MotorCmd, queue_size = 1)
 		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
 		self.image_pub = rospy.Publisher("motion_img/compressed", CompressedImage, queue_size = 1)
 		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)

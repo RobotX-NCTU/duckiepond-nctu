@@ -7,6 +7,7 @@
     <arg name="veh" default="BRIAN"/> 
 	<arg name="latitude" default="24.788808"/>
 	<arg name="longitude" default="121.000188"/>
+    <arg name="combine_ssd" default="False" />
 
     <!-- MOOS -->
     <group ns="$(arg veh)">
@@ -31,7 +32,8 @@
         <remap from="moos_waypt/DESIRED_HEADING" to="/$(arg veh)/DESIRED_HEADING"/>
         <remap from="moos_waypt/DESIRED_THRUST_L" to="/$(arg veh)/DESIRED_THRUST_L"/>
         <remap from="moos_waypt/DESIRED_THRUST_R" to="/$(arg veh)/DESIRED_THRUST_R"/>
-        <remap from="moos_waypt/cmd_drive" to="/$(arg veh)/cmd_drive"/>
+        <remap unless="$(arg combine_ssd)" from="moos_waypt/cmd_drive" to="/$(arg veh)/cmd_drive"/>
+        <remap if="$(arg combine_ssd)" from="moos_waypt/cmd_drive" to="/$(arg veh)/moos_drive"/>
         <include file="$(find moos_behavior)/launch/moos_waypt.launch">
             <arg name="sim" value="$(arg sim)"/>
             <arg name="factor" value="$(arg factor)"/>

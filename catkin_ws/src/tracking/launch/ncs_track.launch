@@ -1,8 +1,13 @@
 <launch>
   <arg name="veh" />
   <arg name="sim" default="false"/>
+  <arg name="combine_moos" default="False" />
+
   <node ns="$(arg veh)" pkg="tracking" type="tracking_wamv.py" name="Tracking" output="screen" >
     <param name="sim" value="$(arg sim)"/>
+    <param name="combine_moos" value="$(arg combine_moos)" />
   </node>
+
+  <node if="$(arg combine_moos)" ns="$(arg veh)" pkg="joystick_control" type="combine_cmd.py" name="combine" output="screen"/>
 
 </launch>
