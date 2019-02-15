@@ -15,6 +15,7 @@ Behavior = BHV_Waypoint
   updates    = WPT_UPDATE
   perpetual  = true
 
+              points = pts={0,0:20,0:20,-20:0,-20}
                 lead = 8
          lead_damper = 1
        lead_to_start = true
