@@ -20,7 +20,7 @@ Behavior = BHV_CutRange
 
   contact = BRIAN     
   pwt_inner_dist = 5
-  pwt_outer_dist = 50     
+  pwt_outer_dist = 70     
 
   patience = 90
 }
@@ -33,7 +33,7 @@ Behavior = BHV_Loiter
 
   condition = RETURN = false
   condition = DEPLOY = true
-
+  condition = SHADOW = false
   updates    = LIT_UPDATE
   perpetual  = true
 

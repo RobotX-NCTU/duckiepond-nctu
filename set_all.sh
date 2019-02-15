@@ -4,10 +4,14 @@
 #-------------------------------------------------------
 
 MASTER_PC_IP='192.168.2.105'
-MONICA_RPI_IP='192.168.2.112'
-MONICA_TX2_IP='192.168.2.111'
 BRIAN_RPI_IP='192.168.2.102'
 BRIAN_TX2_IP='192.168.2.101'
+MONICA_RPI_IP='192.168.2.112'
+MONICA_TX2_IP='192.168.2.111'
+TONY_RPI_IP='192.168.2.122'
+TONY_TX2_IP='192.168.2.121'
+LAY_RPI_IP='192.168.2.132'
+LAY_TX2_IP='192.168.2.131'
 
 VNAME='BRIAN'
 DEVICE='RPI'
@@ -28,6 +32,10 @@ for ARGI; do
         VNAME='BRIAN'
     elif [ "${ARGI}" = "-m" ] ; then 
         VNAME='MONICA'
+    elif [ "${ARGI}" = "-t" ] ; then 
+        VNAME='TONY'
+    elif [ "${ARGI}" = "-l" ] ; then 
+        VNAME='LAY'
     elif [ "${ARGI}" = "-tx2" ] ; then 
         DEVICE='TX2'
     elif [ "${ARGI}" = "-rpi" ] ; then 
@@ -52,6 +60,14 @@ elif [ $IP = 'BRIAN_RPI_IP' ] ; then
     VNAME_DEVICE_IP=$BRIAN_RPI_IP
 elif [ $IP = 'BRIAN_TX2_IP' ] ; then
     VNAME_DEVICE_IP=$BRIAN_TX2_IP
+elif [ $IP = 'TONY_RPI_IP' ] ; then
+    VNAME_DEVICE_IP=$TONY_RPI_IP
+elif [ $IP = 'TONY_TX2_IP' ] ; then
+    VNAME_DEVICE_IP=$TONY_TX2_IP
+elif [ $IP = 'LAY_RPI_IP' ] ; then
+    VNAME_DEVICE_IP=$LAY_RPI_IP
+elif [ $IP = 'LAY_TX2_IP' ] ; then
+    VNAME_DEVICE_IP=$LAY_TX2_IP
 else 
     printf "Bad VNAME_DEVICE_IP: %s \n" $ARGI
     return

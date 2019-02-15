@@ -109,8 +109,7 @@ ProcessConfig = pMarineViewer
   procs_font_size      = medium
   appcast_font_size    = small
 
-  SCOPE = NODE_REPORT_LOCAL
-  SCOPE = DEPLOY
+  SCOPE = VIEW_POINT
 
   button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false 
   button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false
@@ -124,7 +123,6 @@ ProcessConfig = pMarineViewer
 
   right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint
   right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
-
 
   action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false
   action+ = MENU_KEY=deploy # MOOS_MANUAL_OVERRIDE=false
