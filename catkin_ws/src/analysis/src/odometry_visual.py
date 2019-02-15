@@ -22,9 +22,9 @@ def draw_route():
     route_marker.type = route_marker.LINE_STRIP
 
     # maker scale
-    route_marker.scale.x = 0.03
-    route_marker.scale.y = 0.03
-    route_marker.scale.z = 0.03
+    route_marker.scale.x = 0.1
+    route_marker.scale.y = 0.1
+    route_marker.scale.z = 0.1
 
     # marker color
     route_marker.color.a = 1.0
@@ -62,9 +62,9 @@ def draw_odom():
     line_marker.type = line_marker.LINE_STRIP
 
     # maker scale
-    line_marker.scale.x = 0.03
-    line_marker.scale.y = 0.03
-    line_marker.scale.z = 0.03
+    line_marker.scale.x = 0.05
+    line_marker.scale.y = 0.05
+    line_marker.scale.z = 0.05
 
     # marker color
     line_marker.color.a = 1.0
@@ -99,6 +99,9 @@ if __name__ == "__main__":
     # Square
     route_list = [(0, 7), (0, -21), (28, -21), (28, 7), (0, 7)]
 
+    # Circle
+
+    
     rospy.Subscriber("/MONICA/localization_gps_imu/odometry", Odometry, cb_odom, queue_size=1)
 
     pub_odom_line = rospy.Publisher("/odom_linelist", Marker, queue_size=1)
