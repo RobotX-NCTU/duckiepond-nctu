@@ -19,7 +19,7 @@ ProcessConfig = ANTLER
   MSBetweenLaunches = 200
 
   Run = MOOSDB            @ NewConsole = false
-  //Run = pLogger         @ NewConsole = false
+  Run = pLogger         @ NewConsole = false
   Run = pMarineViewer	    @ NewConsole = false
   Run = uProcessWatch	    @ NewConsole = false
   Run = pShare            @ NewConsole = fasle
