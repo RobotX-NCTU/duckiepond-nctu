@@ -78,6 +78,10 @@ ProcessConfig=pShare
 
   output = src_name = SHADOW_1 , dest_name = SHADOW , route = $(VEH_IP1):$(VEH_PORT1)
 
+  output = src_name = LOITER , dest_name = LOITER , route = $(VEH_IP1):$(VEH_PORT1)
+  output = src_name = WPT_UPDATE , dest_name = WPT_UPDATE , route = $(VEH_IP1):$(VEH_PORT1)
+
+
   //VEH 2
   output = src_name = DEPLOY , dest_name = DEPLOY , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = RETURN , dest_name = RETURN , route = $(VEH_IP2):$(VEH_PORT2)
@@ -128,7 +132,7 @@ ProcessConfig = pMarineViewer
   SCOPE = DEPLOY
 
   button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # SHADOW_2=true # SHADOW_1=false 
-  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false 
+  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false # LOITER=true
 
   button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
 
@@ -137,17 +141,17 @@ ProcessConfig = pMarineViewer
   left_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=returnpoint
   left_context[return]  = RETURN_UPDATE = points =$(XPOS),$(YPOS)
 
-  right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint
-  right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
-
+  right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint 
+  right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
+  
   // square
   //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
 
   // circle
   //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
 
-  // s shape
-  //LIT_UPDATE = polygon = 0,7:7,7:7,-21:21,-21:21,7:28,7:label,$(VNAME)_LOITER
+  // 8 shape
+  //WPT_UPDATE = points = pts={7,-14:7,0:21,0:21,-14:35,-14:35,0:21,0:21,-14}
 
   action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false
   action+ = MENU_KEY=deploy # MOOS_MANUAL_OVERRIDE=false

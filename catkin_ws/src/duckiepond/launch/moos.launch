@@ -12,6 +12,14 @@
     <!-- MOOS -->
     <group ns="$(arg veh)">
 
+       <remap from="localization_gps_imu/fix" to="fix"/>
+       <remap from="localization_gps_imu/imu/data" to="imu/data"/>
+       <include file="$(find localization)/launch/localization_gps_imu.launch">
+         <arg name="latitude" value="$(arg latitude)"/>
+         <arg name="longitude" value="$(arg longitude)"/>
+       </include>
+
+
         <!--remap from="moos_waypt/odometry" to="mocap_localization_node/odometry"/-->
         <remap if="$(arg sim)" from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/>
         <remap unless="$(arg sim)" from="moos_waypt/odometry" to="localization_gps_imu/odometry"/>

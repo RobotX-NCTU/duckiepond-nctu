@@ -2,8 +2,9 @@
 
 initialize   DEPLOY = false
 initialize   RETURN = false
-initialize   AVOID = true
+initialize   AVOID = false
 initialize   SHADOW = false
+initialize   LOITER = false
 
 //----------------------------------------------
 Behavior = BHV_CutRange
@@ -26,6 +27,42 @@ Behavior = BHV_CutRange
 }
 
 //----------------------------------------------
+Behavior = BHV_Waypoint
+{ 
+  name      = waypt_survey_
+  pwt       = 100
+
+  condition = RETURN = false
+  condition = DEPLOY = true
+  condition = SHADOW = false
+  condition = LOITER = false
+  
+  endflag   = RETURN = false
+
+  updates    = WPT_UPDATE
+  perpetual  = true
+
+                lead = 8
+         lead_damper = 1
+       lead_to_start = true
+               speed = 10   // meters per second
+        capture_line = true
+      capture_radius = 4.0
+         slip_radius = 7.0
+  efficiency_measure = all
+             //polygon = 20, 5 : 20, -15 : 0, -15 : 0, 5
+               order = normal
+             repeat  = 15
+
+    
+    visual_hints = nextpt_color=yellow
+    visual_hints = nextpt_vertex_size=8
+    visual_hints = nextpt_lcolor=gray70
+    visual_hints = vertex_color=dodger_blue, edge_color=white
+    visual_hints = vertex_size=5, edge_size=1
+}
+
+//----------------------------------------------
 Behavior = BHV_Loiter
 { 
   name      = loiter_survey_
@@ -34,6 +71,8 @@ Behavior = BHV_Loiter
   condition = RETURN = false
   condition = DEPLOY = true
   condition = SHADOW = false
+  condition = LOITER = true
+
   updates    = LIT_UPDATE
   perpetual  = true
 
