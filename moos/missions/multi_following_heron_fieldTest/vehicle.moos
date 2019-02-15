@@ -1,4 +1,4 @@
-ServerHost = $(VEH_IP)
+ServerHost = localhost
 ServerPort = $(VEH_PORT)
 
 // Community name IS the vehicle name
@@ -29,6 +29,8 @@ Processconfig = ANTLER
 
   #ifdef SIM
     Run = uSimMarine       @ NewConsole = false
+  #elseif 
+    Run = iM200           @ NewConsole = false
   #endif
 
   //Run = uTimerScript @ NewConsole
@@ -37,17 +39,6 @@ Processconfig = ANTLER
 ProcessConfig = uTimerScript
 {
   event       = var=VEH_CONTACT, val= $(VEH_CONTACT), time=1
-}
-
-
-//--------------------------------------------------------
-ProcessConfig = uFldNodeBroker
-{
-  AppTick   = 1
-  CommsTick = 1
-
-  //BRIDGE = src=NODE_REPORT_LOCAL,  alias=NODE_REPORT
-  //BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 }
 
 //--------------------------------------------------------
@@ -91,18 +82,36 @@ ProcessConfig = pShare
 {
   AppTick    = 2
   CommsTick  = 2
-
-  input  = route = $(VEH_IP):$(VEH_PORT)
+  input  = route = localhost:$(VEH_LISTEN)
+  #input  = route = $(VEH_IP):$(VEH_PORT)
 
   //output = src_name = NODE_REPORT , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE , route = $(SHORE_IP):$(SHORE_PORT)
 
-  output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
   //output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
-  output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
+  //output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
+
+}
+//-----------------------------------------------------
+// uFldNodeBroker
+ProcessConfig = uFldNodeBroker
+{
+    AppTick = 1 
+    CommsTick = 1 
+    TRY_SHORE_HOST = pshare_route=localhost:$(SHORE_LISTEN)
+    TRY_SHORE_HOST = pshare_route=$(SHORE_IP):$(SHORE_LISTEN)
+  BRIDGE = src=NODE_REPORT_LOCAL, alias=NODE_REPORT 
+  BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
+
+  BRIDGE = src=VIEW_POINT 
+  BRIDGE = src=VIEW_POLYGON 
+  //BRIDGE = src=VIEW_CIRCLE
+  BRIDGE = src=VIEW_SEGLIST 
+  BRIDGE = src=APPCAST 
 
 }
 
@@ -224,4 +233,27 @@ ProcessConfig = uProcessWatch
   NOWATCH = uPokeDB*
 
   SUMMARY_WAIT = 12
+}
+
+//--------------------------------------------------------
+ProcessConfig = iM200
+{
+  AppTick        = 10
+  CommsTick      = 10
+
+  PORT_NUMBER    = 29500
+  IP_ADDRESS     = $(M200_IP)  // Default is 'localhost'
+  GPS_PREFIX     = NAV_        // Prepended to GPS position messages.
+  DIRECT_THRUST  = false       // Default is false.
+                               // When true, vehicle in direct-thrust mode.
+                               // When false, vehicle in rudder-thrust mode.
+
+  HEADING_OFFSET = 0.0         // Offset to add to published heading
+
+	
+  PUBLISH_RAW    = true        // When true, publish all messages from
+                               // front seat to M200_RAW_NMEA
+  MAX_RUDDER     = 100.0        // Rudder value will be capped to this, +/-
+  MAX_THRUST     = 100.0        // Thrust value to each motor will be
+                               // capped to this value, +/-
 }

@@ -26,7 +26,7 @@ Processconfig = ANTLER
   //Run = pBasicContactMgr @ NewConsole = false
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
-  //Run = uSimMarine       @ NewConsole = false
+  Run = uSimMarine       @ NewConsole = false
 
   //Run = uTimerScript @ NewConsole
 }
