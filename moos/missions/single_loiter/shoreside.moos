@@ -123,6 +123,15 @@ ProcessConfig = pMarineViewer
 
   right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint
   right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
+  
+  // square
+  //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
+
+  // circle
+  //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
+
+  // s shape
+  //LIT_UPDATE = polygon = 0,7:7,7:7,-21:21,-21:21,7:28,7:label,$(VNAME)_LOITER
 
 
   action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false
