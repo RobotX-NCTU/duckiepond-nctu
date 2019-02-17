@@ -1,0 +1,49 @@
+<launch>
+
+    <arg name="sim" default="false"/>
+    <arg name="factor" default="monica"/>
+    <arg name="moos_folder" default="multi_following_heron_fieldTest"/>
+    <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
+    <arg name="veh" default="MONICA"/> 
+	<arg name="latitude" default="25.075658333333333"/>
+	<arg name="longitude" default="121.54475833333333"/>
+    <arg name="combine_ssd" default="False" />
+
+    <!-- MOOS -->
+    <group ns="$(arg veh)">
+
+       <remap from="localization_gps_imu/fix" to="fix"/>
+       <remap from="localization_gps_imu/imu/data" to="imu/data"/>
+       <include file="$(find localization)/launch/localization_gps_imu.launch">
+         <arg name="latitude" value="$(arg latitude)"/>
+         <arg name="longitude" value="$(arg longitude)"/>
+       </include>
+
+
+        <!--remap from="moos_waypt/odometry" to="mocap_localization_node/odometry"/-->
+        <remap if="$(arg sim)" from="moos_waypt/odometry" to="/$(arg veh)/p3d_odom"/>
+        <remap unless="$(arg sim)" from="moos_waypt/odometry" to="localization_gps_imu/odometry"/>
+
+        <remap from="moos_waypt/NAV_X" to="/$(arg veh)/NAV_X"/>
+        <remap from="moos_waypt/NAV_Y" to="/$(arg veh)/NAV_Y"/>
+        <remap from="moos_waypt/NAV_HEADING" to="/$(arg veh)/NAV_HEADING"/>
+        <remap from="moos_waypt/NAV_SPEED" to="/$(arg veh)/NAV_SPEED"/>
+        <remap from="moos_waypt/DB_TIME" to="/$(arg veh)/DB_TIME"/>
+        <remap from="moos_waypt/DESIRED_RUDDER" to="/$(arg veh)/DESIRED_RUDDER"/>
+        <remap from="moos_waypt/DESIRED_SPEED" to="/$(arg veh)/DESIRED_SPEED"/>
+        <remap from="moos_waypt/DESIRED_HEADING" to="/$(arg veh)/DESIRED_HEADING"/>
+        <remap from="moos_waypt/DESIRED_THRUST_L" to="/$(arg veh)/DESIRED_THRUST_L"/>
+        <remap from="moos_waypt/DESIRED_THRUST_R" to="/$(arg veh)/DESIRED_THRUST_R"/>
+        <remap unless="$(arg combine_ssd)" from="moos_waypt/cmd_drive" to="/$(arg veh)/cmd_drive"/>
+        <remap if="$(arg combine_ssd)" from="moos_waypt/cmd_drive" to="/$(arg veh)/moos_drive"/>
+        <include file="$(find moos_behavior)/launch/moos_waypt.launch">
+            <arg name="sim" value="$(arg sim)"/>
+            <arg name="factor" value="$(arg factor)"/>
+            <arg name="moos_folder" value="$(arg moos_folder)"/>
+            <arg name="root" value="$(arg root)"/>
+            <arg name="veh" value="$(arg veh)"/>  
+        </include>
+
+    </group>  
+
+</launch>

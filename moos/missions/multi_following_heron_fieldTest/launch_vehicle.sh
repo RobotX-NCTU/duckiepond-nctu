@@ -1,20 +1,20 @@
 #!/bin/bash -e
-SHORE_IP="192.168.1.105"
-SHORE_LISTEN="9200"
+SHORE_IP="localhost"
 SHORE_PORT="9000"
+SHORE_LISTEN="9200"
 
 VEH_NAME1="BRIAN"
-VEH_IP1="192.168.1.101"
+VEH_IP1="localhost"
 VEH_PORT1="9001"
 VEH_LISTEN1="9201"
 
 VEH_NAME2="MONICA"
-VEH_IP2="192.168.1.111"
+VEH_IP2="localhost"
 VEH_PORT2="9002"
 VEH_LISTEN2="9202"
 
 VEH_NAME3="ALENANDER"
-VEH_IP3="192.168.1.13"
+VEH_IP3="localhost"
 VEH_PORT3="9003"
 VEH_LISTEN3="9203"
 M200_IP="192.168.2.1"
@@ -24,6 +24,7 @@ COMMUNITY="shoreside"
 START_POS1="-20,0"         
 START_POS2="0,0"
 START_POS3="20,0"
+SIM="false"
 
 #-------------------------------------------------------
 #  Part 1: Check for and handle command-line arguments
@@ -39,6 +40,9 @@ echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $V
 for ARGI; do
     if [ "${ARGI}" = "--help" -o "${ARGI}" = "-h" ] ; then
         HELP="yes"
+    elif [ "${ARGI//[^0-9]/}" = "$ARGI" -a "$TIME_WARP" = 1 ]; then
+        TIME_WARP=$ARGI
+
     elif [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ] ; then
         SIM="true"
         echo "Simulation mode ON"  
@@ -48,7 +52,9 @@ for ARGI; do
             VNAME=$VEH_NAME1  VEH_PORT=$VEH_PORT1    \
             VEH_IP=$VEH_IP1      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS1 \
-            VEH_LISTEN=$VEH_LISTEN1 SIM="true" \
+            VEH_LISTEN=$VEH_LISTEN1 \
+            SIM=$SIM \
+            SHADOW=$SHADOW \
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME1.bhv -f VNAME=$VEH_NAME1     \
@@ -65,7 +71,8 @@ for ARGI; do
             VNAME=$VEH_NAME2    VEH_PORT=$VEH_PORT2 \
             VEH_IP=$VEH_IP2      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS2 \
-            VEH_LISTEN=$VEH_LISTEN2 SIM="true" \
+            VEH_LISTEN=$VEH_LISTEN2\
+            SIM=$SIM \
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME2.bhv -f VNAME=$VEH_NAME2     \
@@ -82,7 +89,8 @@ for ARGI; do
             VNAME=$VEH_NAME3    VEH_PORT=$VEH_PORT3 \
             VEH_IP=$VEH_IP3      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS3 \
-            VEH_LISTEN=$VEH_LISTEN3 SIM="true" \
+            VEH_LISTEN=$VEH_LISTEN3\
+            SIM=$SIM \
             SHORE_LISTEN=$SHORE_LISTEN M200_IP=$M200_IP
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME3.bhv -f VNAME=$VEH_NAME3     \
