@@ -1,5 +1,5 @@
 #!/bin/bash -e
-SHORE_IP="localhost"
+SHORE_IP="192.168.2.105"
 SHORE_PORT="9000"
 SHORE_LISTEN="9200"
 
