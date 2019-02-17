@@ -14,8 +14,8 @@ $ rosrun lidar_perception watch_tower
 4. Open Rviz and select following topics to visualize:
 - /boundary_marker_point
 - /boundary_marker
-- /path_a
-- /path_b
+- /path_a (please select path color for robot A)
+- /path_b (Try to select different color from robot A)
 - /wamvs
 - /bamboobotb/velodyne_points
 - Axes
