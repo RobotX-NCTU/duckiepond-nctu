@@ -15,7 +15,7 @@ $ rosrun lidar_perception watch_tower
 - /boundary_marker_point
 - /boundary_marker
 - /path_a (please select path color for robot A)
-- /path_b (Try to select different color from robot A)
+- /path_b (try to select different color from robot A)
 - /wamvs
 - /bamboobotb/velodyne_points
 - Axes
