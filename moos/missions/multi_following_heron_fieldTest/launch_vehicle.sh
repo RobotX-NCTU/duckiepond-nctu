@@ -52,12 +52,8 @@ for ARGI; do
             VNAME=$VEH_NAME1  VEH_PORT=$VEH_PORT1    \
             VEH_IP=$VEH_IP1      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS1 \
-<<<<<<< HEAD
-            VEH_LISTEN=$VEH_LISTEN1 SIM=$SIM \
-=======
             VEH_LISTEN=$VEH_LISTEN1 \
             SIM=$SIM \
->>>>>>> 8cc35ab6d4e21b4e37e9b870c34a5021355d2cd5
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME1.bhv -f VNAME=$VEH_NAME1     \
@@ -74,12 +70,8 @@ for ARGI; do
             VNAME=$VEH_NAME2    VEH_PORT=$VEH_PORT2 \
             VEH_IP=$VEH_IP2      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS2 \
-<<<<<<< HEAD
-            VEH_LISTEN=$VEH_LISTEN2 SIM=$SIM \
-=======
             VEH_LISTEN=$VEH_LISTEN2\
             SIM=$SIM \
->>>>>>> 8cc35ab6d4e21b4e37e9b870c34a5021355d2cd5
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME2.bhv -f VNAME=$VEH_NAME2     \
@@ -96,12 +88,8 @@ for ARGI; do
             VNAME=$VEH_NAME3    VEH_PORT=$VEH_PORT3 \
             VEH_IP=$VEH_IP3      SHORE_IP=$SHORE_IP \
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS3 \
-<<<<<<< HEAD
-            VEH_LISTEN=$VEH_LISTEN3 SIM=$SIM \
-=======
             VEH_LISTEN=$VEH_LISTEN3\
             SIM=$SIM \
->>>>>>> 8cc35ab6d4e21b4e37e9b870c34a5021355d2cd5
             SHORE_LISTEN=$SHORE_LISTEN M200_IP=$M200_IP
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME3.bhv -f VNAME=$VEH_NAME3     \
