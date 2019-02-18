@@ -35,11 +35,6 @@ class MOOSWaypt(object):
         self.wamv_desired_heading = None
         self.dbtime = None    
 
-        # Timer
-        rospy.Timer(rospy.Duration(0.2), self.publish_data_to_moos)
-        rospy.Timer(rospy.Duration(0.2), self.send_motor_cmd)
-
-
         # Ros service
         self.srv_linear_speed = rospy.Service('~set_linear', SetValue, self.cb_srv_set_linear_speed)
         self.srv_angular_speed = rospy.Service('~set_angular', SetValue, self.cb_srv_set_angular_speed)
@@ -62,6 +57,11 @@ class MOOSWaypt(object):
             self.pub_motion = rospy.Publisher("~cmd_drive", UsvDrive, queue_size=1)
         else:
             self.pub_motion = rospy.Publisher("~cmd_drive", MotorCmd, queue_size=1)
+
+        # Timer
+        rospy.Timer(rospy.Duration(0.2), self.publish_data_to_moos)
+        rospy.Timer(rospy.Duration(0.2), self.send_motor_cmd)
+
 
         ####################################################################################
         #### ROS Subscriber
@@ -86,8 +86,8 @@ class MOOSWaypt(object):
 
         else:
             motor_msg = MotorCmd()
-
-        motor_msg.header.stamp = rospy.Time.now()
+            motor_msg.header.stamp = rospy.Time.now()
+            
         motor_msg.left = 0
         motor_msg.right = 0
         if self.wamv_desired_heading is None or self.wamv_desired_rudder is None or self.wamv_desired_speed is None:

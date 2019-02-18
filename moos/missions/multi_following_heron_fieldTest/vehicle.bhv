@@ -3,43 +3,19 @@
 initialize   DEPLOY = false
 initialize   RETURN = false
 initialize   AVOID = true
-initialize   SHADOW = false
-initialize   SHADOW_BRIAN = false
-initialize   SHADOW_MONICA = false
+initialize   SHADOW = $(SHADOW)
+initialize   LOITER = true
 
 //----------------------------------------------
-// For MONICA
 Behavior = BHV_CutRange
 {
-  name         = cutrange1_                         // example
+  name         = cutrange_                         // example
   pwt          = 200                               // example
-  condition = SHADOW_MONICA = true         
+  condition = SHADOW = true         
   condition = RETURN = false
   condition = DEPLOY = true
 
-  contact = BRIAN
-
-  updates      = CONTACT_INFO                      // example
-  endflag = CONTACT_RESOLVED = $[CONTACT] // example 
-  //templating   = spawn                             // example
-
-  pwt_inner_dist = 5
-  pwt_outer_dist = 70     
-  patience = 90
-}
-
-//----------------------------------------------
-// For BRIAN
-
-Behavior = BHV_CutRange
-{
-  name         = cutrange2_                         // example
-  pwt          = 200                               // example
-  condition = SHADOW_BRIAN = true         
-  condition = RETURN = false
-  condition = DEPLOY = true
-
-  contact = ALENANDER
+  contact = $(CONTACT_VEH)
 
   updates      = CONTACT_INFO                      // example
   endflag = CONTACT_RESOLVED = $[CONTACT] // example 
@@ -59,9 +35,8 @@ Behavior = BHV_Waypoint
   condition = RETURN = false
   condition = DEPLOY = true
   condition = SHADOW = false
-  condition = SHADOW_BRIAN = false
-  condition = SHADOW_MONICA = false
-
+  condition = LOITER = false
+  
   endflag   = RETURN = false
 
   updates    = WPT_UPDATE
@@ -72,12 +47,12 @@ Behavior = BHV_Waypoint
        lead_to_start = true
                speed = 10   // meters per second
         capture_line = true
-      capture_radius = 2.0
-         slip_radius = 4.0
-	efficiency_measure = all
-             polygon = 20, 5 : 20, -15 : 0, -15 : 0, 5
+      capture_radius = 4.0
+         slip_radius = 7.0
+  efficiency_measure = all
+             //polygon = 20, 5 : 20, -15 : 0, -15 : 0, 5
                order = normal
-             repeat  = 1
+             repeat  = 15
 
     
     visual_hints = nextpt_color=yellow
@@ -85,6 +60,31 @@ Behavior = BHV_Waypoint
     visual_hints = nextpt_lcolor=gray70
     visual_hints = vertex_color=dodger_blue, edge_color=white
     visual_hints = vertex_size=5, edge_size=1
+}
+
+//----------------------------------------------
+Behavior = BHV_Loiter
+{ 
+  name      = loiter_survey_
+  pwt       = 100
+
+  condition = RETURN = false
+  condition = DEPLOY = true
+  condition = SHADOW = false
+  condition = LOITER = true
+
+  updates    = LIT_UPDATE
+  perpetual  = true
+
+   post_suffix = A
+         speed = 1.3
+     clockwise = false
+        radius = 5.0
+     nm_radius = 8.0
+       //polygon = radial::$(LOITER_POS), radius=10, pts=4, snap=1, label=$(VNAME)_LOITER
+  visual_hints = nextpt_color=white, nextpt_lcolor=khaki
+  visual_hints = edge_color=orange, vertex_color=white
+  visual_hints = edge_size=1, vertex_size=2
 }
 
 //------------------------------------------------
@@ -137,7 +137,7 @@ Behavior=BHV_Waypoint
            speed = 2.0
   capture_radius = 2.0
      slip_radius = 8.0
-          points = 0,-20
+          points = 0,20
  }
 
 //----------------------------------------------

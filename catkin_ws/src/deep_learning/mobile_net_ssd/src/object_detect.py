@@ -5,7 +5,9 @@ import numpy as np
 import rospy
 import time
 import cv2
+import math
 import os.path
+from std_msgs.msg import Header
 from duckiepond.msg import Box,Boxlist
 from sensor_msgs.msg import Image,CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
@@ -67,6 +69,21 @@ class ObjectDetecter(object):
 
 	def cbimage(self,img):
 		self.frame_counter += 1
+	
+		'''
+		header_now = Header()
+		header_now = rospy.Time.now()
+		time_diff =  (img.header.stamp - header_now).to_sec()
+		time_diff = abs(time_diff)		
+		#print type(time_diff)
+		if time_diff  >= 0.3:
+			print(time_diff)
+			return
+		#print time_diff
+		#print "==============================="
+		'''		
+
+
 		if self.frame_counter == self.input_rate/self.dest_rate:
 			self.frame_counter=0
 			# grab the frame from the threaded video stream

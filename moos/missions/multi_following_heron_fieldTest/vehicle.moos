@@ -3,11 +3,11 @@ ServerPort = $(VEH_PORT)
 
 // Community name IS the vehicle name
 Community  = $(VNAME)
-MOOSTimeWarp = 1
+MOOSTimeWarp = $(TIME_WARP)
 
-// Bamboo Lake NCTU
-LatOrigin  = 24.788808
-LongOrigin = 121.000188
+// River
+LatOrigin  = 25.075658333333333
+LongOrigin = 121.54475833333333
 
 //------------------------------------------------------------
 Processconfig = ANTLER
@@ -34,11 +34,6 @@ Processconfig = ANTLER
   #endif
 
   //Run = uTimerScript @ NewConsole
-}
-
-ProcessConfig = uTimerScript
-{
-  event       = var=VEH_CONTACT, val= $(VEH_CONTACT), time=1
 }
 
 //--------------------------------------------------------
@@ -82,18 +77,9 @@ ProcessConfig = pShare
 {
   AppTick    = 2
   CommsTick  = 2
-  input  = route = localhost:$(VEH_LISTEN)
-  #input  = route = $(VEH_IP):$(VEH_PORT)
+  //input  = route = localhost:$(VEH_LISTEN)
 
-  //output = src_name = NODE_REPORT , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = NODE_REPORT_LOCAL , dest_name = NODE_REPORT , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = NODE_MESSAGE_LOCAL , dest_name = NODE_MESSAGE , route = $(SHORE_IP):$(SHORE_PORT)
-
-  //output = src_name = VIEW_POINT , dest_name = VIEW_POINT , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = VIEW_POLYGON , dest_name = VIEW_POLYGON , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = VIEW_CIRCLE , dest_name = VIEW_CIRCLE , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = VIEW_SEGLIST , dest_name = VIEW_SEGLIST , route = $(SHORE_IP):$(SHORE_PORT)
-  //output = src_name = APPCAST , dest_name = APPCAST , route = $(SHORE_IP):$(SHORE_PORT)
+  input  = route = $(VEH_IP):$(VEH_PORT)
 
 }
 //-----------------------------------------------------
@@ -102,8 +88,8 @@ ProcessConfig = uFldNodeBroker
 {
     AppTick = 1 
     CommsTick = 1 
-    TRY_SHORE_HOST = pshare_route=localhost:$(SHORE_LISTEN)
-    TRY_SHORE_HOST = pshare_route=$(SHORE_IP):$(SHORE_LISTEN)
+    TRY_SHORE_HOST = pshare_route=localhost:$(SHORE_PORT)
+    TRY_SHORE_HOST = pshare_route=$(SHORE_IP):$(SHORE_PORT)
   BRIDGE = src=NODE_REPORT_LOCAL, alias=NODE_REPORT 
   BRIDGE = src=NODE_MESSAGE_LOCAL, alias=NODE_MESSAGE
 

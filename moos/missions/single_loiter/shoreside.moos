@@ -19,7 +19,7 @@ ProcessConfig = ANTLER
   MSBetweenLaunches = 200
 
   Run = MOOSDB            @ NewConsole = false
-  //Run = pLogger         @ NewConsole = false
+  Run = pLogger         @ NewConsole = false
   Run = pMarineViewer	    @ NewConsole = false
   Run = uProcessWatch	    @ NewConsole = false
   Run = pShare            @ NewConsole = fasle
@@ -109,8 +109,7 @@ ProcessConfig = pMarineViewer
   procs_font_size      = medium
   appcast_font_size    = small
 
-  SCOPE = NODE_REPORT_LOCAL
-  SCOPE = DEPLOY
+  SCOPE = VIEW_POINT
 
   button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false 
   button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false
@@ -122,8 +121,17 @@ ProcessConfig = pMarineViewer
   left_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=returnpoint
   left_context[return]  = RETURN_UPDATE = points =$(XPOS),$(YPOS)
 
-  right_context[return]  = VIEW_POINT = x=$(XPOS),y=$(YPOS),label=loiterpoint
-  right_context[return]  = LIT_UPDATE = polygon = format=radial, x=$(XPOS), y=$(YPOS), radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
+  right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint
+  right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
+  
+  // square
+  //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
+
+  // circle
+  //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
+
+  // s shape
+  //LIT_UPDATE = polygon = 0,7:7,7:7,-21:21,-21:21,7:28,7:label,$(VNAME)_LOITER
 
 
   action  = MENU_KEY=deploy # DEPLOY = true # RETURN = false

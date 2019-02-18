@@ -1,11 +1,16 @@
 <launch>
   <arg name="veh"/>
-    <include file="$(find mobile_net_ssd)/launch/object_detect.launch">
-      <arg name="veh" value="$(arg veh)"/>
-    </include>
+  <arg name="sim" default="false"/>
+  <arg name="combine_moos" default="False" />
 
-    <include file="$(find tracking)/launch/ncs_track.launch">
-      <arg name="veh" value="$(arg veh)"/>
-    </include>
+  <include file="$(find mobile_net_ssd)/launch/object_detect.launch">
+    <arg name="veh" value="$(arg veh)"/>
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
 
+  <include file="$(find tracking)/launch/ncs_track.launch">
+    <arg name="veh" value="$(arg veh)"/>
+    <arg name="combine_moos" value="$(arg combine_moos)"/>
+  </include>
+    
 </launch>

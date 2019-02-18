@@ -4,24 +4,49 @@ initialize   DEPLOY = false
 initialize   RETURN = false
 initialize   AVOID = true
 initialize   SHADOW = false
+initialize   SHADOW_BRIAN = false
+initialize   SHADOW_MONICA = false
 
 //----------------------------------------------
+// For MONICA
 Behavior = BHV_CutRange
 {
-  name         = cutrange_                         // example
+  name         = cutrange1_                         // example
   pwt          = 200                               // example
-  condition = SHADOW = true         // example
+  condition = SHADOW_MONICA = true         
   condition = RETURN = false
   condition = DEPLOY = true
 
+  contact = BRIAN
+
   updates      = CONTACT_INFO                      // example
   endflag = CONTACT_RESOLVED = $[CONTACT] // example 
-  templating   = spawn                             // example
+  //templating   = spawn                             // example
 
-  contact = BRIAN     
   pwt_inner_dist = 5
-  pwt_outer_dist = 50     
+  pwt_outer_dist = 70     
+  patience = 90
+}
 
+//----------------------------------------------
+// For BRIAN
+
+Behavior = BHV_CutRange
+{
+  name         = cutrange2_                         // example
+  pwt          = 200                               // example
+  condition = SHADOW_BRIAN = true         
+  condition = RETURN = false
+  condition = DEPLOY = true
+
+  contact = ALENANDER
+
+  updates      = CONTACT_INFO                      // example
+  endflag = CONTACT_RESOLVED = $[CONTACT] // example 
+  //templating   = spawn                             // example
+
+  pwt_inner_dist = 8
+  pwt_outer_dist = 70     
   patience = 90
 }
 
@@ -34,7 +59,9 @@ Behavior = BHV_Waypoint
   condition = RETURN = false
   condition = DEPLOY = true
   condition = SHADOW = false
-  
+  condition = SHADOW_BRIAN = false
+  condition = SHADOW_MONICA = false
+
   endflag   = RETURN = false
 
   updates    = WPT_UPDATE
@@ -68,7 +95,10 @@ Behavior = BHV_AvoidCollision
 
   condition  = AVOID = true
   condition = SHADOW = false
+  condition = SHADOW_BRIAN = false
+  condition = SHADOW_MONICA = false
 
+  
   updates    = CONTACT_INFO
   endflag    = CONTACT_RESOLVED = $[CONTACT]
   templating = spawn

@@ -1,12 +1,12 @@
 <launch>
 
     <arg name="sim" default="false"/>
-    <arg name="factor" default="bamboo"/>
-    <arg name="moos_folder" default="single_waypt"/>
+    <arg name="factor" default="monica"/>
+    <arg name="moos_folder" default="multi_following_heron_fieldTest"/>
     <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
-    <arg name="veh" default="BRIAN"/> 
-	<arg name="latitude" default="24.788808"/>
-	<arg name="longitude" default="121.000188"/>
+    <arg name="veh" default="MONICA"/> 
+	<arg name="latitude" default="25.075658333333333"/>
+	<arg name="longitude" default="121.54475833333333"/>
     <arg name="combine_ssd" default="False" />
 
     <!-- MOOS -->
