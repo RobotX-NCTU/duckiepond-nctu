@@ -80,6 +80,7 @@ ProcessConfig = pShare
   //input  = route = localhost:$(VEH_LISTEN)
 
   input  = route = $(VEH_IP):$(VEH_PORT)
+input = route = multicast_9
 
 }
 //-----------------------------------------------------

@@ -66,7 +66,9 @@ ProcessConfig=pShare
   AppTick    = 2
   CommsTick  = 2
 
-  input = route =  $(SHORE_IP):$(SHORE_PORT)
+//  input = route =  $(SHORE_IP):$(SHORE_PORT)
+  input = route =  localhost:$(SHORE_PORT)
+//  input = route =  $(SHORE_IP):$(SHORE_PORT)
   input = route = multicast_9
 
   //VEH 1 BRIAN
