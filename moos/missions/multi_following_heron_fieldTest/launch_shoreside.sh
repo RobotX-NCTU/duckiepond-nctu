@@ -24,6 +24,7 @@ COMMUNITY="shoreside"
 START_POS1="-20,0"         
 START_POS2="0,0"
 START_POS3="20,0"
+SIM="false"
 
 #-------------------------------------------------------
 #  Part 1: Check for and handle command-line arguments

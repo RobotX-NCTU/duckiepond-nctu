@@ -70,15 +70,12 @@ ProcessConfig=pShare
   input = route = multicast_9
 
   //VEH 1 BRIAN
-  output = src_name = BRIAN_SHADOW , dest_name = SHADOW , route = $(VEH_IP1):$(VEH_PORT1)
   output = src_name = NODE_REPORT_$(VEH_NAME1) , dest_name = NODE_REPORT , route = $(VEH_IP1):$(VEH_PORT1)
 
   //VEH 2 MONICA
-  output = src_name = MONICA_SHADOW , dest_name = SHADOW , route = $(VEH_IP2):$(VEH_PORT2)
   output = src_name = NODE_REPORT_$(VEH_NAME2) , dest_name = NODE_REPORT , route = $(VEH_IP2):$(VEH_PORT2)
 
   // VEH 3 
-  output = src_name = ALENANDER_SHADOW , dest_name = SHADOW , route = $(VEH_IP3):$(VEH_PORT3)
   output = src_name = NODE_REPORT_$(VEH_NAME3) , dest_name = NODE_REPORT , route = $(VEH_IP3):$(VEH_PORT3)
 }
 

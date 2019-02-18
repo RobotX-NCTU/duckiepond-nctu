@@ -36,7 +36,6 @@ echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $V
 #-------------------------------------------------------
 #  Part 2: Launch the processes
 #-------------------------------------------------------
-
 for ARGI; do
     if [ "${ARGI}" = "--help" -o "${ARGI}" = "-h" ] ; then
         HELP="yes"
@@ -45,7 +44,7 @@ for ARGI; do
 
     elif [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ] ; then
         SIM="true"
-        echo "Simulation mode ON"  
+        echo "Simulation mode ON"   
 
     elif [ "${ARGI}" = "--brian" -o "${ARGI}" = "-b" ] ; then 
         nsplug vehicle.moos duckiepond_$VEH_NAME1.moos -f \
@@ -54,11 +53,10 @@ for ARGI; do
             SHORE_PORT=$SHORE_PORT START_POS=$START_POS1 \
             VEH_LISTEN=$VEH_LISTEN1 \
             SIM=$SIM \
-            SHADOW=$SHADOW \
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME1.bhv -f VNAME=$VEH_NAME1     \
-        START_POS=$START_POS1  
+        START_POS=$START_POS1  SHADOW="true" CONTACT_VEH="ALENANDER"
 
         printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME1 $TIME_WARP
         pAntler duckiepond_$VEH_NAME1.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
@@ -76,7 +74,7 @@ for ARGI; do
             SHORE_LISTEN=$SHORE_LISTEN
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME2.bhv -f VNAME=$VEH_NAME2     \
-            START_POS=$START_POS2   
+            START_POS=$START_POS2   SHADOW="true" CONTACT_VEH="BRIAN"
 
         printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME2 $TIME_WARP
         pAntler duckiepond_$VEH_NAME2.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &
@@ -94,7 +92,7 @@ for ARGI; do
             SHORE_LISTEN=$SHORE_LISTEN M200_IP=$M200_IP
 
         nsplug vehicle.bhv duckiepond_$VEH_NAME3.bhv -f VNAME=$VEH_NAME3     \
-            START_POS=$START_POS3   
+            START_POS=$START_POS3  SHADOW="false" CONTACT_VEH="ALENANDER"
 
         printf "Launching the %s MOOS Community (WARP=%s) \n"  duckiepond_$VEH_NAME3 $TIME_WARP
         pAntler duckiepond_$VEH_NAME3.moos --MOOSTimeWarp=$TIME_WARP >& /dev/null &

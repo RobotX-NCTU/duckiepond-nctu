@@ -3,7 +3,7 @@
 initialize   DEPLOY = false
 initialize   RETURN = false
 initialize   AVOID = true
-initialize   SHADOW = false
+initialize   SHADOW = $(SHADOW)
 initialize   LOITER = true
 
 //----------------------------------------------
@@ -15,11 +15,11 @@ Behavior = BHV_CutRange
   condition = RETURN = false
   condition = DEPLOY = true
 
-  //contact = ALENANDER
+  contact = $(CONTACT_VEH)
 
   updates      = CONTACT_INFO                      // example
   endflag = CONTACT_RESOLVED = $[CONTACT] // example 
-  templating   = spawn                             // example
+  //templating   = spawn                             // example
 
   pwt_inner_dist = 8
   pwt_outer_dist = 70     
