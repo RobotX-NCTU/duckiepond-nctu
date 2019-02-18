@@ -20,11 +20,12 @@ VEH_LISTEN3="9203"
 M200_IP="192.168.2.1"
 
 COMMUNITY="shoreside"
+SIM="true"
 
 START_POS1="-20,0"         
 START_POS2="0,0"
 START_POS3="20,0"
-SIM="false"
+#SIM="false"
 
 #-------------------------------------------------------
 #  Part 1: Check for and handle command-line arguments
