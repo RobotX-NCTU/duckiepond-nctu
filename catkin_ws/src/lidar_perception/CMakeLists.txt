@@ -31,3 +31,6 @@ include_directories(
 
 add_executable(watch_tower src/watch_tower.cpp)
 target_link_libraries(watch_tower ${catkin_LIBRARIES})
+
+add_executable(watch_tower_new src/watch_tower_new.cpp)
+target_link_libraries(watch_tower_new ${catkin_LIBRARIES})
