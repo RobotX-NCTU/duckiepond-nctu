@@ -17,7 +17,7 @@ VEH_NAME3="ALENANDER"
 VEH_IP3="192.168.2.113"
 VEH_PORT3="9003"
 VEH_LISTEN3="9203"
-M200_IP="192.168.2.1"
+M200_IP="192.168.1.134"
 
 COMMUNITY="shoreside"
 SIM="true"
@@ -25,7 +25,7 @@ SIM="true"
 START_POS1="-20,0"         
 START_POS2="0,0"
 START_POS3="20,0"
-#SIM="false"
+SIM="false"
 
 #-------------------------------------------------------
 #  Part 1: Check for and handle command-line arguments
@@ -38,14 +38,16 @@ echo "SHORE_PORT = " $SHORE_PORT ", VEH_PORT1 = " $VEH_PORT1 ", VEH_PORT2 = " $V
 #  Part 2: Launch the processes
 #-------------------------------------------------------
 for ARGI; do
+    if [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ] ; then
+        SIM="true"
+        echo "Simulation mode ON"   
+    fi
+
     if [ "${ARGI}" = "--help" -o "${ARGI}" = "-h" ] ; then
         HELP="yes"
     elif [ "${ARGI//[^0-9]/}" = "$ARGI" -a "$TIME_WARP" = 1 ]; then
         TIME_WARP=$ARGI
 
-    elif [ "${ARGI}" = "--sim" -o "${ARGI}" = "-s" ] ; then
-        SIM="true"
-        echo "Simulation mode ON"   
 
     elif [ "${ARGI}" = "--brian" -o "${ARGI}" = "-b" ] ; then 
         nsplug vehicle.moos duckiepond_$VEH_NAME1.moos -f \

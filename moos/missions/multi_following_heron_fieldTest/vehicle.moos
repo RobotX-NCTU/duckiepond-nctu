@@ -29,7 +29,7 @@ Processconfig = ANTLER
 
   #ifdef SIM true
     Run = uSimMarine       @ NewConsole = false
-  #elseif 
+  #else 
     Run = iM200           @ NewConsole = false
   #endif
 
@@ -210,7 +210,11 @@ ProcessConfig = uProcessWatch
   
   WATCH_ALL = true      // default is true
 
-  //WATCH  = uSimMarine
+ // #ifdef SIM true
+ //   WATCH  = uSimMarine
+ // #else 
+    WATCH = iM200           
+ // #endif
   WATCH  = pShare
   WATCH  = pNodeReporter
   WATCH  = pMarinePID
@@ -238,7 +242,7 @@ ProcessConfig = iM200
   HEADING_OFFSET = 0.0         // Offset to add to published heading
 
 	
-  PUBLISH_RAW    = true        // When true, publish all messages from
+  PUBLISH_RAW    = false        // When true, publish all messages from
                                // front seat to M200_RAW_NMEA
   MAX_RUDDER     = 100.0        // Rudder value will be capped to this, +/-
   MAX_THRUST     = 100.0        // Thrust value to each motor will be
