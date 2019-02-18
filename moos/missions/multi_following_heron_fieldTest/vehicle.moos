@@ -27,7 +27,7 @@ Processconfig = ANTLER
   Run = uFldMessageHandler @ NewConsole = false
   Run = uFldNodeBroker @ NewConsole = false
 
-  #ifdef SIM
+  #ifdef SIM true
     Run = uSimMarine       @ NewConsole = false
   #elseif 
     Run = iM200           @ NewConsole = false
