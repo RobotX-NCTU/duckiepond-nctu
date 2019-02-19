@@ -74,8 +74,8 @@ def draw_odom_folow():
 
     # marker color
     line_marker.color.a = 1.0
-    line_marker.color.r = 1.0
-    line_marker.color.g = 0.0
+    line_marker.color.r = 0.0
+    line_marker.color.g = 1.0
     line_marker.color.b = 0.0
 
     # marker orientaiton
@@ -111,9 +111,9 @@ def draw_odom_lead():
 
     # marker color
     line_marker.color.a = 1.0
-    line_marker.color.r = 0.0
+    line_marker.color.r = 1.0
     line_marker.color.g = 0.0
-    line_marker.color.b = 1.0
+    line_marker.color.b = 0.0
 
     # marker orientaiton
     line_marker.pose.orientation.x = 0.0

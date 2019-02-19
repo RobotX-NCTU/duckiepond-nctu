@@ -7,7 +7,7 @@ from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer
 import message_filters
 import math
 import tf
-fo = open("combine_cirlce_ccw.txt", "w")
+fo = open("ssd_square_ccw.txt", "w")
 
 def cb_odom(msg_folow, msg_lead):
     dis = distance(msg_folow.pose.pose.position, msg_lead.pose.pose.position)
