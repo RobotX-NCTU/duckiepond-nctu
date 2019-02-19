@@ -107,7 +107,7 @@ class Tracking():
 			cmd_msg = UsvDrive()
 		else:
 			cmd_msg = MotorCmd()
-		print(cmd_msg.left,cmd_msg.right)
+		#print(cmd_msg.left,cmd_msg.right)
 		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
 		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
 		print(cmd_msg.left,cmd_msg.right)
