@@ -8,7 +8,7 @@ from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer
 import message_filters
 import math
 import tf
-fo = open("combine_lidar_circle.txt", "w")
+fo = open("combine_lidar_square.txt", "w")
 def cb_odom(msg_follow, msg_lead):
     dis = distance(msg_follow.poses[len(msg_follow.poses)-1].pose.position, msg_lead.poses[len(msg_lead.poses)-1].pose.position)
     
