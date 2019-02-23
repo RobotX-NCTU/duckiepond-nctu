@@ -9,6 +9,7 @@ import math
 import time
 from sensor_msgs.msg import Image, LaserScan
 from sensor_msgs.msg import CameraInfo, CompressedImage
+from std_msgs.msg import Header
 from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import OccupancyGrid, MapMetaData, Odometry
@@ -129,7 +130,10 @@ class Tracking():
 							(int(bbox.x + bbox.w), int(bbox.y + bbox.h)),(0,0,255),5)
 		try:
 			img = self.draw_cmd(img, dis, angle)
-			self.image_pub.publish(self.bridge.cv2_to_compressed_imgmsg(img))
+			img_msg = self.bridge.cv2_to_compressed_imgmsg(img)
+			img_msg.header = Header()
+			img_msg.header.stamp = rospy.Time.now()
+			self.image_pub.publish(img_msg)
 		except CvBridgeError as e:
 			print(e)
 		return angle, dis

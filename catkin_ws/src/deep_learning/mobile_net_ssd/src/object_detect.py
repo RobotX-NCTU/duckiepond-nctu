@@ -144,7 +144,10 @@ class ObjectDetecter(object):
 							cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
 				
 			if self.publish_image:
-				self.pubImg.publish(self.bridge.cv2_to_compressed_imgmsg(image_for_result))
+				img_msg = self.bridge.cv2_to_compressed_imgmsg(image_for_result)
+				img_msg.header = Header()
+				img_msg.header.stamp = rospy.Time.now()
+				self.pubImg.publish(img_msg)
 			self.pubBoxlist.publish(box_list)
 
 	def preprocess_image(self,input_image):
