@@ -23,6 +23,8 @@ add_message_files(
   FILES
   Heading.msg
   MotorCmd.msg
+  Motor4Cmd.msg
+  VelocityVector.msg
   Box.msg
   Boxlist.msg
   BoolStamped.msg
