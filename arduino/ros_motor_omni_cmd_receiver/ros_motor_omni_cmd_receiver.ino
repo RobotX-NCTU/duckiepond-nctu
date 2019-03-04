@@ -23,9 +23,9 @@ void cbMotor(duckiepond::Motor4Cmd &msg){
     int rfv = int(abs(msg.rf*255));
     int rrv = int(abs(msg.rr*255));
     
-    if(msg.lf > 0) digitalWrite(LFS,HIGH);
+    if(msg.lf < 0) digitalWrite(LFS,HIGH);
     else digitalWrite(LFS,LOW);
-    if(msg.lr > 0) digitalWrite(LRS,HIGH);
+    if(msg.lr < 0) digitalWrite(LRS,HIGH);
     else digitalWrite(LRS,LOW);
     if(msg.rf > 0) digitalWrite(RFS,HIGH);
     else digitalWrite(RFS,LOW);
