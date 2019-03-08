@@ -28,9 +28,9 @@ class PurePursuit(object):
 		self.get_waypoint = True
 		# Init subscribers and publishers
 		#self.pub_cmd = rospy.Publisher('/car_cmd', Twist, queue_size=1)
-		self.pub_finish = rospy.Publisher('/pure_pursuit/finished', Bool, queue_size=1)
-		self.pub_lookahead = rospy.Publisher("/lookahead_point", Marker, queue_size = 1)
-		self.pub_waypoint = rospy.Publisher("/waypoint_marker",Marker, queue_size=1)
+		self.pub_finish = rospy.Publisher('pure_pursuit/finished', Bool, queue_size=1)
+		self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
+		self.pub_waypoint = rospy.Publisher("waypoint_marker",Marker, queue_size=1)
 		rospy.loginfo("[%s] Initialized ..." %(self.node_name))
 
 	def initial_param(self):

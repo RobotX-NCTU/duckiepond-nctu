@@ -16,7 +16,6 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-#from duckiepond_vehicle.msg import UsvDrive
 from duckiepond.msg import MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
 
@@ -26,7 +25,7 @@ class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.dis4constV = 5. # Distance for constant velocity
-		self.pos_ctrl_max = 0.5
+		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = 0.0
 		self.pos_station_max = 0.5
 		self.pos_station_min = -0.5
@@ -43,19 +42,20 @@ class Robot_PID():
 
 
 		# Param
-		self.sim  = rospy.get_param('~sim', True)
-		self.tune  = rospy.get_param('~tune', True)
+		self.sim  = rospy.get_param('sim', False)
+		self.tune  = rospy.get_param('tune', True)
 
 		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
-		rospy.Subscriber('~odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber('odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 
-		if self.sim:	
-			self.pub_cmd = rospy.Publisher("~cmd_drive", UsvDrive, queue_size = 1)
+		if self.sim:
+			from duckiepond_vehicle.msg import UsvDrive	
+			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
 		else:
-			self.pub_cmd = rospy.Publisher("~cmd_drive", MotorCmd, queue_size = 1)
+			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 
-		self.pub_goal = rospy.Publisher("~goal_point", Marker, queue_size = 1)
-		self.station_keeping_srv = rospy.Service("~station_keeping", SetBool, self.station_keeping_cb)
+		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
+		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)
 
 		if self.tune:
 			self.pos_control = PID_control("Position")
