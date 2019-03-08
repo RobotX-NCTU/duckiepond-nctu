@@ -43,8 +43,8 @@ class JoyMapper(object):
             self.joy = joy_msg
             vector_msg = VelocityVector()
             vector_msg.x = self.joy.axes[0]
-            vector_msg.y = self.joy.axes[1]
-            vector_msg.angular = self.joy.axes[3]
+            vector_msg.y = self.joy.axes[1] * -1
+            vector_msg.angular = self.joy.axes[3] * -1
 
             self.motor_msg = self.vector_to_cmd(vector_msg)
             self.motor_msg = self.msg_constrain(self.motor_msg)

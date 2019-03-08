@@ -27,8 +27,8 @@ class Robot_PID():
 		self.dis4constV = 5. # Distance for constant velocity
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = 0.0
-		self.pos_station_max = 0.5
-		self.pos_station_min = -0.5
+		self.pos_station_max = 0.8
+		self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 0.95
 		self.cmd_ctrl_min = -0.95
 		self.station_keeping_dis = 3.5 # meters

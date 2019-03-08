@@ -27,8 +27,8 @@ class Robot_PID():
 		self.dis4constV = 5. # Distance for constant velocity
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = -1
-		self.pos_station_max = 0.5
-		self.pos_station_min = -0.5
+		self.pos_station_max = 0.8
+		self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 0.95
 		self.cmd_ctrl_min = -0.95
 		self.station_keeping_dis = 3.5 # meters
@@ -37,6 +37,7 @@ class Robot_PID():
 		self.stop_pos = []
 		self.final_goal = None # The final goal that you want to arrive
 		self.goal = self.final_goal
+		self.dest_angle = 0
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 
@@ -96,9 +97,10 @@ class Robot_PID():
 		
 		if goal_distance < self.station_keeping_dis or self.is_station_keeping:
 			rospy.loginfo("Station Keeping")
-			pos_x_output,pos_y_output, ang_output = self.station_keeping(goal_vector, goal_angle)
+			pos_x_output,pos_y_output, ang_output = self.station_keeping(self.dest_angle, goal_angle)
 		else:
-			pos_x_output,pos_y_output, ang_output = self.control(goal_vector, goal_angle)
+			self.dest_angle = goal_angle
+			pos_x_output,pos_y_output, ang_output = self.control(self.dest_angle, goal_angle)
 
 		if self.sim:
 			cmd_msg = UsvDrive()
@@ -111,10 +113,10 @@ class Robot_PID():
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
-	def control(self, goal_vector, goal_angle):
-		self.pos_x_control.update(goal_vector[0])
-		self.pos_y_control.update(goal_vector[1])
-		self.ang_control.update(goal_angle)
+	def control(self, dest_angle, goal_angle):
+		self.pos_x_control.update(2 * math.sin(goal_angle))
+		self.pos_y_control.update(2 * math.cos(goal_angle))
+		self.ang_control.update(dest_angle)
 
 		# pos_output will always be positive
 		pos_x_output = self.pos_constrain(-self.pos_x_control.output/self.dis4constV)
@@ -123,10 +125,10 @@ class Robot_PID():
 		ang_output = self.ang_control.output/180.
 		return pos_x_output,pos_y_output, ang_output
 
-	def station_keeping(self, goal_vector, goal_angle):
-		self.pos_x_station_control.update(goal_vector[0])
-		self.pos_y_station_control.update(goal_vector[1])
-		self.ang_station_control.update(goal_angle)
+	def station_keeping(self, dest_angle, goal_angle):
+		self.pos_x_station_control.update(2 * math.sin(goal_angle))
+		self.pos_y_station_control.update(2 * math.cos(goal_angle))
+		self.ang_station_control.update(dest_angle)
 
 		# pos_output will always be positive
 		pos_x_output = self.pos_station_constrain(-self.pos_x_station_control.output/self.dis4constV)
