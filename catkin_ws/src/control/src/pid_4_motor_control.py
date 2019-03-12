@@ -24,7 +24,7 @@ from PID import PID_control
 class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
-		self.dis4constV = 5. # Distance for constant velocity
+		self.dis4constV = 5.0 # Distance for constant velocity
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = -1
 		self.pos_station_max = 0.8
@@ -106,7 +106,7 @@ class Robot_PID():
 			cmd_msg = UsvDrive()
 		else:
 			cmd_msg = VelocityVector()
-
+		
 		cmd_msg.x = self.cmd_constarin(pos_x_output)
 		cmd_msg.y = self.cmd_constarin(pos_y_output)
 		cmd_msg.angular = self.cmd_constarin(ang_output)
@@ -114,28 +114,40 @@ class Robot_PID():
 		self.publish_goal(self.goal)
 
 	def control(self, dest_angle,goal_distance, goal_angle):
-		ratiao = max(min(goal_distance/self.dis4constV,1),-1)
+		dis_ratiao = min(goal_distance/self.dis4constV,1)
+		pos_x_output = math.sin(math.radians(goal_angle))
+		pos_y_output = math.cos(math.radians(goal_angle))
+		min_ratiao = min(abs(1./pos_x_output),abs(1./pos_y_output))
+		pos_x_output = self.pos_constrain(pos_x_output * min_ratiao * dis_ratiao)
+		pos_y_output = self.pos_constrain(pos_y_output * min_ratiao * dis_ratiao)
+		'''
 		self.pos_x_control.update(2 * math.sin(goal_angle) * ratiao)
 		self.pos_y_control.update(2 * math.cos(goal_angle) * ratiao)
-		self.ang_control.update(dest_angle)
-
 		# pos_output will always be positive
 		pos_x_output = self.pos_constrain(-self.pos_x_control.output/self.dis4constV)
 		pos_y_output = self.pos_constrain(-self.pos_y_control.output/self.dis4constV)
+		'''
 		# -1 = -180/180 < output/180 < 180/180 = 1
+		self.ang_control.update(dest_angle)
 		ang_output = self.ang_control.output/180.
 		return pos_x_output,pos_y_output, ang_output
 
 	def station_keeping(self, dest_angle,goal_distance, goal_angle):
-		ratiao = max(min(goal_distance/self.dis4constV,1),-1)
+		dis_ratiao = min(goal_distance/self.dis4constV,1)
+		pos_x_output = math.sin(math.radians(goal_angle))
+		pos_y_output = math.cos(math.radians(goal_angle))
+		min_ratiao = min(abs(1./pos_x_output),abs(1./pos_y_output))
+		pos_x_output = self.pos_constrain(pos_x_output * min_ratiao * dis_ratiao)
+		pos_y_output = self.pos_constrain(pos_y_output * min_ratiao * dis_ratiao)
+
+		'''
 		self.pos_x_station_control.update(2 * math.sin(goal_angle) * ratiao)
 		self.pos_y_station_control.update(2 * math.cos(goal_angle) * ratiao)
-		self.ang_station_control.update(dest_angle)
-
-		# pos_output will always be positive
 		pos_x_output = self.pos_station_constrain(-self.pos_x_station_control.output/self.dis4constV)
 		pos_y_output = self.pos_station_constrain(-self.pos_y_station_control.output/self.dis4constV)
+		'''
 		# -1 = -180/180 < output/180 < 180/180 = 1
+		self.ang_station_control.update(dest_angle)
 		ang_output = self.ang_station_control.output/180.
 
 		# if the goal is behind the robot
