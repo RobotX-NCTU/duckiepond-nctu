@@ -97,10 +97,10 @@ class Robot_PID():
 		
 		if goal_distance < self.station_keeping_dis or self.is_station_keeping:
 			rospy.loginfo("Station Keeping")
-			pos_x_output,pos_y_output, ang_output = self.station_keeping(self.dest_angle, goal_angle)
+			pos_x_output,pos_y_output, ang_output = self.station_keeping(self.dest_angle,goal_distance, goal_angle)
 		else:
 			self.dest_angle = goal_angle
-			pos_x_output,pos_y_output, ang_output = self.control(self.dest_angle, goal_angle)
+			pos_x_output,pos_y_output, ang_output = self.control(self.dest_angle,goal_distance, goal_angle)
 
 		if self.sim:
 			cmd_msg = UsvDrive()
@@ -113,9 +113,10 @@ class Robot_PID():
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
-	def control(self, dest_angle, goal_angle):
-		self.pos_x_control.update(2 * math.sin(goal_angle))
-		self.pos_y_control.update(2 * math.cos(goal_angle))
+	def control(self, dest_angle,goal_distance, goal_angle):
+		ratiao = max(min(goal_distance/self.dis4constV,1),-1)
+		self.pos_x_control.update(2 * math.sin(goal_angle) * ratiao)
+		self.pos_y_control.update(2 * math.cos(goal_angle) * ratiao)
 		self.ang_control.update(dest_angle)
 
 		# pos_output will always be positive
@@ -125,9 +126,10 @@ class Robot_PID():
 		ang_output = self.ang_control.output/180.
 		return pos_x_output,pos_y_output, ang_output
 
-	def station_keeping(self, dest_angle, goal_angle):
-		self.pos_x_station_control.update(2 * math.sin(goal_angle))
-		self.pos_y_station_control.update(2 * math.cos(goal_angle))
+	def station_keeping(self, dest_angle,goal_distance, goal_angle):
+		ratiao = max(min(goal_distance/self.dis4constV,1),-1)
+		self.pos_x_station_control.update(2 * math.sin(goal_angle) * ratiao)
+		self.pos_y_station_control.update(2 * math.cos(goal_angle) * ratiao)
 		self.ang_station_control.update(dest_angle)
 
 		# pos_output will always be positive
