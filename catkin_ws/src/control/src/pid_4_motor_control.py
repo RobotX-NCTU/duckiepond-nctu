@@ -23,20 +23,20 @@ class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.dis4constV = 5.0 # Distance for constant velocity
+		self.max_dis_ratiao = 1
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = -1
 		self.pos_station_max = 0.8
 		self.pos_station_min = -0.8
-		self.cmd_ctrl_max = 0.95
-		self.cmd_ctrl_min = -0.95
+		self.cmd_ctrl_max = 1
+		self.cmd_ctrl_min = -1
 		self.station_keeping_dis = 3.5 # meters
 		self.frame_id = 'map'
 		self.is_station_keeping = False
 		self.stop_pos = []
 		self.final_goal = None # The final goal that you want to arrive
 		self.goal = self.final_goal
-		self.dest_angle = 0
-
+		self.heading = 0
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 
 
@@ -91,13 +91,15 @@ class Robot_PID():
 		goal_angle = self.get_goal_angle(yaw, robot_position, self.goal)
 		goal_distance = math.sqrt(goal_vector[0]**2 +  goal_vector[1]**2)
 		
+
 		if goal_distance < self.station_keeping_dis or self.is_station_keeping:
 			rospy.loginfo("Station Keeping")
-			pos_x_output,pos_y_output, ang_output = self.station_keeping(self.dest_angle,goal_distance, goal_angle)
+			head_angle = np.degrees(yaw) - self.heading
+			pos_x_output,pos_y_output, ang_output = self.station_keeping(head_angle,goal_distance, goal_angle)
 		else:
 			rospy.loginfo("Navigating")
-			self.dest_angle = goal_angle
-			pos_x_output,pos_y_output, ang_output = self.control(self.dest_angle,goal_distance, goal_angle)
+			head_angle = goal_angle
+			pos_x_output,pos_y_output, ang_output = self.control(head_angle,goal_distance, goal_angle)
 
 		if self.sim:
 			cmd_msg = UsvDrive()
@@ -107,47 +109,53 @@ class Robot_PID():
 		cmd_msg.x = self.cmd_constarin(pos_x_output)
 		cmd_msg.y = self.cmd_constarin(pos_y_output)
 		cmd_msg.angular = self.cmd_constarin(ang_output)
+		print("heading %f"%self.heading)
 		print("angular %f" %cmd_msg.angular)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
-	def control(self, dest_angle,goal_distance, goal_angle):
+	def control(self, head_angle,goal_distance, goal_angle):
 		self.pos_control.update(goal_distance)
-		dis_ratiao = goal_distance/self.dis4constV
-		if dis_ratiao < 0 : dis_ratiao*=-1
-		dis_ratiao = min(dis_ratiao,1)
+		dis_ratiao = -self.pos_control.output/self.dis4constV
+		dis_ratiao = max(min(dis_ratiao,self.max_dis_ratiao),0)
+		print("dis ratiao%f"%dis_ratiao)
 
 		pos_x_output = math.sin(math.radians(goal_angle))
 		pos_y_output = math.cos(math.radians(goal_angle))
-		min_ratiao = min(abs(1./pos_x_output),abs(1./pos_y_output))
 		pos_x_output = self.pos_constrain(pos_x_output * dis_ratiao)
 		pos_y_output = self.pos_constrain(pos_y_output * dis_ratiao)
 		
 		# -1 = -180/180 < output/180 < 180/180 = 1
-		self.ang_control.update(dest_angle)
+		self.ang_control.update(head_angle)
 		ang_output = self.ang_control.output/180. * -1
 		return pos_x_output,pos_y_output, ang_output
 
-	def station_keeping(self, dest_angle,goal_distance, goal_angle):
-		self.pos_control.update(goal_distance)
-		dis_ratiao = goal_distance/self.dis4constV
-		if dis_ratiao < 0 : dis_ratiao*=-1
-		dis_ratiao = min(dis_ratiao,1)
+	def station_keeping(self, head_angle,goal_distance, goal_angle):
+		self.pos_station_control.update(goal_distance)
+		dis_ratiao = -self.pos_station_control.output/self.dis4constV
+		dis_ratiao = max(min(dis_ratiao,self.max_dis_ratiao),0)
+		print("dis ratiao%f"%dis_ratiao)
 
 		pos_x_output = math.sin(math.radians(goal_angle))
 		pos_y_output = math.cos(math.radians(goal_angle))
-		min_ratiao = min(abs(1./pos_x_output),abs(1./pos_y_output))
 		pos_x_output = self.pos_constrain(pos_x_output * dis_ratiao)
 		pos_y_output = self.pos_constrain(pos_y_output * dis_ratiao)
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
-		self.ang_station_control.update(dest_angle)
+		self.ang_station_control.update(head_angle)
 		ang_output = self.ang_station_control.output/180. * -1
 		return pos_x_output,pos_y_output, ang_output
 
 	def goal_cb(self, p):
 		self.final_goal = [p.pose.position.x, p.pose.position.y]
 		self.goal = self.final_goal
+		quat = (p.pose.orientation.x,\
+				p.pose.orientation.y,\
+				p.pose.orientation.z,\
+				p.pose.orientation.w)
+		_, _, yaw = tf.transformations.euler_from_quaternion(quat)
+		self.heading = np.degrees(yaw)
+		
 
 	def station_keeping_cb(self, req):
 		if req.data == True:
