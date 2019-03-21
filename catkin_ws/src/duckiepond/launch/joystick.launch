@@ -1,19 +1,35 @@
 <launch>
     <arg name="gazebo" default="false"/>
     <arg name="veh" />
+    <arg name="omni" default="false"/>
+    <arg name="differential_constrain" default="0.2" />
 
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
-	<group if="$(arg gazebo)">
-            <node pkg="joystick_control" type="joymapper_node.py" name="joymapper" output="screen" />
-            <node pkg="joystick_control" type="heading_to_usv.py" name="heading_to_usv" output="screen" />
-        </group>
+
+        <group unless="$(arg omni)">
+	        <group if="$(arg gazebo)">
+                <node pkg="joystick_control" type="joymapper_node.py" name="joymapper" output="screen" />
+                <node pkg="joystick_control" type="heading_to_usv.py" name="heading_to_usv" output="screen" />
+            </group>
         
-	<group unless="$(arg gazebo)">
-            <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen" />
-            <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
-                <param name="port" value="/dev/usb_arduino" />
-            </node>
+	        <group unless="$(arg gazebo)">
+                <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen" />
+                <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
+                    <param name="port" value="/dev/usb_arduino" />
+                </node>
+            </group>
+        </group>
+
+        <group if="$(arg omni)">
+            <group unless="$(arg gazebo)">
+                <node pkg="joystick_control" type="joy_node_4motor.py" name="joymapper" output="screen" >
+                    <param name="differential_constrain" value="$(arg differential_constrain)" />
+                </node>
+                <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
+                    <param name="port" value="/dev/usb_arduino" />
+                </node>
+            </group>
         </group>
     </group>
 

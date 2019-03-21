@@ -16,7 +16,7 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig, lookaheadConfig
-from duckiepond_vehicle.msg import UsvDrive
+from duckiepond.msg import MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
 
 from PID import PID_control
@@ -26,7 +26,7 @@ class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.dis4constV = 1. # Distance for constant velocity
-		self.pos_ctrl_max = 0.5
+		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = 0.0
 		self.pos_station_max = 0.5
 		self.pos_station_min = -0.5
@@ -41,14 +41,23 @@ class Robot_PID():
 		self.goal = self.final_goal
 		self.robot_position = None
 
+		#parameter
+		self.sim  = rospy.get_param('sim', False)
+
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 
 		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
-		rospy.Subscriber('/odometry/filtered', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-		self.pub_cmd = rospy.Publisher("/cmd_drive", UsvDrive, queue_size = 1)
-		self.pub_lookahead = rospy.Publisher("/lookahead_point", Marker, queue_size = 1)
-		self.station_keeping_srv = rospy.Service("/station_keeping", SetBool, self.station_keeping_cb)
-		self.navigate_srv = rospy.Service("/navigation", SetBool, self.navigation_cb)
+		rospy.Subscriber('odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+
+		if self.sim:
+			from duckiepond_vehicle.msg import UsvDrive
+			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
+		else :
+			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
+
+		self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
+		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)
+		self.navigate_srv = rospy.Service("navigation", SetBool, self.navigation_cb)
 
 		self.pos_control = PID_control("Position")
 		self.ang_control = PID_control("Angular")
@@ -103,7 +112,10 @@ class Robot_PID():
 			goal_angle = self.get_goal_angle(yaw, robot_position, pursuit_point)
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 		
-		cmd_msg = UsvDrive()
+		if self.sim:
+			cmd_msg = UsvDrive()
+		else:
+			cmd_msg = MotorCmd()
 		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
 		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
 		self.pub_cmd.publish(cmd_msg)
@@ -239,7 +251,7 @@ class Robot_PID():
 
 	def publish_lookahead(self, robot, lookahead):
 		marker = Marker()
-		marker.header.frame_id = "/odom"
+		marker.header.frame_id = "map"
 		marker.header.stamp = rospy.Time.now()
 		marker.ns = "pure_pursuit"
 		marker.type = marker.LINE_STRIP

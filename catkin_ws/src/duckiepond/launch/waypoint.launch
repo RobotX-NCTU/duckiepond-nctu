@@ -1,0 +1,16 @@
+<launch>
+
+    <arg name="veh"/>
+    <arg name="sim" default="false" />
+    <arg name="omni" default="false" />
+
+    <group ns="$(arg veh)">
+        <node unless="$(arg omni)" pkg="control" type="pid_control.py" name="PID_control" output="screen" >
+            <param name="sim" value="$(arg sim)"/> 
+        </node>
+        <node if="$(arg omni)" pkg="control" type="pid_4_motor_control.py" name="PID_control" output="screen" >
+            <param name="sim" value="$(arg sim)"/> 
+        </node>
+    </group>
+
+</launch>
