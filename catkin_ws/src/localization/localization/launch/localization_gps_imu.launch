@@ -1,8 +1,13 @@
 <launch>
 	<arg name="latitude" default="24.788808"/>
 	<arg name="longitude" default="121.000188"/>
+    <arg name="gps_duplicate" default="false"/>
 
-    <node pkg="localization" type="localization_gps_imu.py" name="localization_gps_imu" respawn="false" output="screen">
+    <node unless="$(arg gps_duplicate)" pkg="localization" type="localization_gps_imu.py" name="localization_gps_imu" respawn="false" output="screen">
+        <param name="latitude" value="$(arg latitude)"/>
+        <param name="longitude" value="$(arg longitude)"/>
+    </node>
+    <node if="$(arg gps_duplicate)" pkg="localization" type="localization_gps_imu_gps_duplicate.py" name="localization_gps_imu" respawn="false" output="screen">
         <param name="latitude" value="$(arg latitude)"/>
         <param name="longitude" value="$(arg longitude)"/>
     </node>

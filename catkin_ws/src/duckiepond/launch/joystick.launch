@@ -6,7 +6,6 @@
 
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
-
         <group unless="$(arg omni)">
 	        <group if="$(arg gazebo)">
                 <node pkg="joystick_control" type="joymapper_node.py" name="joymapper" output="screen" />
@@ -32,5 +31,9 @@
             </group>
         </group>
     </group>
+
+    <include if="$(arg omni)" file="$(find duckiepond)/launch/sensor.launch" >
+            <arg name="veh" value="$(arg veh)"/>
+    </include>
 
 </launch>

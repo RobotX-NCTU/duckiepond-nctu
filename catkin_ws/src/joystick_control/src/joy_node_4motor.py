@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 import rospy
 import math
-
-from sensor_msgs.msg import Joy
+import numpy as np
+import tf
+from sensor_msgs.msg import Joy,Imu
 from duckiepond.msg import Motor4Cmd,VelocityVector
+from dynamic_reconfigure.server import Server
+from control.cfg import ang_PIDConfig
+from PID import PID_control
+
 
 class JoyMapper(object):
     def __init__(self):
@@ -16,6 +21,13 @@ class JoyMapper(object):
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",VelocityVector,self.cbCmd,queue_size=1)
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
+        self.sub_imu = rospy.Subscriber("imu/data",Imu,self.cb_imu,queue_size=1)
+
+        #PID
+        self.ang_control = PID_control("joy_stick_Angular")
+        self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "joy_stick_Angular")
+        self.ang_control.setSampleTime(0.1)
+        self.ang_control.SetPoint = 0.0
 
         #parameter
         self.differential_constrain = rospy.get_param("differential_constrain",0.2)
@@ -23,8 +35,13 @@ class JoyMapper(object):
         #varibles
         self.emergencyStop = False
         self.autoMode = False
+        self.rotate = 0
         self.motor_msg = Motor4Cmd()
         self.last_msg = Motor4Cmd()
+        self.vector_msg = VelocityVector()
+        self.imu_msg = Imu()
+        self.boat_angle = 0
+        self.dest_angle = 0
         self.last_msg.lf = 0
         self.last_msg.lr = 0
         self.last_msg.rf = 0
@@ -32,26 +49,44 @@ class JoyMapper(object):
         self.motor_stop()
 
         #timer
-        self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
+        self.timer = rospy.Timer(rospy.Duration(0.05),self.cb_publish)
 
     def cb_publish(self,event):
         if self.emergencyStop:
             self.motor_stop()
+            self.pub_motor_cmd.publish(self.motor_msg)
 
         else:#low pass filter
-            self.motor_msg.lf = self.low_pass_filter(self.motor_msg.lf,self.last_msg.lf)
-            self.motor_msg.lr = self.low_pass_filter(self.motor_msg.lr,self.last_msg.lr)
-            self.motor_msg.rf = self.low_pass_filter(self.motor_msg.rf,self.last_msg.rf)
-            self.motor_msg.rr = self.low_pass_filter(self.motor_msg.rr,self.last_msg.rr)
-        
-        self.pub_motor_cmd.publish(self.motor_msg)
-        self.last_msg = self.motor_msg
+            if not self.autoMode:
+                if self.rotate > 0:
+                    self.dest_angle += 5
+                elif self.rotate < 0:
+                    self.dest_angle -= 5
+                self.dest_angle = self.angle_range(self.dest_angle)
+                angular_input = self.angle_range(self.boat_angle-self.dest_angle)
+                angular_output = self.control(angular_input)
+                print("angular out %f" % angular_output)
+                self.vector_msg.angular = angular_output
+                self.motor_msg = self.vector_to_cmd(self.vector_msg)
+                self.motor_msg = self.msg_constrain(self.motor_msg)
+                
+
+            self.last_msg.lf = self.low_pass_filter(self.motor_msg.lf,self.last_msg.lf)
+            self.last_msg.lr = self.low_pass_filter(self.motor_msg.lr,self.last_msg.lr)
+            self.last_msg.rf = self.low_pass_filter(self.motor_msg.rf,self.last_msg.rf)
+            self.last_msg.rr = self.low_pass_filter(self.motor_msg.rr,self.last_msg.rr)
+            self.pub_motor_cmd.publish(self.last_msg)
     
     def low_pass_filter(self,current,last):
         current = last + max(min(current-last
                             ,self.differential_constrain)
                             ,-self.differential_constrain)
         return current
+
+    def control(self, head_angle):
+		self.ang_control.update(head_angle)
+		ang_output = self.ang_control.output/(-180.)
+		return ang_output
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
@@ -62,13 +97,41 @@ class JoyMapper(object):
         self.processButtons(joy_msg)
         if not self.emergencyStop and not self.autoMode:
             self.joy = joy_msg
-            vector_msg = VelocityVector()
-            vector_msg.x = self.joy.axes[0] * -1
-            vector_msg.y = self.joy.axes[1] 
-            vector_msg.angular = self.joy.axes[3] * -1
+            self.vector_msg = VelocityVector()
+            self.vector_msg.x = self.joy.axes[0] * -1
+            self.vector_msg.y = self.joy.axes[1]
+            if self.joy.axes[3] > 0:
+                self.rotate = 1
+            elif self.joy.axes[3] < 0:
+                self.rotate = -1
+            else:
+                self.rotate = 0
+            self.vector_msg.angular = 0
 
-            self.motor_msg = self.vector_to_cmd(vector_msg)
-            self.motor_msg = self.msg_constrain(self.motor_msg)
+    def cb_imu(self,msg):
+        self.imu_msg = msg
+        quat = (msg.orientation.x,msg.orientation.y,msg.orientation.z,msg.orientation.w)
+        _, _, yaw = tf.transformations.euler_from_quaternion(quat)
+        self.boat_angle = np.degrees(yaw)
+
+    def ang_pid_cb(self, config, level):
+		print("Angular: [Kp]: {Kp}   [Ki]: {Ki}   [Kd]: {Kd}\n".format(**config))
+		Kp = float("{Kp}".format(**config))
+		Ki = float("{Ki}".format(**config))
+		Kd = float("{Kd}".format(**config))
+		self.ang_control.setKp(Kp)
+		self.ang_control.setKi(Ki)
+		self.ang_control.setKd(Kd)
+		return config
+
+    def angle_range(self, angle): # limit the angle to the range of [-180, 180]
+		if angle > 180:
+			angle = angle - 360
+			angle = self.angle_range(angle)
+		elif angle < -180:
+			angle = angle + 360
+			angle = self.angle_range(angle)
+		return angle
 
     def motor_stop(self):
         self.motor_msg.lf = 0
@@ -78,10 +141,10 @@ class JoyMapper(object):
 
     def vector_to_cmd(self,vec):
         motor4msg = Motor4Cmd()
-        motor4msg.lf = vec.y + vec.x + vec.angular
-        motor4msg.lr = vec.y - vec.x + vec.angular
-        motor4msg.rf = vec.y - vec.x - vec.angular
-        motor4msg.rr = vec.y + vec.x - vec.angular
+        motor4msg.lf = max(min(vec.y + vec.x,1),-1)  + vec.angular
+        motor4msg.lr = max(min(vec.y - vec.x,1),-1) + vec.angular
+        motor4msg.rf = max(min(vec.y - vec.x,1),-1) - vec.angular
+        motor4msg.rr = max(min(vec.y + vec.x,1),-1) - vec.angular
         return motor4msg
 
     def msg_constrain(self,msg):
