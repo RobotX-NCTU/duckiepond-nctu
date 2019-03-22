@@ -23,7 +23,7 @@ class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.dis4constV = 5.0 # Distance for constant velocity
-		self.max_dis_ratiao = 1
+		self.max_dis_ratiao = 0.8
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = -1
 		self.pos_station_max = 0.8
@@ -70,7 +70,7 @@ class Robot_PID():
 
 			self.initialize_PID()
 		else:
-			print 'no working...'
+			print 'no working...' 
 
 	def odom_cb(self, msg):
 		self.frame_id = msg.header.frame_id
@@ -94,7 +94,7 @@ class Robot_PID():
 
 		if goal_distance < self.station_keeping_dis or self.is_station_keeping:
 			rospy.loginfo("Station Keeping")
-			head_angle = np.degrees(yaw) - self.heading
+			head_angle = self.angle_range(np.degrees(yaw) - self.heading)
 			pos_x_output,pos_y_output, ang_output = self.station_keeping(head_angle,goal_distance, goal_angle)
 		else:
 			rospy.loginfo("Navigating")
@@ -111,6 +111,7 @@ class Robot_PID():
 		cmd_msg.angular = self.cmd_constarin(ang_output)
 		print("heading %f"%self.heading)
 		print("angular %f" %cmd_msg.angular)
+		print("compare %f"% np.degrees(yaw))
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
@@ -131,15 +132,16 @@ class Robot_PID():
 		return pos_x_output,pos_y_output, ang_output
 
 	def station_keeping(self, head_angle,goal_distance, goal_angle):
+		
 		self.pos_station_control.update(goal_distance)
-		dis_ratiao = -self.pos_station_control.output/self.dis4constV
+		dis_ratiao = -self.pos_station_control.output
 		dis_ratiao = max(min(dis_ratiao,self.max_dis_ratiao),0)
-		print("dis ratiao%f"%dis_ratiao)
+		
 
 		pos_x_output = math.sin(math.radians(goal_angle))
 		pos_y_output = math.cos(math.radians(goal_angle))
-		pos_x_output = self.pos_constrain(pos_x_output * dis_ratiao)
-		pos_y_output = self.pos_constrain(pos_y_output * dis_ratiao)
+		pos_x_output = self.pos_constrain(pos_x_output*dis_ratiao)
+		pos_y_output = self.pos_constrain(pos_y_output*dis_ratiao)
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
 		self.ang_station_control.update(head_angle)
