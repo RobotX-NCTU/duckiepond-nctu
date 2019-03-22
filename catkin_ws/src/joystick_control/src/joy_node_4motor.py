@@ -17,10 +17,18 @@ class JoyMapper(object):
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",VelocityVector,self.cbCmd,queue_size=1)
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
+        #parameter
+        self.differential_constrain = rospy.get_param("differential_constrain",0.2)
+
         #varibles
         self.emergencyStop = False
         self.autoMode = False
         self.motor_msg = Motor4Cmd()
+        self.last_msg = Motor4Cmd()
+        self.last_msg.lf = 0
+        self.last_msg.lr = 0
+        self.last_msg.rf = 0
+        self.last_msg.rr = 0
         self.motor_stop()
 
         #timer
@@ -29,8 +37,21 @@ class JoyMapper(object):
     def cb_publish(self,event):
         if self.emergencyStop:
             self.motor_stop()
+
+        else:#low pass filter
+            self.motor_msg.lf = self.low_pass_filter(self.motor_msg.lf,self.last_msg.lf)
+            self.motor_msg.lr = self.low_pass_filter(self.motor_msg.lr,self.last_msg.lr)
+            self.motor_msg.rf = self.low_pass_filter(self.motor_msg.rf,self.last_msg.rf)
+            self.motor_msg.rr = self.low_pass_filter(self.motor_msg.rr,self.last_msg.rr)
         
         self.pub_motor_cmd.publish(self.motor_msg)
+        self.last_msg = self.motor_msg
+    
+    def low_pass_filter(self,current,last):
+        current = last + max(min(current-last
+                            ,self.differential_constrain)
+                            ,-self.differential_constrain)
+        return current
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
@@ -75,7 +96,7 @@ class JoyMapper(object):
         # Button A
         if (joy_msg.buttons[0] == 1):
             rospy.loginfo('A button')
-            
+        
         # Y button
         elif (joy_msg.buttons[3] == 1):
             rospy.loginfo('Y button')
