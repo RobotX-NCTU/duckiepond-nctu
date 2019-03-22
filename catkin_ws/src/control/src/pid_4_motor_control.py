@@ -45,7 +45,7 @@ class Robot_PID():
 		self.tune  = rospy.get_param('tune', True)
 
 		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
-		rospy.Subscriber('odometry/filtered', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber('localization_gps_imu/odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 
 		if self.sim:
 			from duckiepond_vehicle.msg import UsvDrive	
