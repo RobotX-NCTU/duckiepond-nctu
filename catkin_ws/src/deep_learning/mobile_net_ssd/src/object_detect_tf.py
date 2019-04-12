@@ -52,52 +52,56 @@ class ObjectDetecter(object):
         rospy.loginfo("[%s] Initializing " %(self.node_name))
         self.bridge = CvBridge()
         self.frame_counter = 0
+        self.image_np = np.zeros((800,600,3), np.uint8)
+        self.img_flag = False
+
+        with self.detection_graph.as_default():
+            with tf.Session(graph=self.detection_graph,config=self.session_config) as sess:
+                while True:
+                    if self.img_flag:
+                        self.img_flag = False
+                        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+                        image_np_expanded = np.expand_dims(self.image_np, axis=0)
+                        new_img = self.image_np
+                        # Extract image tensor
+                        image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
+                        # Extract detection boxes
+                        boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
+                        # Extract detection scores
+                        scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
+                        # Extract detection classes
+                        classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
+                        # Extract number of detectionsd
+                        num_detections = self.detection_graph.get_tensor_by_name(
+                            'num_detections:0')
+                        # Actual detection.
+                        (boxes, scores, classes, num_detections) = sess.run(
+                            [boxes, scores, classes, num_detections],
+                            feed_dict={image_tensor: image_np_expanded})
+
+                        # Visualization of the results of a detection.
+                        vis_util.visualize_boxes_and_labels_on_image_array(
+                            new_img,
+                            np.squeeze(boxes),
+                            np.squeeze(classes).astype(np.int32),
+                            np.squeeze(scores),
+                            self.category_index,
+                            use_normalized_coordinates=True,
+                            line_thickness=8)
+
+                        if self.publish_image:
+                            img_msg = self.bridge.cv2_to_compressed_imgmsg(new_img)
+                            img_msg.header = Header()
+                            img_msg.header.stamp = rospy.Time.now()
+                            self.pubImg.publish(img_msg)
 
 
     def cbimage(self,img):
         self.frame_counter += 1
         if self.frame_counter == self.input_rate/self.dest_rate:
             self.frame_counter=0
-
-            image_np = self.bridge.compressed_imgmsg_to_cv2(img)
-
-            # Detection
-            with self.detection_graph.as_default():
-                with tf.Session(graph=self.detection_graph,config=self.session_config) as sess:
-
-                    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-                    image_np_expanded = np.expand_dims(image_np, axis=0)
-                    # Extract image tensor
-                    image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')
-                    # Extract detection boxes
-                    boxes = self.detection_graph.get_tensor_by_name('detection_boxes:0')
-                    # Extract detection scores
-                    scores = self.detection_graph.get_tensor_by_name('detection_scores:0')
-                    # Extract detection classes
-                    classes = self.detection_graph.get_tensor_by_name('detection_classes:0')
-                    # Extract number of detectionsd
-                    num_detections = self.detection_graph.get_tensor_by_name(
-                        'num_detections:0')
-                    # Actual detection.
-                    (boxes, scores, classes, num_detections) = sess.run(
-                        [boxes, scores, classes, num_detections],
-                        feed_dict={image_tensor: image_np_expanded})
-            
-            # Visualization of the results of a detection.
-            vis_util.visualize_boxes_and_labels_on_image_array(
-                image_np,
-                np.squeeze(boxes),
-                np.squeeze(classes).astype(np.int32),
-                np.squeeze(scores),
-                self.category_index,
-                use_normalized_coordinates=True,
-                line_thickness=8)
-
-            if self.publish_image:
-				img_msg = self.bridge.cv2_to_compressed_imgmsg(image_np)
-				img_msg.header = Header()
-				img_msg.header.stamp = rospy.Time.now()
-				self.pubImg.publish(img_msg)
+            self.image_np = self.bridge.compressed_imgmsg_to_cv2(img)
+            self.img_flag = True
 
     def on_shutdown(self):
 		pass
