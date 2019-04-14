@@ -3,14 +3,22 @@
     <arg name="pub_image" default="True" />
     <arg name="threshold" default="0.3" />
     <arg name="dest_rate" default="5" />
-    <arg name="input_rate" default="10" />
+    <arg name="input_rate" default="30" />
     <arg name="sim" default="False" />
+    <arg name="tf" default="False" />
 
-    <node ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect.py" name="detecter" output="screen" >
+    <node unless="$(arg tf)" ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect.py" name="detecter" output="screen">
         <param name="publish_image" value="$(arg pub_image)" />
         <param name="threshold" value="$(arg threshold)" />
         <param name="dest_rate" value="$(arg dest_rate)" />
         <param name="input_rate" value="$(arg input_rate)" />
         <param name="sim" value="$(arg sim)" />
     </node>
+    <node if="$(arg tf)" ns="$(arg veh)" pkg="mobile_net_ssd" type="object_detect_tf.py" name="detecter" output="screen">
+        <param name="publish_image" value="$(arg pub_image)" />
+        <param name="threshold" value="$(arg threshold)" />
+        <param name="dest_rate" value="$(arg input_rate)" />
+        <param name="input_rate" value="$(arg input_rate)" />
+    </node>
+
 </launch>
