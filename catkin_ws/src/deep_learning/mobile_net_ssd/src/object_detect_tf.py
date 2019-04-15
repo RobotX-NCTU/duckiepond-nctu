@@ -12,7 +12,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
-CLASSES = ("background", "kayaker")
+CLASSES = ("background", "boat")
 COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
 
@@ -59,6 +59,7 @@ class ObjectDetecter(object):
             image = self.bridge.compressed_imgmsg_to_cv2(img)
             image_for_result = image
             box_list = Boxlist()
+            (box_list.image_height,box_list.image_width, _) = image.shape
             box_list.image = img
             predictions = self.predict(image, self.sess)
 

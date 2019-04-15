@@ -2,10 +2,12 @@
   <arg name="veh"/>
   <arg name="sim" default="false"/>
   <arg name="combine_moos" default="False" />
+  <arg name="tf" default="False" />
 
   <include file="$(find mobile_net_ssd)/launch/object_detect.launch">
     <arg name="veh" value="$(arg veh)"/>
     <arg name="sim" value="$(arg sim)"/>
+    <arg name="tf" value="$(arg tf)" />
   </include>
 
   <include file="$(find tracking)/launch/ncs_track.launch">
