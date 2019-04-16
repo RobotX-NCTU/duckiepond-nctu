@@ -38,10 +38,16 @@ class ObjectDetecter(object):
         self.dest_rate = rospy.get_param("detecter/dest_rate", 30)
         self.input_rate = rospy.get_param("detecter/input_rate", 30)
         self.threshold = rospy.get_param("detecter/threshold", 0.4)
+        self.sim = rospy.get_param("detecter/sim", False)
 
         self.node_name = rospy.get_name()
-        self.subscriber = rospy.Subscriber(
-            "camera_node/image/compressed", CompressedImage, self.cbimage, queue_size=1, buff_size=2**24)
+        if self.sim:
+            self.subscriber = rospy.Subscriber(
+                "camera/rgb/image_rect_color", Image, self.cbimage_raw, queue_size=1, buff_size=2**24)
+        else:
+            self.subscriber = rospy.Subscriber(
+                "camera_node/image/compressed", CompressedImage, self.cbimage, queue_size=1, buff_size=2**24)
+
         self.pubImg = rospy.Publisher(
             "detecter/image/compressed", CompressedImage, queue_size=1)
         self.pubBoxlist = rospy.Publisher(
@@ -52,51 +58,61 @@ class ObjectDetecter(object):
         self.frame_counter = 0
         self.image_np = np.zeros((800, 600, 3), np.uint8)
 
+    def cbimage_raw(self, img):
+        self.frame_counter += 1
+        if self.frame_counter == self.input_rate/self.dest_rate:
+            self.frame_counter = 0
+            image = self.bridge.imgmsg_to_cv2(img)
+            self.process_img(image, self.bridge.cv2_to_compressed_imgmsg(image))
+
     def cbimage(self, img):
         self.frame_counter += 1
         if self.frame_counter == self.input_rate/self.dest_rate:
             self.frame_counter = 0
             image = self.bridge.compressed_imgmsg_to_cv2(img)
-            image_for_result = image
-            box_list = Boxlist()
-            (box_list.image_height,box_list.image_width, _) = image.shape
-            box_list.image = img
-            predictions = self.predict(image, self.sess)
+            self.process_img(image, img)
 
-            for pred in predictions:
-                (pred_class, pred_conf, pred_boxpts) = pred
+    def process_img(self, image, msg):
+        image_for_result = image
+        box_list = Boxlist()
+        (box_list.image_height, box_list.image_width, _) = image.shape
+        box_list.image = msg
+        predictions = self.predict(image, self.sess)
 
-                if pred_class == 1 and pred_conf > self.threshold:
-                    ptA = (int(pred_boxpts[1]*image.shape[1]),
-                           int(pred_boxpts[0]*image.shape[0]))
-                    ptB = (int(pred_boxpts[3]*image.shape[1]),
-                           int(pred_boxpts[2]*image.shape[0]))
-                    box = Box()
-                    box.x = ptA[0]
-                    box.y = ptA[1]
-                    box.w = ptB[0] - ptA[0]
-                    box.h = ptB[1] - ptA[1]
-                    box.confidence = pred_conf
-                    box_list.list.append(box)
+        for pred in predictions:
+            (pred_class, pred_conf, pred_boxpts) = pred
 
-                    if self.publish_image:
-                        label = "{}: {:.2f}%".format(CLASSES[pred_class],
-                                                     pred_conf * 100)
-                        (startX, startY) = (ptA[0], ptA[1])
-                        y = startY - 15 if startY - 15 > 15 else startY + 15
+            if pred_class == 1 and pred_conf > self.threshold:
+                ptA = (int(pred_boxpts[1]*image.shape[1]),
+                       int(pred_boxpts[0]*image.shape[0]))
+                ptB = (int(pred_boxpts[3]*image.shape[1]),
+                       int(pred_boxpts[2]*image.shape[0]))
+                box = Box()
+                box.x = ptA[0]
+                box.y = ptA[1]
+                box.w = ptB[0] - ptA[0]
+                box.h = ptB[1] - ptA[1]
+                box.confidence = pred_conf
+                box_list.list.append(box)
 
-                        cv2.rectangle(image_for_result, ptA, ptB,
-                                      COLORS[pred_class], 2)
-                        cv2.putText(image_for_result, label, (startX, y),
-                                    cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
+                if self.publish_image:
+                    label = "{}: {:.2f}%".format(CLASSES[pred_class],
+                                                 pred_conf * 100)
+                    (startX, startY) = (ptA[0], ptA[1])
+                    y = startY - 15 if startY - 15 > 15 else startY + 15
 
-            if self.publish_image:
-                img_msg = self.bridge.cv2_to_compressed_imgmsg(
-                    image_for_result)
-                img_msg.header = Header()
-                img_msg.header.stamp = rospy.Time.now()
-                self.pubImg.publish(img_msg)
-            self.pubBoxlist.publish(box_list)
+                    cv2.rectangle(image_for_result, ptA, ptB,
+                                  COLORS[pred_class], 2)
+                    cv2.putText(image_for_result, label, (startX, y),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, COLORS[pred_class], 3)
+
+        if self.publish_image:
+            img_msg = self.bridge.cv2_to_compressed_imgmsg(
+                image_for_result)
+            img_msg.header = Header()
+            img_msg.header.stamp = rospy.Time.now()
+            self.pubImg.publish(img_msg)
+        self.pubBoxlist.publish(box_list)
 
     def predict(self, image, sess):
         image_np_expanded = np.expand_dims(image, axis=0)

@@ -19,6 +19,7 @@
         <param name="threshold" value="$(arg threshold)" />
         <param name="dest_rate" value="$(arg input_rate)" />
         <param name="input_rate" value="$(arg input_rate)" />
+        <param name="sim" value="$(arg sim)" />
     </node>
 
 </launch>
