@@ -2,7 +2,7 @@
 
     <arg name="sim" default="false"/>
     <arg name="factor" default="bamboo"/>
-    <arg name="moos_folder" default="single_waypt"/>
+    <arg name="moos_folder" default="multi_following_loiter"/>
     <arg name="root" default="$(env HOME)/duckiepond-nctu/moos"/>
     <arg name="veh" default="BRIAN"/> 
 	<arg name="latitude" default="24.788808"/>

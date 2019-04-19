@@ -35,8 +35,8 @@ def draw_route():
     # marker color
     route_marker.color.a = 1.0
     route_marker.color.r = 0.0
-    route_marker.color.g = 1.0
-    route_marker.color.b = 0.0
+    route_marker.color.g = 0.0
+    route_marker.color.b = 1.0
 
     # marker orientaiton
     route_marker.pose.orientation.x = 0.0
@@ -140,6 +140,9 @@ if __name__ == "__main__":
     point_list_lead = []
 
     # Square
+    # route_list = [(0, 7), (0, -21), (28, -21), (28, 7), (0, 7)]
+    
+    # Circle
     route_list = [(0, 7), (0, -21), (28, -21), (28, 7), (0, 7)]
 
     # Circle

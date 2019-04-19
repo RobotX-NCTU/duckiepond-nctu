@@ -7,7 +7,6 @@ from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer
 import message_filters
 import math
 import tf
-fo = open("ssd_square_ccw.txt", "w")
 
 def cb_odom(msg_folow, msg_lead):
     dis = distance(msg_folow.pose.pose.position, msg_lead.pose.pose.position)
@@ -45,8 +44,8 @@ if __name__ == "__main__":
     point_list_follow = []
     point_list_lead = []
 
-    # Square
-    route_list = [(0, 7), (0, -21), (28, -21), (28, 7), (0, 7)]
+    file_ = rospy.get_param("~file")
+    fo = open(file_+".txt", "w")
 
     # Circle
     sub_odom_follow = message_filters.Subscriber("/MONICA/localization_gps_imu/odometry", Odometry)
