@@ -9,10 +9,17 @@ import message_filters
 import math
 import tf
 fo = open("combine_lidar_square.txt", "w")
+counter = 0
 def cb_odom(msg_follow, msg_lead):
+    global counter
+    if len(msg_follow.poses) is 0 or  len(msg_lead.poses) is 0:
+        return
     dis = distance(msg_follow.poses[len(msg_follow.poses)-1].pose.position, msg_lead.poses[len(msg_lead.poses)-1].pose.position)
     
-    print(dis)
+    print(dis, counter)
+    if dis >= 10:
+        return
+    counter += 1
 
     text = str(dis) + '\n'
     fo.write(text)

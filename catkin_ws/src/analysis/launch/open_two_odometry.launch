@@ -1,0 +1,33 @@
+<launch>
+
+    <arg name="latitude" default="24.788808"/>
+    <arg name="longitude" default="121.000188"/>
+    <arg name="file" default="ssd_circle_cw"/>
+
+
+    <!-- GPS IMU Localization -->
+    <group ns="MONICA">
+        <remap from="localization_gps_imu/fix" to="fix"/>
+        <remap from="localization_gps_imu/imu/data" to="imu/data"/>
+        <include file="$(find localization)/launch/localization_gps_imu.launch">
+            <arg name="latitude" value="$(arg latitude)"/>
+            <arg name="longitude" value="$(arg longitude)"/>
+        </include>
+    </group>
+    <group ns="BRIAN">
+        <remap from="localization_gps_imu/fix" to="fix"/>
+        <remap from="localization_gps_imu/imu/data" to="imu/data"/>
+        <include file="$(find localization)/launch/localization_gps_imu.launch">
+            <arg name="latitude" value="$(arg latitude)"/>
+            <arg name="longitude" value="$(arg longitude)"/>
+        </include>
+    </group>
+
+    <node  pkg="analysis" type="d_phi_extract.py" name="d_phi_extract" respawn="false" output="screen">
+        <param name="file" value="/home/tony/Downloads/$(arg file)"/>
+    </node>
+
+    <node  pkg="analysis" type="odometry_visual.py" name="odometry_visual" respawn="false" output="screen">
+    </node>
+
+</launch>

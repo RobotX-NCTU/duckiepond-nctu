@@ -13,6 +13,8 @@ from sensor_msgs.msg import CompressedImage
 from duckiepond.msg import MotorCmd
 from cv_bridge import CvBridge
 import time
+from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
+from duckiepond.srv import SetValue, SetValueRequest, SetValueResponse
 
 class EndToEndTensorflow(object):
     def __init__(self):
@@ -23,6 +25,7 @@ class EndToEndTensorflow(object):
         # Param
         self.sim  = rospy.get_param('~sim', True)
         self.model_path = rospy.get_param("~model")
+        self.linear_speed = 1.65
 
         
         # Variables
@@ -37,6 +40,7 @@ class EndToEndTensorflow(object):
         self.saver.restore(self.sess, self.model_path)
         self.image_tensor = self.sess.graph.get_tensor_by_name('x:0')
         self.output_tensor = self.sess.graph.get_tensor_by_name('ConvNet/fc_layer_2/BiasAdd:0')
+        self.srv_linear_speed = rospy.Service('~set_linear', SetValue, self.cb_srv_set_linear_speed)
 
 
         # Timer
@@ -65,6 +69,12 @@ class EndToEndTensorflow(object):
 
         return new_img
 
+
+    def cb_srv_set_linear_speed(self, req):
+        self.linear_speed = req.value
+        rospy.loginfo("Set Linear Speed %f." %(self.linear_speed))
+        return SetValueResponse()
+
     def cb_image(self, msg):
         if self.frame_counter <2 :
             self.frame_counter += 1
@@ -91,8 +101,8 @@ class EndToEndTensorflow(object):
             else:
                 motor_msg = MotorCmd()
 
-            motor_msg.left = self.motor_cmd[0][0]
-            motor_msg.right = self.motor_cmd[0][1]
+            motor_msg.left = self.motor_cmd[0][0] * self.linear_speed 
+            motor_msg.right = self.motor_cmd[0][1] * self.linear_speed 
             motor_msg.header.stamp = rospy.Time.now()
             self.pub_motion.publish(motor_msg)
 

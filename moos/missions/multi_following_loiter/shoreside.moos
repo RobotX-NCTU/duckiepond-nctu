@@ -19,7 +19,7 @@ ProcessConfig = ANTLER
   MSBetweenLaunches = 200
 
   Run = MOOSDB            @ NewConsole = false
-  Run = pLogger         @ NewConsole = false
+  //Run = pLogger         @ NewConsole = false
   Run = pMarineViewer	    @ NewConsole = false
   Run = uProcessWatch	    @ NewConsole = false
   Run = pShare            @ NewConsole = fasle
@@ -132,7 +132,7 @@ ProcessConfig = pMarineViewer
   SCOPE = DEPLOY
 
   button_one = DEPLOY # DEPLOY=true # STATION_KEEP=false # SHADOW_2=true # SHADOW_1=false 
-  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false # LOITER=true
+  button_one = MOOS_MANUAL_OVERRIDE=false # RETURN=false # LOITER=false
 
   button_two = RETURN # RETURN=true # STATION_KEEP=false # DEPLOY=true # MOOS_MANUAL_OVERRIDE=false
 
@@ -142,7 +142,7 @@ ProcessConfig = pMarineViewer
   left_context[return]  = RETURN_UPDATE = points =$(XPOS),$(YPOS)
 
   right_context[return]  = VIEW_POINT = x=14.1,y=-6.9,label=loiterpoint 
-  right_context[return]  = LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=16, pts=16, snap=1, label=$(VNAME)_LOITER
+  right_context[return]  = WPT_UPDATE = points = pts={7,-14:7,0:21,0:21,-14:35,-14:35,0:21,0:21,-14}
   
   // square
   //LIT_UPDATE = polygon = format=radial, x=14.1, y=-6.9, radius=20, pts=4, snap=1, label=$(VNAME)_LOITER
