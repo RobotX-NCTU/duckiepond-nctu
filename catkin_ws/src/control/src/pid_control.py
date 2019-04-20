@@ -16,7 +16,7 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-from duckiepond.msg import MotorCmd
+from duckiepond.msg import MotorCmd,UsvDrive
 from std_srvs.srv import SetBool, SetBoolResponse
 
 from PID import PID_control
@@ -42,17 +42,17 @@ class Robot_PID():
 
 
 		# Param
-		self.sim  = rospy.get_param('sim', False)
+		self.sim  = rospy.get_param('tracking/sim', True)
 		self.tune  = rospy.get_param('tune', True)
 
 		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
-		rospy.Subscriber('localization_gps_imu/odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 
 		if self.sim:
-			from duckiepond_vehicle.msg import UsvDrive	
 			self.pub_cmd = rospy.Publisher("cmd_drive", UsvDrive, queue_size = 1)
+			rospy.Subscriber('p3d_odom', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 		else:
 			self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
+			rospy.Subscriber('localization_gps_imu/odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 
 		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
 		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)

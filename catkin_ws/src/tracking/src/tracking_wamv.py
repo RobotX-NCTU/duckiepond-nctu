@@ -17,19 +17,19 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-from duckiepond.msg import Boxlist,MotorCmd
+from duckiepond.msg import Boxlist, MotorCmd, UsvDrive
 from std_srvs.srv import SetBool, SetBoolResponse
 from PID import PID_control
+
 
 class Tracking():
 	def __init__(self):
 		self.node_name = rospy.get_name()
-		rospy.loginfo("[%s] Initializing " %(self.node_name))
+		rospy.loginfo("[%s] Initializing " % (self.node_name))
 		self.ROBOT_NUM = 3
-		self.wavm_labels = ["wamv",""]
-		#rospy.Subscriber('/pcl_points_img', PoseArray, self.call_back, queue_size = 1, buff_size = 2**24)
-		self.combine_moos = rospy.get_param("Tracking/combine_moos",False)
-
+		self.wavm_labels = ["wamv", ""]
+		# rospy.Subscriber('/pcl_points_img', PoseArray, self.call_back, queue_size = 1, buff_size = 2**24)
+		self.combine_moos = rospy.get_param("Tracking/combine_moos", False)
 
 		# Image definition
 		self.width = 640
@@ -43,28 +43,31 @@ class Tracking():
 		self.pos_ctrl_min = -1
 		self.cmd_ctrl_max = 0.95
 		self.cmd_ctrl_min = -0.95
-		self.station_keeping_dis = 3.5 # meters
+		self.station_keeping_dis = 3.5  # meters
 		self.frame_id = 'odom'
 		self.is_station_keeping = False
 		self.stop_pos = []
-		self.final_goal = None # The final goal that you want to arrive
+		self.final_goal = None  # The final goal that you want to arrive
 		self.goal = self.final_goal
 
-		rospy.loginfo("[%s] Initializing " %(self.node_name))
-		self.sim = rospy.get_param("Tracking/sim",False)
-		#self.image_sub = rospy.Subscriber("/BRIAN/camera_node/image/compressed", Image, self.img_cb, queue_size=1)
-		self.image_sub = rospy.Subscriber("detecter/predictions", Boxlist, self.box_cb, queue_size=1, buff_size = 2**24)
+		rospy.loginfo("[%s] Initializing " % (self.node_name))
+		self.sim = rospy.get_param("Tracking/sim", False)
+		# self.image_sub = rospy.Subscriber("/BRIAN/camera_node/image/compressed", Image, self.img_cb, queue_size=1)
+		self.image_sub = rospy.Subscriber(
+		    "detecter/predictions", Boxlist, self.box_cb, queue_size=1, buff_size=2**24)
 		publisher_name = "cmd_drive"
 		if self.combine_moos:
 			publisher_name = "ssd_drive"
 		if self.sim:
 			from duckiepond_vehicle.msg import UsvDrive
-			self.pub_cmd = rospy.Publisher(publisher_name, UsvDrive, queue_size = 1)
+			self.pub_cmd = rospy.Publisher(publisher_name, UsvDrive, queue_size=1)
 		else:
-			self.pub_cmd = rospy.Publisher(publisher_name, MotorCmd, queue_size = 1)
-		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
-		self.image_pub = rospy.Publisher("motion_img/compressed", CompressedImage, queue_size = 1)
-		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)
+			self.pub_cmd = rospy.Publisher(publisher_name, MotorCmd, queue_size=1)
+		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size=1)
+		self.image_pub = rospy.Publisher(
+		    "motion_img/compressed", CompressedImage, queue_size=1)
+		self.station_keeping_srv = rospy.Service(
+		    "station_keeping", SetBool, self.station_keeping_cb)
 
 		self.pos_control = PID_control("Position_tracking")
 		self.ang_control = PID_control("Angular_tracking")
@@ -74,10 +77,18 @@ class Tracking():
 
 		self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position_tracking")
 		self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular_tracking")
-		self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
-		self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
-		
+		self.pos_station_srv = Server(
+		    pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
+		self.ang_station_srv = Server(
+		    ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
+
 		self.initialize_PID()
+
+		self.cmd_msg = UsvDrive()
+		self.timer = rospy.Timer(rospy.Duration(0.2), self.cb_publish)
+	
+	def cb_publish(self, event):
+		self.pub_cmd.publish(self.cmd_msg)
 
 	def box_cb(self, msg):
 		self.width = msg.image_width
@@ -85,7 +96,7 @@ class Tracking():
 		try:
 			np_arr = np.fromstring(msg.image.data, np.uint8)
 			cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-			#cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+			# cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 		except CvBridgeError as e:
 			print(e)
 		(rows, cols, channels) = cv_image.shape
@@ -105,15 +116,15 @@ class Tracking():
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 		
 		if self.sim:
-			cmd_msg = UsvDrive()
+			self.cmd_msg = UsvDrive()
 		else:
-			cmd_msg = MotorCmd()
-		#print(cmd_msg.left,cmd_msg.right)
-		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
-		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
-		print(cmd_msg.left,cmd_msg.right)
-		self.pub_cmd.publish(cmd_msg)
-		#self.publish_goal(self.goal)
+			self.cmd_msg = MotorCmd()
+		# print(cmd_msg.left,cmd_msg.right)
+		self.cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+		self.cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
+		print(self.cmd_msg.left,self.cmd_msg.right)
+		
+		# self.publish_goal(self.goal)
 
 	def get_control_info(self, boxes, img):
 		# Image Preprocessing (vgg use BGR image as training input)
@@ -156,7 +167,7 @@ class Tracking():
 		draw_img = img.copy()
 		cv2.circle(draw_img, (center), radius, (255, 255, 255), 10)
 		cv2.addWeighted(draw_img, alpha, img, 1 - alpha, 0, img)
-		#cv2.circle(img, (int(center[0]+x_max), int(center[1]+y_max)), 15, (255, 255, 255), -1)
+		# cv2.circle(img, (int(center[0]+x_max), int(center[1]+y_max)), 15, (255, 255, 255), -1)
 		cv2.arrowedLine(img, center, (int(center[0]+x), int(center[1]+y)), (255, 255, 255), 7)
 		return img
 

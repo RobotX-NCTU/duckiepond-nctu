@@ -28,6 +28,7 @@ add_message_files(
   Box.msg
   Boxlist.msg
   BoolStamped.msg
+  UsvDrive.msg
 )
 
 add_service_files(

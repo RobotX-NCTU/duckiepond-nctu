@@ -20,7 +20,7 @@ class ObjectDetecter(object):
     def __init__(self):
         my_dir = os.path.abspath(os.path.dirname(__file__))
         self.PATH_TO_CKPT = os.path.join(
-            my_dir, "../graphs/frozen_inference_graph.pb")
+            my_dir, "../graphs/boat_graph.pb")
         self.NUM_CLASSES = 1
         self.session_config = tf.ConfigProto()
         self.session_config.gpu_options.allow_growth = True
@@ -37,7 +37,7 @@ class ObjectDetecter(object):
         self.publish_image = rospy.get_param("detecter/publish_image", True)
         self.dest_rate = rospy.get_param("detecter/dest_rate", 30)
         self.input_rate = rospy.get_param("detecter/input_rate", 30)
-        self.threshold = rospy.get_param("detecter/threshold", 0.4)
+        self.threshold = rospy.get_param("detecter/threshold", 0.2)
         self.sim = rospy.get_param("detecter/sim", False)
 
         self.node_name = rospy.get_name()
