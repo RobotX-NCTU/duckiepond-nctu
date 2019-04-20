@@ -2,7 +2,7 @@
 
     <arg name="latitude" default="24.788808"/>
     <arg name="longitude" default="121.000188"/>
-    <arg name="file" default="moos_square_ccw"/>
+    <arg name="file" default="ssd_circle_cw"/>
 
 
     <!-- GPS IMU Localization -->

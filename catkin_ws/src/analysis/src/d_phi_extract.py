@@ -7,12 +7,16 @@ from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer
 import message_filters
 import math
 import tf
-
+from std_msgs.msg import Int32
+counter = 0
 def cb_odom(msg_folow, msg_lead):
     dis = distance(msg_folow.pose.pose.position, msg_lead.pose.pose.position)
     phi = angle(msg_folow.pose.pose.orientation, msg_lead.pose.pose.orientation)
     
     print(dis, phi)
+    global counter
+    counter += 1
+    print("Counter = " + str(counter))
 
     text = str(dis) + " " + str(phi) + '\n'
     fo.write(text)
@@ -38,6 +42,10 @@ def distance(position_1, position_2):
     y = position_1.y - position_2.y
     return math.sqrt(x*x + y*y)
 
+def cb_clear(msg_int):
+    print("Counter Clear point = ", counter)
+    print("--------------------------------------")
+
 if __name__ == "__main__":
     rospy.init_node("odometry_plot",anonymous=False)
 
@@ -47,7 +55,9 @@ if __name__ == "__main__":
     file_ = rospy.get_param("~file")
     fo = open(file_+".txt", "w")
 
-    # Circle
+
+    rospy.Subscriber("/clear", Int32, cb_clear, queue_size=1)
+
     sub_odom_follow = message_filters.Subscriber("/MONICA/localization_gps_imu/odometry", Odometry)
     sub_odom_lead = message_filters.Subscriber("/BRIAN/localization_gps_imu/odometry", Odometry)
 
