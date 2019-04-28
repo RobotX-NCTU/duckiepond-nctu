@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import numpy as np
 import os.path
@@ -12,7 +12,7 @@ from std_msgs.msg import Header
 from sensor_msgs.msg import Image, CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
-CLASSES = ("background", "boat")
+CLASSES = ("background", "kayaker")
 COLORS = np.random.uniform(0, 255, size=(len(CLASSES), 3))
 
 
@@ -20,7 +20,7 @@ class ObjectDetecter(object):
     def __init__(self):
         my_dir = os.path.abspath(os.path.dirname(__file__))
         self.PATH_TO_CKPT = os.path.join(
-            my_dir, "../graphs/boat_graph.pb")
+            my_dir, "../graphs/kayaker_graph.pb")
         self.NUM_CLASSES = 1
         self.session_config = tf.ConfigProto()
         self.session_config.gpu_options.allow_growth = True
@@ -135,14 +135,15 @@ class ObjectDetecter(object):
         box_list = np.squeeze(boxes)
 
         predictions = []
-        for i in range(num_detections):
+        num = int(num_detections[0])
+        for i in range(num):
             predictions.append((class_list[i], conf_list[i], box_list[i]))
 
         return predictions
 
     def on_shutdown(self):
         self.sess.close()
-        print 'shutting down'
+        print ('shutting down')
 
 
 if __name__ == "__main__":

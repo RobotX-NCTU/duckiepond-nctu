@@ -61,9 +61,11 @@ class Tracking():
 		if self.sim:
 			from duckiepond_vehicle.msg import UsvDrive
 			self.pub_cmd = rospy.Publisher(publisher_name, UsvDrive, queue_size=1)
-		else:
+		        self.cmd_msg = UsvDrive()
+                else:
 			self.pub_cmd = rospy.Publisher(publisher_name, MotorCmd, queue_size=1)
-		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size=1)
+		        self.cmd_msg = MotorCmd()
+                self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size=1)
 		self.image_pub = rospy.Publisher(
 		    "motion_img/compressed", CompressedImage, queue_size=1)
 		self.station_keeping_srv = rospy.Service(
@@ -84,7 +86,6 @@ class Tracking():
 
 		self.initialize_PID()
 
-		self.cmd_msg = UsvDrive()
 		self.timer = rospy.Timer(rospy.Duration(0.2), self.cb_publish)
 	
 	def cb_publish(self, event):
