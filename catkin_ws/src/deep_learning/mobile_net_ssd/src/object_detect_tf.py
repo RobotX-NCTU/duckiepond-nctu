@@ -84,7 +84,7 @@ class ObjectDetecter(object):
         for pred in predictions:
             (pred_class, pred_conf, ptA, ptB) = pred
 
-            if pred_conf > self.threshold:
+            if pred_class==1 and pred_conf > self.threshold:
                 box = Box()
                 box.x = ptA[0]
                 box.y = ptA[1]
