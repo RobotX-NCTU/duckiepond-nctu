@@ -16,9 +16,10 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class ObjectDetecter(object):
     def __init__(self):
+        self.target_name = rospy.get_param("detecter/target","boat")
         my_dir = os.path.abspath(os.path.dirname(__file__))
         self.PATH_TO_CKPT = os.path.join(
-            my_dir, "../graphs/kayaker_graph.pb")
+            my_dir, "../graphs/"+self.target_name+"_graph.pb")
         self.NUM_CLASSES = 1
         self.session_config = tf.ConfigProto()
         self.session_config.gpu_options.allow_growth = True
@@ -83,7 +84,7 @@ class ObjectDetecter(object):
         for pred in predictions:
             (pred_class, pred_conf, ptA, ptB) = pred
 
-            if pred_class == 1 and pred_conf > self.threshold:
+            if pred_conf > self.threshold:
                 box = Box()
                 box.x = ptA[0]
                 box.y = ptA[1]

@@ -3,11 +3,13 @@
   <arg name="sim" default="false"/>
   <arg name="combine_moos" default="False" />
   <arg name="tf" default="False" />
+  <arg name="target" default="boat" />
 
   <include file="$(find mobile_net_ssd)/launch/object_detect.launch">
     <arg name="veh" value="$(arg veh)"/>
     <arg name="sim" value="$(arg sim)"/>
     <arg name="tf" value="$(arg tf)" />
+    <arg name="target" value="$(arg target)" />
   </include>
 
   <include file="$(find tracking)/launch/ncs_track.launch">
