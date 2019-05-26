@@ -102,3 +102,6 @@ ENV PATH "$PATH:/root/moos-ivp/bin"
 WORKDIR /root
 
 RUN apt-get install -y byobu
+RUN wget -r -R "index\.html*" http://models.gazebosim.org/
+RUN mkdir .gazebo
+RUN mv models.gazebosim.org/ .gazebo/models
