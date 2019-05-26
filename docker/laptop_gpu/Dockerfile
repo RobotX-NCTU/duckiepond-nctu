@@ -79,3 +79,5 @@ RUN chmod a+r /usr/local/cuda-9.0/lib64/libcudnn*
 
 RUN rm -rf cudnn-9.0-linux-x64-v7.4.2.24.tar.gz
 WORKDIR /root
+
+RUN pip install tables==3.5.1 
