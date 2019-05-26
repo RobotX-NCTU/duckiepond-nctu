@@ -81,3 +81,24 @@ RUN rm -rf cudnn-9.0-linux-x64-v7.4.2.24.tar.gz
 WORKDIR /root
 
 RUN pip install tables==3.5.1 
+
+#install ncsdk2
+WORKDIR /root
+RUN mkdir ncs 
+WORKDIR /root/ncs
+RUN git clone -b ncsdk2 https://github.com/movidius/ncsdk.git
+WORKDIR /root/ncs/ncsdk
+RUN sudo -H make install
+
+#install moos-ivp
+WORKDIR /root
+RUN git clone https://github.com/ARG-NCTU/moos-ivp-nctu.git moos-ivp 
+WORKDIR /root/moos-ivp
+RUN ./build-moos.sh
+RUN ./build-ivp.sh
+
+# Add MOOS-IvP to the PATH
+ENV PATH "$PATH:/root/moos-ivp/bin" 
+WORKDIR /root
+
+RUN apt-get install -y byobu
