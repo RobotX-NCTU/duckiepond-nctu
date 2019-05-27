@@ -105,3 +105,24 @@ RUN apt-get install -y byobu
 RUN wget -r -R "index\.html*" http://models.gazebosim.org/
 RUN mkdir .gazebo
 RUN mv models.gazebosim.org/ .gazebo/models
+
+
+# Install Caffe
+WORKDIR /root
+RUN git clone https://github.com/tonycar12002/caffe.git && \
+    cd caffe && git checkout ssd
+
+RUN apt-get install -y libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler
+RUN apt-get install -y --no-install-recommends libboost-all-dev
+RUN apt-get install -y libopenblas-dev liblapack-dev libatlas-base-dev
+RUN apt-get install -y libgflags-dev libgoogle-glog-dev liblmdb-dev
+RUN apt-get install -y git cmake build-essential
+
+WORKDIR /root
+RUN cd caffe && git pull && cp Makefile.config.example Makefile.config && make -j8
+RUN cd caffe && make py
+RUN cd caffe && make test -j8
+RUN touch /root/.bashrc && echo "source /opt/ros/kinetic/setup.bash" >> /root/.bashrc
+RUN touch /root/.bashrc && echo export PYTHONPATH="/root/caffe/python" >> /root/.bashrc
+RUN pip install scikit-image
+RUN apt-get install -y protobuf-compiler python-pil python-lxml python-tk
