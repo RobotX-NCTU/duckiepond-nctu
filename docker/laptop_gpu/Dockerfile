@@ -126,3 +126,4 @@ RUN touch /root/.bashrc && echo "source /opt/ros/kinetic/setup.bash" >> /root/.b
 RUN touch /root/.bashrc && echo export PYTHONPATH="/root/caffe/python" >> /root/.bashrc
 RUN pip install scikit-image
 RUN apt-get install -y protobuf-compiler python-pil python-lxml python-tk
+RUN apt-get install -y pyqt4-dev-tools pyqt5-dev-tools && pip install lxml
