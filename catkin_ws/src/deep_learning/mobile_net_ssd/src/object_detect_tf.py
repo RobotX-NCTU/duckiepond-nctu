@@ -32,7 +32,7 @@ class ObjectDetecter(object):
                 tf.import_graph_def(od_graph_def, name='')
         self.sess = tf.Session(graph=self.detection_graph,
                                config=self.session_config)
-        self.tracker = CentroidTracker()
+        #self.tracker = CentroidTracker()
         # parameter
         self.publish_image = rospy.get_param("detecter/publish_image", True)
         self.dest_rate = rospy.get_param("detecter/dest_rate", 30)
@@ -79,7 +79,7 @@ class ObjectDetecter(object):
         (box_list.image_height, box_list.image_width, _) = image.shape
         box_list.image = msg
         predictions, boxes = self.predict(image, self.sess)
-        objects = self.tracker.update(boxes)
+        #objects = self.tracker.update(boxes)
 
         for pred in predictions:
             (pred_class, pred_conf, ptA, ptB) = pred
@@ -90,7 +90,8 @@ class ObjectDetecter(object):
                 box.y = ptA[1]
                 box.w = ptB[0] - ptA[0]
                 box.h = ptB[1] - ptA[1]
-                box.id = self.tracker.search_id(ptA,ptB)
+                #box.id = self.tracker.search_id(ptA,ptB)
+                box.id = 0
                 box.confidence = pred_conf
                 box_list.list.append(box)
 
