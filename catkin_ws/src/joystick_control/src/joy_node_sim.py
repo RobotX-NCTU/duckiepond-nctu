@@ -47,8 +47,8 @@ class JoyMapper(object):
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-            self.motor_msg.right = max(min(cmd_msg.left,1),-1)
-            self.motor_msg.left = max(min(cmd_msg.right,1),-1)
+            self.motor_msg.right = max(min(cmd_msg.right,1),-1)
+            self.motor_msg.left = max(min(cmd_msg.left,1),-1)
 
     def cbJoy(self, joy_msg):
         self.processButtons(joy_msg)
@@ -59,8 +59,8 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.right = max(min(speed - difference , 1),-1)
-            self.motor_msg.left = max(min(speed + difference , 1),-1)
+            self.motor_msg.right = max(min(speed + difference , 1),-1)
+            self.motor_msg.left = max(min(speed - difference , 1),-1)
 
     def processButtons(self, joy_msg):
         # Button A

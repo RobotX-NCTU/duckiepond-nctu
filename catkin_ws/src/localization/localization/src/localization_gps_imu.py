@@ -40,6 +40,7 @@ class LocailizationGPSImu(object):
         self.lat_orig = rospy.get_param('~latitude', 0.0)
         self.long_orig = rospy.get_param('~longitude', 0.0)
         self.utm_orig = fromLatLong(self.lat_orig, self.long_orig)
+        self.imu_rotate = rospy.get_param('~imu_rotate',np.pi/2)
 
         # Service
         self.srv_imu_offset = rospy.Service('~imu_offset', SetValue, self.cb_srv_imu_offest)
@@ -74,7 +75,7 @@ class LocailizationGPSImu(object):
         roll = tf.transformations.euler_from_quaternion(q)[0]
         pitch = tf.transformations.euler_from_quaternion(q)[1]
         yaw = tf.transformations.euler_from_quaternion(q)[2]
-        yaw = yaw + np.pi/2.
+        yaw = yaw + self.imu_rotate
 
         if self.start == False:
             self.start = True

@@ -5,9 +5,9 @@ ServerPort = $(VEH_PORT)
 Community  = $(VNAME)
 MOOSTimeWarp = 1
 
-// Bamboo Lake NCTU
-LatOrigin  = 24.788808
-LongOrigin = 121.000188
+//sand island
+LatOrigin = 21.31134444
+LongOrigin = -157.88995000
 
 //------------------------------------------------------------
 Processconfig = ANTLER
