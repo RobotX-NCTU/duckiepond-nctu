@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="BRIAN"/>
+    <arg name="omni" default="false"/>
+    <arg name="differential_constrain" default="0.2" />
+
+    <group ns="$(arg veh)">
+        <remap from="joymapper/joy" to="joy" />
+
+        <group unless="$(arg omni)">
+            <node pkg="joystick_control" type="joy_node_sim.py" name="joymapper" output="screen">
+                <param name="vrx" value="true" />
+            </node>
+        </group>
+
+        <group if="$(arg omni)">
+            <node pkg="joystick_control" type="joy_node_4motor_sim.py" name="joymapper" output="screen">
+                <param name="differential_constrain" value="$(arg differential_constrain)" />
+            </node>
+        </group>
+
+    </group>
+
+</launch>
