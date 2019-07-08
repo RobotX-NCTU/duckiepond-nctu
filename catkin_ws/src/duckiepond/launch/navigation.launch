@@ -3,7 +3,7 @@
     <arg name="sim" default="false" />
 
     <group ns="$(arg veh)">
-        <node pkg="control" type="navigation.py" name="PID_control" output="screen" >
+        <node pkg="control" type="multipoint.py" name="multi_waypoint" output="screen" >
             <param name="sim" value="$(arg sim)"/> 
         </node>
     </group>

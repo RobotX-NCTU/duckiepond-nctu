@@ -26,6 +26,8 @@ for i,point in enumerate(p_list):
 
 goal = points.get()
 rospy.init_node("multi_waypoint")
+sim = rospy.get_param('sim',True)
+pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,queue_size=1)
 
 def cb_odom(msg):
     odom = msg
@@ -44,7 +46,12 @@ def cb_odom(msg):
     pub.publish(pose)
     print goal
 
-sub = rospy.Subscriber("/BRIAN/p3d_odom",Odometry,cb_odom,queue_size=1)
-pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,queue_size=1)
+odomerty_name=''
+if sim:
+    odomerty_name = "p3d_odom"
+else:
+    odomerty_name = "localization_gps_imu/odometry"
+
+sub = rospy.Subscriber(odomerty_name,Odometry,cb_odom,queue_size=1)
 
 rospy.spin()
