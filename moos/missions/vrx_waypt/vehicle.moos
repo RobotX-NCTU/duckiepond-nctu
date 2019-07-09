@@ -1,5 +1,5 @@
-ServerHost = $(VEH_IP)
-ServerPort = $(VEH_PORT)
+ServerHost = localhost
+ServerPort = 9100
 
 // Community name IS the vehicle name
 Community  = $(VNAME)
@@ -14,23 +14,30 @@ Processconfig = ANTLER
 {
   MSBetweenLaunches = 100
 
-  Run = MOOSDB           @ NewConsole = false
-  Run = uProcessWatch    @ NewConsole = false
-  Run = pShare           @ NewConsole = false
-  //Run = pLogger          @ NewConsole = false
-  Run = pNodeReporter    @ NewConsole = false
-  Run = pMarinePID       @ NewConsole = false
+  Run = MOOSDB              @ NewConsole = false
+  Run = uProcessWatch       @ NewConsole = false
+  Run = pShare              @ NewConsole = false
+  //Run = pLogger           @ NewConsole = false
+  Run = pNodeReporter       @ NewConsole = false
+  Run = pMarinePID          @ NewConsole = false
 
-  Run = pHelmIvP         @ NewConsole = false
-  Run = pHostInfo        @ NewConsole = false  
-  //Run = pBasicContactMgr @ NewConsole = false
-  Run = uFldMessageHandler @ NewConsole = false
-  Run = uFldNodeBroker @ NewConsole = false
-  //Run = uSimMarine       @ NewConsole = false
+  Run = pHelmIvP            @ NewConsole = false
+  Run = pHostInfo           @ NewConsole = false  
+  Run = uFldMessageHandler  @ NewConsole = false
+  Run = uFldNodeBroker      @ NewConsole = false
+  Run = pObstacleMgr        @ NewConsole = false
+  Run = pBasicContactMgr    @ NewConsole = false
 
-  //Run = uTimerScript @ NewConsole
+  //Run = uSimMarine        @ NewConsole = false
+  //Run = uTimerScript      @ NewConsole = false
 }
 
+//-----------------------------------------
+ProcessConfig = pObstacleMgr
+{
+  AppTick    = 4
+  CommsTick  = 4  
+}
 
 //--------------------------------------------------------
 ProcessConfig = uFldNodeBroker
@@ -115,7 +122,7 @@ ProcessConfig = uSimMarine
   thrust_reflect = true
 }
 
-
+//------------------------------------------------------
 ProcessConfig = pHostInfo
 {
   AppTick 	= 1
@@ -124,6 +131,7 @@ ProcessConfig = pHostInfo
   DEFAULT_HOSTIP = localhost
 }
 
+//------------------------------------------------------
 ProcessConfig = pHelmIvP
 {
   AppTick    = 4
@@ -151,14 +159,14 @@ ProcessConfig = pMarinePID
   ACTIVE_START  = true
   
   // Yaw PID controller
-  YAW_PID_KP             = 0.4
+  YAW_PID_KP             = 0.45
   YAW_PID_KD             = 0.1
   YAW_PID_KI             = 0.0
   YAW_PID_INTEGRAL_LIMIT = 0.07
   
   // Speed PID controller
-  SPEED_PID_KP           = 1.0
-  SPEED_PID_KD           = 0.0
+  SPEED_PID_KP           = 0.8
+  SPEED_PID_KD           = 0.2
   SPEED_PID_KI           = 0.0
   SPEED_PID_INTEGRAL_LIMIT = 0.07
   
@@ -189,6 +197,7 @@ ProcessConfig = pLogger
   WildCardLogging = true 
 }
 
+//------------------------------------------------------
 ProcessConfig = pNodeReporter
 {
   AppTick     = 2
@@ -197,6 +206,7 @@ ProcessConfig = pNodeReporter
   VESSEL_TYPE = KAYAK
 }
 
+//------------------------------------------------------
 ProcessConfig = uProcessWatch
 {
   AppTick   = 1
