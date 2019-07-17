@@ -42,8 +42,8 @@ class Robot_PID():
 
 
 		# Param
-		self.sim  = rospy.get_param('tracking/sim', True)
-		self.tune  = rospy.get_param('tune', True)
+		self.sim  = rospy.get_param("~tracking/sim", True)
+		self.tune  = rospy.get_param('~tune', True)
 
 		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
 

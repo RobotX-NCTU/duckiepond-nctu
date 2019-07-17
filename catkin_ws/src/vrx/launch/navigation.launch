@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="BRIAN"/>
+    <arg name="sim" default="false" />
+
+    <group ns="$(arg veh)">
+        <node pkg="control" type="multipoint.py" name="multi_waypoint" output="screen" >
+            <param name="nav/sim" value="$(arg sim)"/> 
+        </node>
+    </group>
+
+</launch>

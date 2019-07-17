@@ -27,7 +27,7 @@ for i,point in enumerate(p_list):
 
 goal = points.get()
 rospy.init_node("multi_waypoint")
-sim = rospy.get_param('sim',True)
+sim = rospy.get_param("~nav/sim",True)
 pub = rospy.Publisher("/move_base_simple/goal", PoseStamped,queue_size=1)
 
 def cb_odom(msg):
