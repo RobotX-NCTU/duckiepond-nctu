@@ -1,89 +1,221 @@
-FROM amd64/ubuntu:xenial
+FROM nvcr.io/nvidia/l4t-base:r32.2
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-get update -y
-RUN apt-get install -y \
-    bash \
-    git \
-    make \
-    wget \
-    sudo \
-    python-pip \
-    python-dev \
-    python-numpy \
-    python-scipy \
-    build-essential \
-    cmake \
-    net-tools \
-    iputils-ping \
-    network-manager \
-    vim \
-    libjpeg-dev \
-    libtiff-dev \
-    libpng-dev \
-    libfltk1.3-dev \
-    fluid \
-    && rm -rf /var/lib/apt/lists/*
+############################ USER ###############################
+# setup environment
+ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL=/bin/bash \
+    USER=argduckiepond \
+    NB_UID=1000 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
 
-RUN sudo pip install utm
+ENV HOME=/home/${USER}
 
-# install packages
-RUN apt-get update && apt-get install -q -y \
-    dirmngr \
-    gnupg2 \
-    lsb-release \
-    && rm -rf /var/lib/apt/lists/*
+RUN adduser --disabled-password \
+    --gecos "Default user" \
+    --uid ${NB_UID} \
+    ${USER}
 
-# setup keys
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+RUN echo "root:root" | chpasswd
+RUN echo "${USER}:111111" | chpasswd
 
-# setup sources.list
-RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
 
-# install bootstrap tools
+############################################# install bootstrap tools #############################################
 RUN apt-get update && apt-get install --no-install-recommends -y \
+    libusb-1.0 \
+    gtk+-3.0 \
+    build-essential \
+    make \
+    cmake \
+    g++ \
+    tzdata \
+    dirmngr \
+    lsb-release \
+    gnupg2 \
+    libpcap-dev \
+    libglfw3-dev \
+    python3-pip \
+    python3-opencv  \
+    python3-scipy   \
+    python-vcstools \
+    python-scipy \
+    python-gobject \
+    python-gtk2 \
+    libcanberra-gtk-module \
+    libcanberra-gtk3-module \
+    libfltk1.3-dev \ 
+    freeglut3-dev \ 
+    libpng-dev \ 
+    libjpeg-dev \
+    libxft-dev \ 
+    libxinerama-dev \ 
+    libtiff5-dev \ 
+    netbase \ 
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+######################################### ROS ##################################################################
+# setup keys and source.list
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
+    echo "deb http://packages.ros.org/ros/ubuntu bionic main" > /etc/apt/sources.list.d/ros1-latest.list
+
+# install ros packages
+ENV ROS_DISTRO melodic
+RUN apt-get update && apt-get install -y \ 
+    ros-${ROS_DISTRO}-desktop-full \
+    ros-$ROS_DISTRO-serial \
+    ros-$ROS_DISTRO-soem \
+    ros-$ROS_DISTRO-openslam-gmapping \
+    ros-$ROS_DISTRO-geodesy \
+    ros-$ROS_DISTRO-cartographer-* \
+    ros-$ROS_DISTRO-ddynamic-reconfigure \
+    ros-$ROS_DISTRO-perception \
+    ros-$ROS_DISTRO-rgbd-launch \
+    ros-$ROS_DISTRO-joystick-drivers \
+    ros-$ROS_DISTRO-pointcloud-to-laserscan \
+    ros-$ROS_DISTRO-robot-localization \
+    ros-$ROS_DISTRO-spacenav-node \
+    ros-$ROS_DISTRO-tf2-sensor-msgs \
+    ros-$ROS_DISTRO-controller-manager \
+    ros-$ROS_DISTRO-twist-mux \
+    ros-$ROS_DISTRO-velodyne-simulator \
+    ros-$ROS_DISTRO-gazebo-ros \
+    ros-$ROS_DISTRO-move-base-msgs \
+    ros-$ROS_DISTRO-lms1xx \
+    ros-$ROS_DISTRO-rviz-imu-plugin \
+    ros-$ROS_DISTRO-interactive-marker-twist-server \
+    ros-$ROS_DISTRO-teleop-twist-joy \
+    ros-$ROS_DISTRO-rosserial-arduino \
+    ros-$ROS_DISTRO-rosserial \
     python-rosdep \
     python-rosinstall \
-    python-vcstools \
+    python-rosinstall-generator \
+    python-wstool \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-
-# setup environment
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
 
 # bootstrap rosdep
 RUN rosdep init \
     && rosdep update
 
-# install ros packages
-ENV ROS_DISTRO kinetic
-RUN apt-get update && apt-get install -y --fix-missing\
-    ros-kinetic-ros-core=1.3.2-0* \
-    ros-kinetic-robot \
-    ros-kinetic-perception \
-    ros-kinetic-navigation \
-    ros-kinetic-robot-localization \
-    ros-kinetic-roslint \
-    ros-kinetic-hector-trajectory-server \
-    ros-kinetic-joystick-drivers \
-    ros-kinetic-rqt \
-    ros-kinetic-rqt-common-plugins \
-    ros-kinetic-web-video-server \
-    ros-kinetic-rosserial-arduino \
-    ros-kinetic-rosserial \
-    ros-kinetic-geodesy \
+#################################### GTSAM ####################################
+
+# RUN cd ${HOME}/ \
+#     && git clone https://github.com/borglab/gtsam.git \
+#     && cd gtsam/ \
+#     && mkdir build \
+#     && cd build \
+#     && cmake .. \
+#     && make install
+
+#################################### ISAM ####################################
+
+# RUN cd ${HOME}/ \
+#     && git clone https://github.com/ori-drs/isam \
+#     && cd isam/ \
+#     && make \
+#     && make install
+
+# COPY ./FindCholmod.cmake /usr/share/cmake-3.10/Modules
+# COPY ./FindiSAM.cmake /usr/share/cmake-3.10/Modules
+
+
+##################################### PIP ######################################
+
+RUN pip3 install --upgrade pip setuptools
+
+RUN pip3 install \
+    numpy \
+    rospkg \
+    catkin-tools\
+    cython \
+    pandas \
+    image \
+    Pillow \
+    pandas \
+    pypozyx \
+    empy \
+    gdown 
+
+
+#################################### Pytorch ####################################
+WORKDIR /tmp
+RUN wget https://nvidia.box.com/shared/static/phqe92v26cbhqjohwtvxorrwnmrnfx1o.whl -O \
+    torch-1.4.0-cp36-cp36m-linux_aarch64.whl \
+    && pip3 install torch-1.4.0-cp36-cp36m-linux_aarch64.whl torchvision \
+    && rm -rf  torch-1.4.0-cp36-cp36m-linux_aarch64.whl 
+
+#################################  procman  ########################################
+RUN cd ${HOME} && git clone https://github.com/lcm-proj/lcm \
+    && cd lcm \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make install
+
+RUN cd ${HOME} && git clone http://github.com/ARG-NCTU/procman \
+    && cd procman \
+    && mkdir build \
+    && cd build \
+    && cmake .. \
+    && make install
+
+######################################## realsense ########################################
+
+RUN apt-get update && apt-get install -y \
+    libsuitesparse-dev\
+    software-properties-common \
+    libusb-1.0-0-dev \
+    libx11-dev \
+    xorg-dev \
+    libgl1-mesa-dev \
+    libglu1-mesa-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# set the version of the realsense library
+ENV LIBREALSENSE_VERSION 2.36.0
+RUN wget https://github.com/IntelRealSense/librealsense/archive/v${LIBREALSENSE_VERSION}.tar.gz --no-check-certificate && \
+    tar -xvzf v${LIBREALSENSE_VERSION}.tar.gz && \
+    rm v${LIBREALSENSE_VERSION}.tar.gz && \
+    mkdir -p librealsense-${LIBREALSENSE_VERSION}/build && \
+    cd librealsense-${LIBREALSENSE_VERSION}/build && \
+    cmake .. && \
+    make && \
+    make install && \
+    rm -rf librealsense-${LIBREALSENSE_VERSION}
 
-WORKDIR /root
-RUN git clone -b tx2 https://github.com/ARG-NCTU/moos-ivp-nctu.git moos-ivp 
-WORKDIR /root/moos-ivp
-RUN ./build-moos.sh
-RUN ./build-ivp.sh
+######################################## MOOS ########################################
 
-WORKDIR /root
+# INSTALLING MOOS-IVP
+# RUN cd\
+#     && svn co --trust-server-cert --non-interactive https://oceanai.mit.edu/svn/moos-ivp-aro/trunk/ moos-ivp\
+#     && cd moos-ivp\
+#     && svn update --trust-server-cert --non-interactive
+# # INSTALLING MOOS-IVP
 
-# Add MOOS-IvP to the PATH
-ENV PATH "$PATH:/root/moos-ivp/bin" 
+# RUN cd ~/moos-ivp\
+#     && ./build.sh
 
-WORKDIR /root
+# SETTING MOOS-IVP VARIABLE PATH
+# RUN cd \
+#     && apt install -y wget \
+#     && wget http://oceanai.mit.edu/2.680/docs/.bashrc \
+#     && rm .bashrc \
+#     && mv .bashrc.1 .bashrc 
+# SETTING MOOS-IVP VARIABLE PATH 
+
+
+
+##################################### setting #####################################
+RUN chown -R ${USER}:${USER} ${HOME}/
+RUN echo "${USER} ALL=(ALL)  ALL" > /etc/sudoers
+
+# setup entrypoint
+COPY ./ros_entrypoint.sh /
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+
+USER ${USER}
+
+WORKDIR ${HOME}
+CMD ["bash"]
