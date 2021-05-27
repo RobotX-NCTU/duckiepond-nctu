@@ -29,7 +29,7 @@ docker run -it \
     -v "$XAUTH:$XAUTH" \
     -v "/home/$USER/duckiepond-nctu:/home/argduckiepond/duckiepond-nctu/" \
     -v "/home/$USER/moos-ivp-taiwanMoos:/home/argduckiepond/moos-ivp-taiwanMoos/" \
-    -v "/home/$USER/mr-bridge:/home/argduckiepond/mr_bridge/" \
+    -v "/home/$USER/mr_bridge:/home/argduckiepond/mr_bridge/" \
     -v "/tmp/.X11-unix:/tmp/.X11-unix" \
     -v "/etc/localtime:/etc/localtime:ro" \
     -v "/dev:/dev" \
