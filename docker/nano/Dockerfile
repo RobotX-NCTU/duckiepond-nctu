@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     libxinerama-dev \ 
     libtiff5-dev \ 
     netbase \ 
+    fluid \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -187,14 +188,14 @@ RUN wget https://github.com/IntelRealSense/librealsense/archive/v${LIBREALSENSE_
 ######################################## MOOS ########################################
 
 # INSTALLING MOOS-IVP
-# RUN cd\
-#     && svn co --trust-server-cert --non-interactive https://oceanai.mit.edu/svn/moos-ivp-aro/trunk/ moos-ivp\
-#     && cd moos-ivp\
-#     && svn update --trust-server-cert --non-interactive
-# # INSTALLING MOOS-IVP
+RUN cd\
+    && svn co --trust-server-cert --non-interactive https://oceanai.mit.edu/svn/moos-ivp-aro/trunk/ moos-ivp\
+    && cd moos-ivp\
+    && svn update --trust-server-cert --non-interactive
+# INSTALLING MOOS-IVP
 
-# RUN cd ~/moos-ivp\
-#     && ./build.sh
+RUN cd ~/moos-ivp\
+    && ./build.sh
 
 # SETTING MOOS-IVP VARIABLE PATH
 # RUN cd \
@@ -207,8 +208,13 @@ RUN wget https://github.com/IntelRealSense/librealsense/archive/v${LIBREALSENSE_
 
 
 ##################################### setting #####################################
+
 RUN chown -R ${USER}:${USER} ${HOME}/
 RUN echo "${USER} ALL=(ALL)  ALL" > /etc/sudoers
+
+# Support of nvidia-docker 2.0
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 
 # setup entrypoint
 COPY ./ros_entrypoint.sh /
