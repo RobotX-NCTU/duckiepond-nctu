@@ -41,5 +41,5 @@ docker run -it \
     --network host \
     --rm \
     --privileged \
-    argnctu/duckiepond:arm64v8-xavier \
+    argnctu/duckiepond:arm64v8-nano \
     bash 
